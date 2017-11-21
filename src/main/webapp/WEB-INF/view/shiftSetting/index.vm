@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>班次设置</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<div class="menu">
+    <p class="menu-head">岗位名称</p>
+    <ul class="nav nav-tabs">
+        #foreach($post in $postList)
+            #if($foreach.count==1)
+                <li class="active"><a href="javascript:;" class="postBtn"
+                                      data-postId="$post.getPostId()">$post.getPostName()</a></li>
+            #else
+                <li><a href="javascript:;" class="postBtn" data-postId="$post.getPostId()">$post.getPostName()</a></li>
+            #end
+        #end
+    </ul>
+</div>
+<div class="content">
+    <!-- 右侧内容 start -->
+
+    <!-- 右侧内容 end -->
+    <!-- 表格 start -->
+    <div class="wrapper" style="padding-top:0;">
+        <div class="tab-content">
+            <div class="tab-pane in active" id="shiftSettingTable">
+                <div class="content-header">
+                    <div class="float-left">
+                        <a class="btnDefault bgGreen" href="#addPlan" data-toggle="modal"
+                           data-target="#addPlan">新增班制</a>
+                        <a class="btnDefault shiftEdit" href="javascript:;">编辑班制</a>
+                        <ul class="shifts nav nav-tabs" id="shiftModelList">
+                            #foreach($model in $shiftModelList)
+                                <li><a href="javascirpt:;" data-modelId="$model.getModelId()"
+                                       data-toggle="tab">$model.getModelName()</a></li>
+                            #end
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane in active" id="shift1">
+                        <div class="table-header">
+                            <span class="shiftModelSpan">20人排班制</span>
+                        </div>
+                        <div class="shiftInfo">
+                            <p class="gray">24小时值班人数表</p>
+                            <ul>
+                                <li>
+                                    <div class="time">
+                                        <label class="gray">时间段：</label>
+                                        <div class='input-group datetimepicker'>
+                                            <input class="form-control startAt" type='text' value="00:00"/>
+                                            <em class="input-group-addon">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </em>
+                                        </div>
+                                        <span>至</span>
+                                        <div class='input-group datetimepicker'>
+                                            <input class="form-control endAt" type='text' value="06:00"/>
+                                            <em class="input-group-addon">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </em>
+                                        </div>
+                                    </div>
+                                    <div class="peopleNum">
+                                        <label class="gray">值班人数：</label>
+                                        <span>4</span>
+                                        <em class="icon-4"></em>
+                                    </div>
+                                    <em class="icon-1"></em>
+                                </li>
+                                <li class="add">
+                                    <a href="javascript:;">+ 添加时间段</a>
+                                </li>
+                                <li class="clear">
+                                    <div class="time">
+                                        <label class="gray">时间段：</label>
+                                        <div class='input-group datetimepicker'>
+                                            <input class="form-control startAt" type='text' value="00:00"/>
+                                            <em class="input-group-addon">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </em>
+                                        </div>
+                                        <span>至</span>
+                                        <div class='input-group datetimepicker'>
+                                            <input class="form-control endAt" type='text' value="00:00"/>
+                                            <em class="input-group-addon">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </em>
+                                        </div>
+                                    </div>
+                                    <div class="peopleNum">
+                                        <label class="gray">值班人数：</label>
+                                        <span>0</span>
+                                        <em class="icon-4"></em>
+                                    </div>
+                                    <em class="icon-1"></em>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="table-header">
+                            <span class="gray">排班表</span>
+                            <div class="dropdown">
+                                <button type="button" class="btn dropdown-toggle" id="dropdownMenu1"
+                                        data-toggle="dropdown">操作
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                    <!--<li role="presentation">
+                                        <a role="menuitem" href="#editShiftModel" class="editShiftModel" data-toggle="modal" data-target="#editShiftModel">修改班制</a>
+                                    </li>-->
+                                    <li role="presentation">
+                                        <a role="menuitem" href="#addShift" class="addShiftBtn" data-toggle="modal"
+                                           data-target="#addShift">增加班次</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a role="menuitem" href="#shiftTest" class="addShiftBtn">方案验算</a>
+                                    </li>
+                                    <!--<li role="presentation">
+                                        <a role="menuitem" href="#hourCalculation" class="addShiftBtn" data-toggle="modal" data-target="#hourCalculation">工时简算</a>
+                                    </li>-->
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="wrapper">
+                            <table class="table" id="shiftTable">
+                            ##                            <thead>
+##	                            <tr>
+##	                                <th>班次名称</th>
+##	                                <th>起止时间</th>
+##	                                <th>本班工时</th>
+##	                                <th>班次间隔</th>
+##	                                <th>班次关联</th>
+##	                                <th>值班人数</th>
+##	                                <th>操作</th>
+##	                            </tr>
+##                            </thead>
+##                            <tbody>
+##	                            <tr>
+##	                                <td>大夜班</td>
+##	                                <td>00:00-09:00</td>
+##	                                <td>9</td>
+##	                                <td>24</td>
+##	                                <td>-</td>
+##	                                <td>4</td>
+##	                                <td>
+##	                                    <a href="#editShift" data-toggle="modal" data-target="#editShift">编辑</a>
+##	                                    <a class="delete" href="javascript:;">删除</a>
+##	                                </td>
+##	                            </tr>
+##	                            <tr>
+##	                                <td>大白班</td>
+##	                                <td>07:00-17:00</td>
+##	                                <td>10</td>
+##	                                <td>12</td>
+##	                                <td>-</td>
+##	                                <td>5</td>
+##	                                <td>
+##	                                    <a href="#editShift" data-toggle="modal" data-target="#editShift">编辑</a>
+##	                                    <a class="delete" href="javascript:;">删除</a>
+##	                                </td>
+##	                            </tr>
+##	                            <tr>
+##	                                <td>中白班</td>
+##	                                <td>07:00-16:00</td>
+##	                                <td>9</td>
+##	                                <td>12</td>
+##	                                <td>-</td>
+##	                                <td>6</td>
+##	                                <td>
+##	                                    <a href="#editShift" data-toggle="modal" data-target="#editShift">编辑</a>
+##	                                    <a class="delete" href="javascript:;">删除</a>
+##	                                </td>
+##	                            </tr>
+##	                            <tr>
+##	                                <td>夜班</td>
+##	                                <td>17:00-24:00</td>
+##	                                <td>7</td>
+##	                                <td>-</td>
+##	                                <td>下夜班</td>
+##	                                <td>3</td>
+##	                                <td>
+##	                                    <a href="#editShift" data-toggle="modal" data-target="#editShift">编辑</a>
+##	                                    <a class="delete" href="javascript:;">删除</a>
+##	                                </td>
+##	                            </tr>
+##                            </tbody>
+                            </table>
+                            <div class="page" id="pager">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 表格 end -->
+                </div>
+                <!-- 新增班制 -->
+                <div class="modal" id="addPlan" tabindex="-1" role="dialog" data-backdrop="static"
+                     data-keyboard="false">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                                <h4 class="modal-title">新增班制</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-container clear" id="addPlanForm">
+                                    <div class="form_line">
+                                        <label class="require">班制名称</label>
+                                        <input name="postId" id="postId" type="hidden">
+                                        <input name="modelName" type="text">
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">站区</label>
+                                        <select name="stationArea" id="stationArea" class=" reset-input">
+                                            <option value="">请选择</option>
+                                            #foreach($group in $!groups)
+                                                <option value="$!group.groupCode">$!group.groupName</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">站点</label>
+                                        <select name="station" id="station" class=" reset-input">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">周工时下限</label>
+                                        <input name="minWeeklyReason" type="text">
+                                        <span>小时</span>
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">周工时上限</label>
+                                        <input name="maxWeeklyReason" type="text">
+                                        <span>小时</span>
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">每周最少休班</label>
+                                        <input type="text" name="minWeeklyRest">
+                                        <span>天</span>
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">每周最多休班</label>
+                                        <input type="text" name="maxWeeklyRest">
+                                        <span>天</span>
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">月工时上限</label>
+                                        <input type="text" name="postMonth">
+                                        <span>小时</span>
+                                    </div>
+                                    <div class="form_line">
+                                        <label class="require">年工时上限</label>
+                                        <input type="text" name="postYear">
+                                        <span>小时</span>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-confirm" href="javascript:;" onclick="addShiftModel()">确定</a>
+                                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal"
+                                        aria-label="Close">取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 修改方案名称 -->
+                <div class="modal" id="editShiftModel" tabindex="-1" role="dialog" data-backdrop="static"
+                     data-keyboard="false">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                                <h4 class="modal-title">修改班制名称</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-container clear" id="editShiftModelForm">
+                                    <div class="form_line">
+                                        <label>班制名称</label>
+                                        <input type="hidden" name="modelCode" id="editModelCode">
+                                        <input type="text" name="modelName" id="editModelName">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-confirm" href="javascript:;" onclick="updateShiftModel()">确定</a>
+                                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal"
+                                        aria-label="Close">取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 增加班次 -->
+                <div class="modal" id="addShift" tabindex="-1" role="dialog" data-backdrop="static"
+                     data-keyboard="false">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                                <h4 class="modal-title">增加班次</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-container clear" id="addShiftSettingForm">
+                                    <div class="form_line">
+                                        <label>班次名称</label>
+                                        <input type="text" name="shiftName">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次代号</label>
+                                        <input type="text" name="shiftCode">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次颜色</label>
+                                        <input type="text" class='simple_color' name="shiftColor" value='#ffffff'/>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>起止时间</label>
+                                        <div class="section">
+                                            <div class='input-group datetimepicker'>
+                                                <input type='text' class="form-control" name="startAtStr"/>
+                                                <em class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </em>
+                                            </div>
+                                            <span>至</span>
+                                            <div class='input-group datetimepicker'>
+                                                <input type='text' class="form-control" name="endAtStr"/>
+                                                <em class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </em>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>总时间</label>
+                                        <input type="text" name="totalAtStr" readonly
+                                               style="background-color: lightgrey">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次间隔</label>
+                                        <input type="text" name="intervalAtStr">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次关联</label>
+                                        <input type="hidden" name="relevanceName" id="hiddenRelevanceName">
+                                        <select name="relevanceId" id="relevance">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>值班人数</label>
+                                        <input type="text" name="shiftNum">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>注意事项</label>
+                                        <textarea rows="5" name="shiftExplain"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-confirm" href="javascript:;" onclick="addShift()">确定</a>
+                                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal"
+                                        aria-label="Close">取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 编辑班次 -->
+                <div class="modal" id="editShift" tabindex="-1" role="dialog" data-backdrop="static"
+                     data-keyboard="false">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                                <h4 class="modal-title">编辑班次</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-container clear" id="editShiftForm">
+                                    <div class="form_line">
+                                        <label>班次名称</label>
+                                        <input type="hidden" id="editShiftId" name="shiftId">
+                                        <input type="text" id="editShiftName" name="shiftName">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次代号</label>
+                                        <input type="text" name="shiftCode" id="editShiftCode">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次颜色</label>
+                                        <input type="text" id="edit_simple_color" class='edit_simple_color' name="shiftColor" value='#ffffff'/>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>起止时间</label>
+                                        <div class="section">
+                                            <div class='input-group datetimepicker'>
+                                                <input type='text' class="form-control" id="startAtStr"
+                                                       name="startAtStr"/>
+                                                <em class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </em>
+                                            </div>
+                                            <span>至</span>
+                                            <div class='input-group datetimepicker'>
+                                                <input type='text' class="form-control" id="endAtStr" name="endAtStr"/>
+                                                <em class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </em>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>总时间</label>
+                                        <input type="text" id="editTotalAt" name="totalAtStr" readonly
+                                               style="background-color: lightgrey">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次间隔</label>
+                                        <input type="text" id="editIntervalAt" name="intervalAtStr">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班次关联</label>
+                                        <input type="hidden" id="editRelevanceName" name="relevanceName">
+                                        <select name="relevanceId" id="editRelevanceId">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>值班人数</label>
+                                        <input type="text" id="editShiftNum" name="shiftNum">
+                                    </div>
+                                    <div class="form_line">
+                                        <label>注意事项</label>
+                                        <textarea rows="5" name="shiftExplain" id="editShiftExplain"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-confirm" href="javascript:;" onclick="updateShift()">确定</a>
+                                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal"
+                                        aria-label="Close">取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 工时简算 -->
+                <div class="modal" id="hourCalculation" tabindex="-1" role="dialog" data-backdrop="static"
+                     data-keyboard="false">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                                <h4 class="modal-title">工时简算</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-container clear">
+                                    <div class="form_line">
+                                        <label>每日总工时</label>
+                                        <span>60小时</span>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>班制名称</label>
+                                        <input type="text" name="">
+                                        <a class="btn btn-confirm">计算</a>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>计算结果</label>
+                                        <span>平均每人周工时<i class="blue">40</i>小时</span>
+                                        <span>平均每人日工时<i class="blue">8</i>小时</span>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-confirm" href="javascript:;" onclick="updateShiftModel()">确定</a>
+                                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal"
+                                        aria-label="Close">取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 方案验算 -->
+                <div class="modal" id="shiftTest" tabindex="-1" role="dialog" data-backdrop="static"
+                     data-keyboard="false">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                                <h4 class="modal-title">方案验算</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-container clear">
+                                    <div class="form_line">
+                                        <label>每日总工时</label>
+                                        <span name="settionTotal">80小时</span>
+                                    </div>
+                                    <div class="form_line">
+                                        <label>总排班人数</label>
+                                        <input name="totalCount" type="text">
+                                        <a class="btn btn-confirm" href="javascript:;" onclick="checkPlan()">开始验算</a>
+                                    </div>
+                                </form>
+                                <div class="testResult">
+                                    <p>计算结果<span class="orange">请填写排班人数，并点击验算按钮</span></p>
+                                    <ul class="hidden">
+                                        <!-- <li>
+                                            <em class="icon-danger"></em>
+                                            <span>24小时值班人数表与班次表相不符合，06:00-9:00值班人数不同 ;10:00-12:00值班人数不同</span>
+                                        </li>
+                                        <li>
+                                            <em class="icon-success"></em>
+                                            <span>员工平均周工时35.6小时，合理范围32-48小时；员工平均月工时152.3小时，合理范围166小时内；员工平均年工时1856小时, 合理范围2000小时内</span>
+                                        </li>
+                                        <li>
+                                            <em class="icon-success"></em>
+                                            <span>员工平均每周休班1.2天，合理范围1-2天</span>
+                                        </li>-->
+                                    </ul>
+                                    <div class="result">
+                                        <!--<em class="icon-right"></em>
+                                        <span>排班方案合理，可用于生成排班表格</span>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-confirm" href="javascript:;">确定</a>
+                                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal"
+                                        aria-label="Close">取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $('.simple_color').simpleColor();
+                    $('.edit_simple_color').simpleColor();
+                    var postId = $(".menu .active a").attr("data-postId");
+                    var modelId = $("#shiftModelList .active a").attr("data-modelId");
+                    //点击增加班次按钮后需要获取当前班制下所有班次 加入到select选项里
+                    $(document).on("click", ".addShiftBtn", function () {
+                        postId = $(".menu .active a").attr("data-postId");
+                        modelId = $("#shiftModelList .active a").attr("data-modelId");
+                        jQuery.ajax({
+                            type: "get",
+                            url: "$path/getShiftSetting?postId=" + postId + "&modelId=" + modelId,
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert("fail", "网络错误");
+                            },
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var str = '<option value="">请选择</option>';
+                                    for (var i = 0; i < data.length; i++) {
+                                        str += '<option value="' + data[i].shiftId + '">' + data[i].shiftName + '</option>';
+                                    }
+                                    $("#relevance").html(str);
+                                    $("#hiddenRelevanceName").val("");
+                                }
+                            }
+                        });
+                    })
+                    $(function () {
+                        $("#stationArea").change(function () {
+                            var _oneId = this.value;
+                            var two_obj = $('#station');
+                            var _html = "<option value=''>请选择</option>";
+                            $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+                                if (data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        var obj = data[i];
+                                        _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                                    }
+                                }
+                                two_obj.html(_html);
+                            });
+                        }).change();
+                        $("#editStationArea").change(function () {
+                            var _oneId = this.value;
+                            var two_obj = $('#editStation');
+                            var _html = "<option value=''>请选择</option>";
+                            $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+                                if (data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        var obj = data[i];
+                                        _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                                    }
+                                }
+                                two_obj.html(_html);
+                            });
+                        }).change();
+
+                        $("#stationAreaQuery").change(function () {
+                            var _oneId = this.value;
+                            var two_obj = $('#stationQuery');
+                            var _html = "<option value=''>请选择</option>";
+                            $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+                                if (data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        var obj = data[i];
+                                        _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                                    }
+                                }
+                                two_obj.html(_html);
+                            });
+                        }).change();
+
+                        //显示默认班制
+                        loadPost($(".menu .active a").attr("data-postId"));
+                        //关联班次选择
+                        $("#relevance").change(function () {
+                            $("input[name='relevanceName']").val($(this).find(":selected").text());
+                        })
+
+                        //关联班次选择
+                        $("#editRelevanceId").change(function () {
+                            $("input[name='relevanceName']").val($(this).find(":selected").text());
+                        })
+                        //编辑班制
+                        $(document).on("click", ".shifts li span", function () {
+                            //var modelCode=$(this).prev().attr("data-modelCode");
+                            var modelId = $(this).prev().attr("data-modelId");
+                            var li = $(this).closest("li");
+                            //delShiftModel(modelCode);
+                            delShiftModel(modelId)
+                            if (li.siblings().length == 0) {
+                                $(".shiftEdit.btnDefault").removeClass("complete").text("编辑班制");
+                            }
+                            li.remove();
+                        })
+                        //岗位点击
+                        $(document).on("click", ".postBtn", function () {
+                            var postId = $(this).attr("data-postId");
+                            $(this).parent().addClass("active").siblings().removeClass("active");
+                            loadPost(postId);
+                            //tableInit(modelId);
+                        })
+                        //编辑班制点击
+                        $(document).on("click", ".editShiftModel", function () {
+                            var modelCode = $("#shiftModelList .active a").attr("data-modelCode");
+                            var modelName = $("#shiftModelList .active a").text();
+                            $("#editModelCode").val(modelCode);
+                            $("#editModelName").val(modelName);
+                        })
+                        //编辑班制
+                        $(".shiftEdit.btnDefault").click(function () {
+                            if ($(this).hasClass("complete")) {
+                                $(this).next().find("li span").remove();
+                                $(this).removeClass("complete").text("编辑班制");
+                                $(".menu .active a").click();
+                            } else {
+                                $(this).next().find("li").append("<span class='icon-1'></span>");
+                                $(this).addClass("complete").text("完成编辑");
+                            }
+
+                        })
+                        //切换班制
+                        $(document).on("click", "#shiftModelList li", function () {
+                            modelId = $(this).find("a").attr("data-modelId");
+                            modelName = $(this).find("a").text();
+                            $(".shiftModelSpan").html(modelName);
+                            $(this).addClass("active").siblings().removeClass("active");
+                            //loadPost(modelId);
+                            getTableData(modelId);
+                            getShiftPopulation(modelId);
+                        })
+                        //编辑班次
+                        $(document).on("click", ".editShift", function () {
+                            postId = $(".menu .active a").attr("data-postId");
+                            modelId = $("#shiftModelList .active a").attr("data-modelId");
+                            var shiftId = $(this).attr("data-shiftId");
+                            jQuery.ajax({
+                                type: "get",
+                                url: "$path/editShift?shiftid=" + shiftId + "&postId=" + postId + "&modelId=" + modelId,
+                                data: null,
+                                dataType: "json",
+                                error: function () {
+                                    Alert('fail', "网络错误");
+                                },
+                                success: function (data) {
+                                    var str = '<option value="">请选择</option>';
+                                    for (var i = 0; i < data.rs.length; i++) {
+                                        str += '<option value="' + data.rs[i].shiftId + '">' + data.rs[i].shiftName + '</option>';
+                                    }
+                                    $("#editRelevanceId").html(str);
+                                    $("#editShiftId").val(data.ss.shiftId);
+                                    $("#editShiftName").val(data.ss.shiftName);
+                                    $("#editShiftNum").val(data.ss.shiftNum);
+                                    $("#startAtStr").val(data.ss.startAtStr);
+                                    $("#endAtStr").val(data.ss.endAtStr);
+                                    $("#editTotalAt").val(data.ss.totalAtStr);
+                                    $("#editIntervalAt").val(data.ss.intervalAtStr);
+                                    $("#editRelevanceId").val(data.ss.relevanceId);
+                                    $("#editRelevanceName").val(data.ss.relevanceName);
+                                    $("#editShiftCode").val(data.ss.shiftCode);
+                                    $("#editShiftExplain").val(data.ss.shiftExplain);
+                                    $('.edit_simple_color').setColor('#' + data.ss.shiftColor);
+                                    $('#edit_simple_color').val('#' + data.ss.shiftColor);
+                                    $("#editShift").modal('show');
+                                }
+                            });
+                        })
+                        //初始化日期控件
+                        $(".datetimepicker").not(".occurrence-time").datetimepicker({
+                            format: "HH:mm",
+//        stepping: 30,
+                            useCurrent: false
+                        });
+                        //新增班制和编辑：计算起止时间时间差
+                        $("[name='startAtStr'],[name='endAtStr']").blur(function () {
+                            var start = $(this).closest(".form_line").find("[name='startAtStr']").val();
+                            var end = $(this).closest(".form_line").find("[name='endAtStr']").val();
+
+                            if (start != '' && end != '') {
+                                var startHour = parseInt(start.substring(0, 2));
+                                var endHour = parseInt(end.substring(0, 2));
+                                var startMinute = parseInt(start.substring(3, 5));
+                                var endMinute = parseInt(end.substring(3, 5));
+                                var minute = endMinute - startMinute;
+                                var hour = 0;
+                                if (endMinute < startMinute) {
+                                    minute += 60;
+                                    endHour -= 1;
+                                }
+                                if (endHour < startHour) {
+                                    hour = 24 - startHour + endHour;
+                                } else {
+                                    hour = endHour - startHour;
+                                }
+                                if (minute == 0) {
+                                    $(this).closest("form").find("[name='totalAtStr']").val(hour + '小时');
+                                } else {
+                                    $(this).closest("form").find("[name='totalAtStr']").val(hour + '小时' + minute + '分钟');
+                                }
+                                $(this).closest("form").find("[name='totalAtStr']").attr('code', hour * 60 + minute);
+
+                                if (startHour == 0 && startMinute == 0) {
+                                    $(this).closest("form").find("[name='intervalAtStr']").val(24);
+                                } else if (endHour == 0 && endMinute == 0) {
+                                    $(this).closest("form").find("[name='intervalAtStr']").val(0);
+                                } else {
+                                    $(this).closest("form").find("[name='intervalAtStr']").val(((1440 - endHour * 60 - endMinute) / 60));
+                                }
+                            }
+                        })
+                        //编辑值班人数
+                        $(document).on("click", ".peopleNum em", function () {
+                            var span = $(this).siblings("span");
+                            $("<input type='text' value='" + span.text() + "'>").insertBefore($(this));
+                            span.hide();
+                            $(this).siblings("input").focus();
+                        })
+                        $(document).on("blur", ".peopleNum input", function () {
+                            var span = $(this).siblings("span");
+                            span.text($(this).val()).show();
+                            var obj = $(this).closest("li");
+                            updateShiftPopulation(obj);
+                            $(this).remove();
+                        })
+                        //编辑时间段
+                        $(document).on("blur", ".shiftInfo .datetimepicker input", function () {
+                            var obj = $(this).closest("li");
+                            updateShiftPopulation(obj);
+                        })
+                        //值班人数表--删除时间段
+                        $(document).on("click", ".shiftInfo li>em", function () {
+                            postId = $(".menu .active a").attr("data-postId");
+                            modelId = $("#shiftModelList .active a").attr("data-modelId");
+                            var populationId = $(this).closest("li").attr("data-id");
+                            jQuery.ajax({
+                                type: "get",
+                                url: "$path/deleteShiftPopulation",
+                                data: {"populationId": populationId},
+                                dataType: "json",
+                                error: function () {
+                                    Alert('fail', "网络错误");
+                                },
+                                success: function (result) {
+                                    Alert(result.data, result.message);
+                                }
+                            });
+                            $(this).parent().remove();
+                        })
+
+                        //值班人数表--添加时间段
+                        $(document).on("click", ".shiftInfo .add", function () {
+                            postId = $(".menu .active a").attr("data-postId");
+                            modelId = $("#shiftModelList .active a").attr("data-modelId");
+                            var obj = $(this);
+                            jQuery.ajax({
+                                type: "post",
+                                url: "$path/addShiftPopulation",
+                                data: {"postId": postId, "modelId": modelId},
+                                dataType: "json",
+                                error: function () {
+                                    Alert('fail', "网络错误");
+                                },
+                                success: function (result) {
+                                    var str = '<li data-id="' + result.message + '">';
+                                    str += $(".shiftInfo li.clear").html();
+                                    str += '</li>';
+                                    $(str).insertBefore(obj);
+                                    //初始化日期控件
+                                    $(".datetimepicker").not(".occurrence-time").datetimepicker({
+                                        format: "HH:mm",
+                                        stepping: 5,
+                                        useCurrent: false
+                                    });
+                                    //Alert(result.data,result.message);
+                                }
+                            });
+                        })
+                        //方案验算：获取每日总工时
+                        $("a[href='#shiftTest']").click(function () {
+                            var L = $(".shiftInfo li").length;
+                            if (L < 3) {
+                                Alert("fail", "请先添加时间段再进行验算！")
+                            } else {
+                                modelId = $("#shiftModelList .active a").attr("data-modelId");
+                                jQuery.ajax({
+                                    type: "get",
+                                    url: "$path/getShiftSettionTotal",
+                                    data: {"postId": postId, "modelId": modelId},
+                                    dataType: "json",
+                                    error: function () {
+                                        Alert('fail', "网络错误");
+                                    },
+                                    success: function (data) {
+                                        $("#shiftTest [name='settionTotal']").text(data.total);
+                                        $("#shiftTest").modal("show");
+                                    }
+                                });
+                            }
+                        })
+                    })
+
+                    function reloadStation(oneId) {
+                        var two_obj = $('#editStation');
+                        var _html = "<option value=''>请选择</option>";
+                        jQuery.ajax({
+                            async: false,
+                            type: "get",
+                            url: "$path/group/querySubNodes",
+                            data: {oneCode: oneId},
+                            dataType: "json",
+                            error: function (xmlHttpReq, status) {
+                                Alert("fail", "网络错误");
+                            },
+                            success: function (data) {
+                                if (data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        var obj = data[i];
+                                        _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                                    }
+                                }
+                                two_obj.html(_html);
+                            }
+                        });
+                    }
+
+                    //方案验算
+                    function checkPlan() {
+                        modelId = $("#shiftModelList .active a").attr("data-modelId");
+                        var totalCount = $.trim($("#shiftTest [name='totalCount']").val());
+                        if (totalCount != '') {
+                            jQuery.ajax({
+                                type: "get",
+                                url: "$path/checkPlan",
+                                data: {"postId": postId, "modelId": modelId, "totalCount": totalCount},
+                                dataType: "json",
+                                error: function () {
+                                    Alert('fail', "网络错误");
+                                },
+                                success: function (data) {
+                                    console.log(data);
+                                    var str = '';
+                                    //24小时值班人数
+                                    str += '<li>';
+                                    if (data.statusPopulationAndSetting == 'fail') {
+                                        str += '<em class="icon-danger"></em>';
+                                        str += '<span>24小时值班人数表与班次表不符合，';
+                                        for (var i = 0; i < data.failTime.length; i++) {
+                                            str += data.failTime[i] + '值班人数不同，';
+                                        }
+                                        str += '</span>';
+                                    } else {
+                                        str += '<em class="icon-success"></em>';
+                                        str += '<span>24小时值班人数表与班次表相符合</span>';
+                                    }
+                                    str += '</li>';
+                                    //每周工时
+                                    str += '<li>';
+                                    if (data.statusWorkHour == 'fail') {
+                                        str += '<em class="icon-danger"></em>';
+
+                                    } else {
+                                        str += '<em class="icon-success"></em>';
+                                    }
+                                    str += '<span>员工平均周工时' + data.avgHourWeekly.toFixed(1) + '小时';
+                                    if (data.min_post_week != null && data.max_post_week != null) {
+                                        str += '；合理范围' + data.min_post_week + '-' + data.max_post_week + '小时；';
+                                    } else {
+                                        str += '；';
+                                    }
+
+                                    str += '员工平均月工时' + data.avgHourMonth.toFixed(1) + '小时，';
+                                    str += '合理范围' + data.postMonth + '小时内；员工平均年工时' + data.avgHourYear.toFixed(1) + '小时, 合理范围' + data.postYear + '小时内</span>';
+                                    str += '</li>';
+                                    //每周休班
+                                    str += '<li>'
+                                    if (data.statusAvgWeeklyRest == 'fail') {
+                                        str += '<em class="icon-danger"></em>';
+
+                                    } else {
+                                        str += '<em class="icon-success"></em>';
+                                    }
+                                    str += '员工平均每周休班' + data.avgWeeklyRest.toFixed(1) + '天，合理范围' + data.minWeeklyRest + '-' + data.maxWeeklyRest + '天';
+                                    str += '</li>';
+                                    $(".testResult ul").removeClass("hidden").html(str);
+                                    //总结果
+                                    var result = '';
+                                    if (data.statusAvgWeeklyRest == 'fail') {
+                                        result += '<em class="icon-wrong"></em>';
+                                        result += '<span>排班方案不合理，请调整后再用于自动排班</span>';
+                                    } else {
+                                        result += '<em class="icon-right"></em>';
+                                        result += '<span>排班方案合理，可用于生成排班表格</span>';
+                                    }
+                                    $("#shiftTest .result").html(result);
+                                }
+                            });
+                        }
+                    }
+
+                    //获取时间段
+                    function getShiftPopulation(modelId) {
+                        postId = $(".menu .active a").attr("data-postId");
+                        jQuery.ajax({
+                            type: "get",
+                            url: "$path/getShiftPopulation",
+                            data: {"postId": postId, "modelId": modelId},
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (data) {
+                                $(".shiftInfo li").not(".add,.clear").remove();
+                                var target = $(".shiftInfo li.add");
+                                for (var i = 0; i < data.length; i++) {
+                                    var str = '<li data-id="' + data[i].populationId + '">';
+                                    str += $(".shiftInfo li.clear").html();
+                                    str += '</li>';
+                                    $(str).insertBefore(target);
+                                    var obj = $(".shiftInfo li").eq(i);
+                                    obj.find(".startAt").val(data[i].startAtStr);
+                                    obj.find(".endAt").val(data[i].endAtStr);
+                                    obj.find(".peopleNum span").text(data[i].populationCount == null ? 0 : data[i].populationCount);
+                                }
+                                //初始化日期控件
+                                $(".datetimepicker").not(".occurrence-time").datetimepicker({
+                                    format: "HH:mm",
+//                stepping: 30,
+                                });
+                            }
+                        });
+                    }
+
+                    //编辑时间段
+                    function updateShiftPopulation(obj) {
+                        var startAtStr = obj.find(".startAt").val();
+                        var endAtStr = obj.find(".endAt").val();
+                        var populationId = obj.attr("data-id");
+                        var populationCount = obj.find(".peopleNum span").text();
+                        jQuery.ajax({
+                            type: "post",
+                            url: "$path/updateShiftPopulation",
+                            data: {
+                                "startAtStr": startAtStr,
+                                "endAtStr": endAtStr,
+                                "populationCount": populationCount,
+                                "populationId": populationId
+                            },
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (result) {
+                                Alert(result.data, result.message);
+                            }
+                        });
+                    }
+
+                    //新增班次
+                    function addShift() {
+                        var postId = $(".menu .active a").attr("data-postId");
+                        var modelId = $("#shiftModelList .active a").attr("data-modelId");
+                        var stationArea = $("select[name='stationArea']").val();
+                        var station = $("select[name='station']").val();
+                        jQuery.ajax({
+                            type: "post",
+                            url: "$path/addShiftSettingForm?" + $("#addShiftSettingForm").serialize() + "&postId=" + postId + "&modelId=" + modelId+"&station="+station+"&stationArea="+stationArea,
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (result) {
+                                Alert(result.data, result.message);
+                                setTimeout(function () {
+                                    $("#addShift").modal('hide');
+                                    getTableData(modelId);
+                                    $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                                }, 500)
+                            }
+                        });
+                    }
+
+                    //新增班制
+                    function addShiftModel() {
+                        modelName = $("input[name='modelName']").val();
+                        minWeeklyReason = $("input[name='minWeeklyReason']").val();
+                        maxWeeklyReason = $("input[name='maxWeeklyReason']").val();
+                        minWeeklyRest = $("input[name='minWeeklyRest']").val();
+                        maxWeeklyRest = $("input[name='maxWeeklyRest']").val();
+                        postMonth = $("input[name='postMonth']").val();
+                        postYear = $("input[name='postYear']").val();
+                        stationArea = $("select[name='stationArea']").val();
+                        station = $("select[name='station']").val();
+                        postId = $(".menu .active a").attr("data-postId");//获取当前选中的值
+                        jQuery.ajax({
+                            type: "post",
+                            url: "$path/addShiftModel?modelName=" + modelName + "&postId=" + postId + "&minWeeklyReason=" + minWeeklyReason
+                            + "&maxWeeklyReason=" + maxWeeklyReason + "&minWeeklyRest=" + minWeeklyRest + "&maxWeeklyRest=" + maxWeeklyRest
+                            + "&postMonth=" + postMonth + "&postYear=" + postYear + "&stationArea=" + stationArea + "&station=" + station,
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (result) {
+                                Alert(result.data, result.message);
+                                setTimeout(function () {
+                                    $("#mask", parent.document).hide();
+                                    location.reload();
+                                }, 500)
+                            }
+                        });
+                    }
+
+                    //根据岗位循环班制
+                    function loadPost(postId) {
+                        $(".shiftEdit.btnDefault").removeClass("complete").text("编辑班制");
+                        jQuery.ajax({
+                            type: "get",
+                            url: "$path/shiftModelData?postId=" + postId,
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (data) {
+                                var str = '';
+                                if (data.length > 0) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        if (i == 0) {
+                                            str += '<li class="active"><a href="javascript:;" class="searchShiftModelBtn" data-modelId="' + data[i].modelId + '" data-modelCode="' + data[i].modelCode + '">' + data[i].modelName + '</a></li>';
+                                        } else {
+                                            str += '<li><a href="javascript:;" class="searchShiftModelBtn" data-modelId="' + data[i].modelId + '" data-modelCode="' + data[i].modelCode + '">' + data[i].modelName + '</a></li>';
+                                        }
+                                    }
+                                    $("#shift1").show();
+                                } else {
+                                    $("#shift1").hide();
+                                }
+                                $("#shiftModelList").html(str);
+                                var modelId = $("#shiftModelList .active a").attr("data-modelId");
+                                $(".shiftModelSpan").html($("#shiftModelList .active a").text());
+                                tableInit(modelId);
+                                getTableData(modelId);
+                            }
+                        });
+                    }
+
+                    function getTableData(modelId) {
+                        postId = $(".menu .active a").attr("data-postId");
+                        $("#shiftTable").jqGrid('setGridParam', {
+                            postData: {
+                                search: JSON.stringify({"postId": postId, "modelId": modelId})
+                            }
+                        }).trigger('reloadGrid');
+                    }
+
+                    //根据班制和岗位初始化表格
+                    function tableInit(modelId) {
+                        //获取时间段
+                        getShiftPopulation(modelId);
+                        //岗位postId,班制modelId
+                        postId = $(".menu .active a").attr("data-postId");
+                        $("#shiftTable").jqGrid({
+                            url: "$path/shiftSettingData",
+                            datatype: "json",
+                            mtype: "get",
+                            height: 'auto',
+                            autowidth: true,
+                            postData: {
+                                search: JSON.stringify({"postId": postId, "modelId": modelId})
+                            },
+                            colNames: ['班次名称', '起止时间', '本班工时', '班次间隔', '班次关联', '值班人数', "操作"],
+                            colModel: [
+                                {name: 'shiftName', width: '15%'},
+                                {
+                                    name: 'startAtStr',
+                                    width: '15%',
+                                    formatter: function (cellvalue, options, rowObject) {
+                                        return rowObject.startAtStr + '-' + rowObject.endAtStr;
+                                    }
+                                },
+                                {name: 'totalAtStr', width: '15%'},
+                                {name: 'intervalAtStr', width: '15%'},
+                                {name: 'relevanceName', width: '15%'},
+                                {name: 'shiftNum', width: '15%'},
+                                {
+                                    name: 'operation',
+                                    width: '10%',
+                                    formatter: function (cellvalue, options, rowObject) {
+                                        var str = '';
+                                        str = '<a href="javascript:;" class="editShift" data-shiftId="' + rowObject.shiftId + '">编辑</a>';
+                                        str += '<a class="stop" href="javascript:;" onclick="delShift(' + rowObject.shiftId + ')">删除</a>';
+                                        return str;
+                                    }
+                                },
+                            ],
+                            viewrecords: true,//是否在浏览导航栏显示记录总数
+                            rowNum: 10,//每页显示记录数
+                            pager: $('#pager'),
+                            jsonReader: {
+                                page: "page",
+                                total: "pages",
+                                records: "count",
+                                root: "results",
+                                repeatitems: false,
+                                id: "shiftId"
+                            }
+                        });
+                        jQuery("#shiftTable").jqGrid('navGrid', '#pager', {edit: false, add: false, del: false});
+                    }
+
+                    //更新班次
+                    function updateShift() {
+                        jQuery.ajax({
+                            type: "put",
+                            url: "$path/updateShift?" + $("#editShiftForm").serialize(),
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (result) {
+                                Alert(result.data, result.message);
+                                setTimeout(function () {
+                                    $("#editShift").modal('hide');
+                                    $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                                }, 500)
+                            }
+                        });
+                    }
+
+                    //删除班次
+                    function delShift(shiftId) {
+                        postId = $(".menu .active a").attr("data-postId");
+                        modelId = $("#shiftModelList .active a").attr("data-modelId");
+                        jQuery.ajax({
+                            type: "delete",
+                            url: "$path/delShift?shiftId=" + shiftId,
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (result) {
+                                Alert(result.data, result.message);
+                                setTimeout(function () {
+                                    getTableData(modelId);
+                                    $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                                }, 500)
+                            }
+                        });
+                    }
+
+                    //更新班制
+                    function updateShiftModel() {
+                        jQuery.ajax({
+                            type: "put",
+                            url: "$path/updateShiftModel?" + $("#editShiftModelForm").serialize(),
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (result) {
+                                Alert(result.data, result.message);
+                                setTimeout(function () {
+                                    $("#editShiftModel").modal('hide');
+                                    $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                                }, 500)
+                            }
+                        });
+                    }
+
+                    //删除班制
+                    function delShiftModel(modelCode) {
+                        jQuery.ajax({
+                            type: "delete",
+                            url: "$path/delShiftModel?modelCode=" + modelCode,
+                            data: null,
+                            dataType: "json",
+                            error: function () {
+                                Alert('fail', "网络错误");
+                            },
+                            success: function (result) {
+                                Alert(result.data, result.message);
+                                setTimeout(function () {
+                                    $(".menu .active a").click();
+                                }, 1000)
+                            }
+                        });
+                    }
+                </script>
+</body>
+</html>

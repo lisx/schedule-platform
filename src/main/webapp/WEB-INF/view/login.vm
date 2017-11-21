@@ -1,0 +1,77 @@
+#set($path = ${rc.contextPath})
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="$path/static/css/font.css">
+    <link rel="stylesheet" href="$path/static/css/sign.css">
+    <script src="$path/static/js/jquery.min.js" type="application/javascript"></script>
+    <script src="$path/static/js/alert.js" type="application/javascript"></script>
+	<script>
+	$(function(){
+		//回车登录
+		$(document).keydown(function(e){
+			if(e.keyCode==13){
+			   submitLogin();
+			}
+		});
+		//登陆超时
+		if (window != top){
+			top.location.href = location.href + "?tag=sessionInvalid"; 
+			window.stop();
+		}
+	})
+	$(function(){
+		var tag = "$tag";
+		if ("sessionInvalid" == tag) {
+			Alert("fail", "登录超时，请重新登录！");
+			setTimeout(function(){
+				location.href = "$path/";
+			},2000)
+		}
+	});
+	</script>
+</head>
+<body>
+<div id="login">
+    <div class="wrapper">
+    	<img src="$path/static/img/slogon.png">
+        <div class="login">
+        	<img src="$path/static/img/loginText.png">
+	        <form action="login" method="post" id="loginForm">
+                <p class="error" id="result" style="color:red;">$!message</p>
+	            <div class="inputBox">
+	                <span class="icon-3"></span>
+	                <input type="text"  name="userCode" placeholder="用户名" id="userCode">
+	            </div>
+	            <div class="inputBox">
+	                <span class="icon-2"></span>
+	                <input type="password" name="password" placeholder="登录密码" id="password">
+	            </div>
+	            <button class="btn-login" type="button" onclick="submitLogin()">登录</button>
+	        </form>
+        </div>
+    </div>
+</div>
+<script>
+function submitLogin(){
+	var name = $("#userCode").val();
+	var pass = $("#password").val();
+	if($.trim(name)=='' && $.trim(pass)==''){
+		$("#result").text("请输入用户名和密码");
+		return;
+	}
+	if($.trim(name)=='' && !$.trim(pass)==''){
+		$("#result").text("请输入用户名");
+		return;
+	}
+	if(!$.trim(name)=='' && $.trim(pass)==''){
+		$("#result").text("请输入密码");
+		return;
+	}
+	$("#loginForm").submit();
+}
+</script>
+</body>
+</html>

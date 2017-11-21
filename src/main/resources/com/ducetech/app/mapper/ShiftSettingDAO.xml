@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.ShiftSettingDAO">
+    <resultMap type="com.ducetech.app.model.ShiftSetting" id="shiftSettingMap">
+        <id column="shift_id" property="shiftId"/>
+        <result column="shift_name" property="shiftName"/>
+        <result column="shift_num" property="shiftNum"/>
+        <result column="shift_color" property="shiftColor"/>
+        <result column="start_at" property="startAt"/>
+        <result column="end_at" property="endAt"/>
+        <result column="total_at" property="totalAt"/>
+        <result column="interval_at" property="intervalAt"/>
+        <result column="relevance_id" property="relevanceId"/>
+        <result column="relevance_name" property="relevanceName"/>
+        <result column="station" property="station"/>
+        <result column="station_area" property="stationArea"/>
+        <result column="if_use" property="ifUse"/>
+        <result column="post_id" property="postId"/>
+        <result column="model_id" property="modelId"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="updator_id" property="updatorId"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="shift_code" property="shiftCode"/>
+        <result column="shift_color" property="shiftColor"/>
+        <result column="shift_explain" property="shiftExplain"/>
+    </resultMap>
+    <!-- 查询首页 -->
+    <select id="selectShiftSettingByModelId" parameterType="com.ducetech.app.model.ShiftSetting"
+            resultMap="shiftSettingMap">
+        select shift_id, shift_num, shift_name,
+        shift_color,start_at,end_at,total_at,interval_at,relevance_id,relevance_name,station,station_area,if_use,post_id,model_id,creator_id,
+        updator_id, created_at, updated_at, shift_code,shift_color, shift_explain from shift_setting where if_use=0
+        <if test="modelId!=null and modelId!=''">
+            and model_id=#{modelId}
+        </if>
+    </select>
+
+    <select id="selectShiftSettingByStation" parameterType="com.ducetech.app.model.ShiftSetting"
+            resultMap="shiftSettingMap">
+        select * from shift_setting where if_use=0 and station=#{station}
+    </select>
+
+
+    <select id="selectShiftSetting" parameterType="com.ducetech.app.model.ShiftSetting" resultMap="shiftSettingMap">
+        select shift_id, shift_num, shift_name,
+        shift_color,start_at,end_at,total_at,interval_at,relevance_id,relevance_name,station,station_area,if_use,post_id,model_id,creator_id,
+        updator_id, created_at, updated_at, shift_code,shift_color, shift_explain from shift_setting where if_use=0
+        <if test="postId!=null and postId!=''">
+            and post_id=#{postId}
+        </if>
+        <if test="modelId!=null and modelId!=''">
+            and model_id=#{modelId}
+        </if>
+        <if test="shiftNum!=null and shiftNum!=''">
+            and shift_num=#{shiftNum}
+        </if>
+    </select>
+
+    <select id="editShiftSetting" parameterType="String" resultMap="shiftSettingMap">
+        select * from shift_setting where if_use=0
+        <if test="shiftId!=null and shiftId!=''">
+            and shift_id=#{shiftId}
+        </if>
+    </select>
+
+    <!-- 插入班次 -->
+    <insert id="insertShiftSetting" useGeneratedKeys="true" keyProperty="shiftId">
+        insert into shift_setting (shift_num,shift_name,relevance_id,relevance_name,start_at,end_at,total_at,interval_at,post_id,model_id,if_use,creator_id,created_at,shift_code,shift_color, shift_explain)
+        values(#{shiftNum},#{shiftName},#{relevanceId},#{relevanceName},#{startAt},#{endAt},#{totalAt},#{intervalAt},#{postId},#{modelId},#{ifUse},#{creatorId},#{createdAt},#{shiftCode},#{shiftColor},#{shiftExplain})
+    </insert>
+
+    <update id="updateShiftSetting" parameterType="com.ducetech.app.model.ShiftSetting">
+        update shift_setting
+        <set>
+            shift_num=#{shiftNum},
+            <if test="shiftName != null and shiftName !=''">
+                shift_name=#{shiftName},
+            </if>
+            relevance_id=#{relevanceId},
+            relevance_name=#{relevanceName},
+            start_at=#{startAt},
+            end_at=#{endAt},
+            <if test="totalAt != null">
+                total_at=#{totalAt},
+            </if>
+            <if test="intervalAt != null">
+                interval_at=#{intervalAt},
+            </if>
+            <if test="shiftColor != null and shiftColor != ''">
+                shift_color=#{shiftColor},
+            </if>
+            <if test="shiftCode != null and shiftCode != ''">
+                shift_code=#{shiftCode},
+            </if>
+            <if test="shiftExplain != null and shiftExplain != ''">
+                shift_explain=#{shiftExplain}
+            </if>
+        </set>
+        where shift_id=#{shiftId}
+    </update>
+
+    <delete id="deleteShiftSettingByShiftId" parameterType="String">
+        <if test="shiftId!=null and shiftId!=''">
+            update shift_setting set if_use= 1
+            where shift_id = #{shiftId} and if_use = 0
+        </if>
+    </delete>
+
+    <delete id="deleteShiftSettingByModelId" parameterType="String">
+        <if test="modelId!=null and modelId!=''">
+            update shift_setting set if_use= 1
+            where model_id = #{modelId} and if_use = 0
+        </if>
+    </delete>
+
+    <!--查询总工时/分钟-->
+    <select id="getShiftSettionTotal" parameterType="com.ducetech.app.model.ShiftSetting" resultType="integer">
+        select sum(total_at * shift_num) from shift_setting where if_use=0
+        <if test="postId!=null and postId!=''">
+            and post_id=#{postId}
+        </if>
+        <if test="modelId!=null and modelId!=''">
+            and model_id=#{modelId}
+        </if>
+    </select>
+</mapper>

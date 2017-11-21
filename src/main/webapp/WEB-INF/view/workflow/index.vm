@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>班次设置</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+    <style>
+        #shiftTemplate {
+            display: none;
+        }
+
+
+        .td-active {
+            background-color: #aaaaaa !important;
+        }
+        .font3 {
+            color: #000000;
+            font-size: 14pt;
+        !important;
+            font-weight: 400;
+            font-style: normal;
+            font-family: "宋体", "sans-serif";
+        }
+
+        .font4 {
+            color: #000000;
+            font-size: 20pt;
+        !important;
+            font-weight: 400;
+            font-style: normal;
+            font-family: "宋体", "sans-serif";
+        }
+
+        td {
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            color: #000000;
+            height: 30px;
+            border: 1px solid #000000;
+            font-size: 10pt;
+            line-height: 25px;
+            font-weight: 400;
+            font-style: normal;
+            font-family: "Arial", "sans-serif";
+        }
+
+        .colorPanel{
+            position: absolute;
+            display: none;
+            z-index: 100;
+        }
+        .colorPanel td {
+            width: 40px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="colorPanel">
+    <table>
+        <tr>
+            <td color-value="6e79be" style="background-color: #6e79be"></td>
+            <td color-value="e3528c" style="background-color: #e3528c"></td>
+            <td color-value="e47979" style="background-color: #e47979"></td>
+            <td color-value="c641de" style="background-color: #c641de"></td>
+            <td color-value="3e98af" style="background-color: #3e98af"></td>
+            <td color-value="29ad7d" style="background-color: #29ad7d"></td>
+        </tr>
+        <tr>
+            <td color-value="7755f7" style="background-color: #7755f7"></td>
+            <td color-value="3bc755" style="background-color: #3bc755"></td>
+            <td color-value="d68149" style="background-color: #d68149"></td>
+            <td color-value="c4a744" style="background-color: #c4a744"></td>
+            <td color-value="c7bf41" style="background-color: #c7bf41"></td>
+            <td color-value="67bc39" style="background-color: #67bc39"></td>
+        </tr>
+        <tr>
+            <td color-value="000000" style="background-color: #000000"></td>
+            <td color-value="333333" style="background-color: #333333"></td>
+            <td color-value="666666" style="background-color: #666666"></td>
+            <td color-value="999999" style="background-color: #999999"></td>
+            <td color-value="cccccc" style="background-color: #cccccc"></td>
+            <td color-value="ffffff" style="background-color: #ffffff"></td>
+        </tr>
+    </table>
+</div>
+
+<div class="form_line">
+    <label>班制</label>
+    <select name="shiftModel" id="shiftModel">
+        <option value="">请选择</option>
+        #foreach($model in $!models)
+            <option value="$!model.modelId">$!model.modelName</option>
+        #end
+    </select>
+</div>
+<a class="btnDefault bgBlue btnLoad" onclick="loadWorkFlow()" href="javascript:;">加载工作流程</a>
+<a class="btnDefault bgGreen " id="remFlow" onclick="deleteWorkflowContent()" href="javascript:;"
+   style="display: none;">删除工作流程</a>
+<a class="btnDefault bgOrange " id="addFlow" onclick="addWorkflowContent()" href="javascript:;"
+   style="display: none;">设置工作流程</a>
+
+<!-- 右侧内容 start -->
+<div id="shiftTemplate">
+    <table cellpadding=0 cellspacing=0 width=1800  tableType="shiftTable">
+        <col class=x21 width=72 style='width:54pt'>
+        <col class=x21 width=11 span=144 style='width:8pt'>
+        <tr height=40>
+            <td colspan=145 tdType='title' height=40 class=font4></td>
+        </tr>
+        <tr>
+            <td colspan=145 tdType='comment' height=27 class=font3></td>
+        </tr>
+        <tr>
+            <td height=27 width="40">编号</td>
+            <td colspan=6>0100</td>
+            <td colspan=6>0200</td>
+            <td colspan=6>0300</td>
+            <td colspan=6>0400</td>
+            <td colspan=6>0500</td>
+            <td colspan=6>0600</td>
+            <td colspan=6>0700</td>
+            <td colspan=6>0800</td>
+            <td colspan=6>0900</td>
+            <td colspan=6>1000</td>
+            <td colspan=6>1100</td>
+            <td colspan=6>1200</td>
+            <td colspan=6>1300</td>
+            <td colspan=6>1400</td>
+            <td colspan=6>1500</td>
+            <td colspan=6>1600</td>
+            <td colspan=6>1700</td>
+            <td colspan=6>1800</td>
+            <td colspan=6>1900</td>
+            <td colspan=6>2000</td>
+            <td colspan=6>2100</td>
+            <td colspan=6>2200</td>
+            <td colspan=6>2300</td>
+            <td colspan=6>0000</td>
+        </tr>
+
+
+    </table>
+</div>
+
+<div id="content">
+
+</div>
+
+
+<script>
+
+    $(document).on("click","[tdValue]",function () {
+        if($(this).hasClass("td-active")){
+            $(this).removeClass("td-active");
+            if($(this).attr("contentId")){
+                $("#remFlow").hide();
+            }
+        }else {
+            $(this).addClass("td-active");
+            if($(".td-active").length==2){
+                $("#addFlow").show();
+            }
+            if($(this).attr("contentId")){
+                $("#remFlow").show();
+            }
+        }
+        if($(".td-active").length==0){
+            $("#remFlow").hide();
+        }
+    });
+    
+    function addWorkflowContent() {
+        var first=$(".td-active:first");
+        var workflowId=$(first).closest("tr").attr("trWorkflowId");
+        if(!workflowId){
+            Alert("fail","没有创建流程");
+            return ;
+        }
+        var tr = $(first).closest("tr");
+        var start=parseInt($(first).attr("tdValue"));
+        var rowNum=$(tr).attr("trType");
+        var last=$(tr).find(".td-active:last");
+        var end=parseInt($(last).attr("tdValue"));
+        $(".td-active").each(function () {
+            $(this).removeClass(".td-active");
+        });
+        $("#addFlow").hide();
+
+        for (var l = start + 10; l <= end; l += 10) {
+            $(tr).find("[tdValue=" + l + "]").remove();
+        }
+        var td=$(tr).find("[tdValue=" + start + "]");
+        $(td).attr("colspan", (end - start+10) / 10);
+
+        $(td).append(contentTemplate);
+        $(td).find("input").focus();
+    }
+
+    function deleteWorkflowContent() {
+        for(var i=0;i<$(".td-active[contentId]").length;i++){
+            var content=$(".td-active[contentId]")[i];
+            var contentId=$(content).attr("contentId");
+            jQuery.ajax({
+                async: false,
+                type: "get",
+                url: "$path/workflowContentDel?contentId=" + contentId,
+                data: null,
+                dataType: "json",
+                error: function () {
+                    Alert('fail', "网络错误");
+                },
+                success: function (result) {
+                    var colspan=$(content).attr("colspan");
+                    $(content).removeClass("td-active");
+                    $(content).css("background-color","#fff");
+                    $(content).text("");
+                    $(content).removeAttr("colspan");
+                    $(content).removeAttr("contentId");
+                    var tr=$(content).closest("tr");
+                    var cursor=content;
+                    var time=parseInt($(content).attr("tdValue"));
+                    for(var i=1;i<colspan;i++){
+                        var t=time+10*i;
+                        var td="<td tdType=minutes tdValue="+t+"></td>";
+                        $(cursor).after(td);
+                        cursor=$(tr).find("[tdValue="+t+"]");
+                    }
+                }
+            });
+        }
+        $("#remFlow").hide();
+    }
+    var workflowTemplate = '<tr trType=0><td rowspan=2 height=55 tdType=serialNumber></td><td tdType="minutes" tdValue="0"></td><td tdType="minutes" tdValue="10"></td><td tdType="minutes" tdValue="20"></td><td tdType="minutes" tdValue="30"></td><td tdType="minutes" tdValue="40"></td><td tdType="minutes" tdValue="50"></td><td tdType="minutes" tdValue="60"></td><td tdType="minutes" tdValue="70"></td><td tdType="minutes" tdValue="80"></td><td tdType="minutes" tdValue="90"></td><td tdType="minutes" tdValue="100"></td><td tdType="minutes" tdValue="110"></td><td tdType="minutes" tdValue="120"></td><td tdType="minutes" tdValue="130"></td><td tdType="minutes" tdValue="140"></td><td tdType="minutes" tdValue="150"></td><td tdType="minutes" tdValue="160"></td><td tdType="minutes" tdValue="170"></td><td tdType="minutes" tdValue="180"></td><td tdType="minutes" tdValue="190"></td><td tdType="minutes" tdValue="200"></td><td tdType="minutes" tdValue="210"></td><td tdType="minutes" tdValue="220"></td><td tdType="minutes" tdValue="230"></td><td tdType="minutes" tdValue="240"></td><td tdType="minutes" tdValue="250"></td><td tdType="minutes" tdValue="260"></td><td tdType="minutes" tdValue="270"></td><td tdType="minutes" tdValue="280"></td><td tdType="minutes" tdValue="290"></td><td tdType="minutes" tdValue="300"></td><td tdType="minutes" tdValue="310"></td><td tdType="minutes" tdValue="320"></td><td tdType="minutes" tdValue="330"></td><td tdType="minutes" tdValue="340"></td><td tdType="minutes" tdValue="350"></td><td tdType="minutes" tdValue="360"></td><td tdType="minutes" tdValue="370"></td><td tdType="minutes" tdValue="380"></td><td tdType="minutes" tdValue="390"></td><td tdType="minutes" tdValue="400"></td><td tdType="minutes" tdValue="410"></td><td tdType="minutes" tdValue="420"></td><td tdType="minutes" tdValue="430"></td><td tdType="minutes" tdValue="440"></td><td tdType="minutes" tdValue="450"></td><td tdType="minutes" tdValue="460"></td><td tdType="minutes" tdValue="470"></td><td tdType="minutes" tdValue="480"></td><td tdType="minutes" tdValue="490"></td><td tdType="minutes" tdValue="500"></td><td tdType="minutes" tdValue="510"></td><td tdType="minutes" tdValue="520"></td><td tdType="minutes" tdValue="530"></td><td tdType="minutes" tdValue="540"></td><td tdType="minutes" tdValue="550"></td><td tdType="minutes" tdValue="560"></td><td tdType="minutes" tdValue="570"></td><td tdType="minutes" tdValue="580"></td><td tdType="minutes" tdValue="590"></td><td tdType="minutes" tdValue="600"></td><td tdType="minutes" tdValue="610"></td><td tdType="minutes" tdValue="620"></td><td tdType="minutes" tdValue="630"></td><td tdType="minutes" tdValue="640"></td><td tdType="minutes" tdValue="650"></td><td tdType="minutes" tdValue="660"></td><td tdType="minutes" tdValue="670"></td><td tdType="minutes" tdValue="680"></td><td tdType="minutes" tdValue="690"></td><td tdType="minutes" tdValue="700"></td><td tdType="minutes" tdValue="710"></td><td tdType="minutes" tdValue="720"></td><td tdType="minutes" tdValue="730"></td><td tdType="minutes" tdValue="740"></td><td tdType="minutes" tdValue="750"></td><td tdType="minutes" tdValue="760"></td><td tdType="minutes" tdValue="770"></td><td tdType="minutes" tdValue="780"></td><td tdType="minutes" tdValue="790"></td><td tdType="minutes" tdValue="800"></td><td tdType="minutes" tdValue="810"></td><td tdType="minutes" tdValue="820"></td><td tdType="minutes" tdValue="830"></td><td tdType="minutes" tdValue="840"></td><td tdType="minutes" tdValue="850"></td><td tdType="minutes" tdValue="860"></td><td tdType="minutes" tdValue="870"></td><td tdType="minutes" tdValue="880"></td><td tdType="minutes" tdValue="890"></td><td tdType="minutes" tdValue="900"></td><td tdType="minutes" tdValue="910"></td><td tdType="minutes" tdValue="920"></td><td tdType="minutes" tdValue="930"></td><td tdType="minutes" tdValue="940"></td><td tdType="minutes" tdValue="950"></td><td tdType="minutes" tdValue="960"></td><td tdType="minutes" tdValue="970"></td><td tdType="minutes" tdValue="980"></td><td tdType="minutes" tdValue="990"></td><td tdType="minutes" tdValue="1000"></td><td tdType="minutes" tdValue="1010"></td><td tdType="minutes" tdValue="1020"></td><td tdType="minutes" tdValue="1030"></td><td tdType="minutes" tdValue="1040"></td><td tdType="minutes" tdValue="1050"></td><td tdType="minutes" tdValue="1060"></td><td tdType="minutes" tdValue="1070"></td><td tdType="minutes" tdValue="1080"></td><td tdType="minutes" tdValue="1090"></td><td tdType="minutes" tdValue="1100"></td><td tdType="minutes" tdValue="1110"></td><td tdType="minutes" tdValue="1120"></td><td tdType="minutes" tdValue="1130"></td><td tdType="minutes" tdValue="1140"></td><td tdType="minutes" tdValue="1150"></td><td tdType="minutes" tdValue="1160"></td><td tdType="minutes" tdValue="1170"></td><td tdType="minutes" tdValue="1180"></td><td tdType="minutes" tdValue="1190"></td><td tdType="minutes" tdValue="1200"></td><td tdType="minutes" tdValue="1210"></td><td tdType="minutes" tdValue="1220"></td><td tdType="minutes" tdValue="1230"></td><td tdType="minutes" tdValue="1240"></td><td tdType="minutes" tdValue="1250"></td><td tdType="minutes" tdValue="1260"></td><td tdType="minutes" tdValue="1270"></td><td tdType="minutes" tdValue="1280"></td><td tdType="minutes" tdValue="1290"></td><td tdType="minutes" tdValue="1300"></td><td tdType="minutes" tdValue="1310"></td><td tdType="minutes" tdValue="1320"></td><td tdType="minutes" tdValue="1330"></td><td tdType="minutes" tdValue="1340"></td><td tdType="minutes" tdValue="1350"></td><td tdType="minutes" tdValue="1360"></td><td tdType="minutes" tdValue="1370"></td><td tdType="minutes" tdValue="1380"></td><td tdType="minutes" tdValue="1390"></td><td tdType="minutes" tdValue="1400"></td><td tdType="minutes" tdValue="1410"></td><td tdType="minutes" tdValue="1420"></td><td tdType="minutes" tdValue="1430"></td></tr><tr trType=1><td tdType="minutes" tdValue="0"><td tdType="minutes" tdValue="10"></td><td tdType="minutes" tdValue="20"></td><td tdType="minutes" tdValue="30"></td><td tdType="minutes" tdValue="40"></td><td tdType="minutes" tdValue="50"></td><td tdType="minutes" tdValue="60"></td><td tdType="minutes" tdValue="70"></td><td tdType="minutes" tdValue="80"></td><td tdType="minutes" tdValue="90"></td><td tdType="minutes" tdValue="100"></td><td tdType="minutes" tdValue="110"></td><td tdType="minutes" tdValue="120"></td><td tdType="minutes" tdValue="130"></td><td tdType="minutes" tdValue="140"></td><td tdType="minutes" tdValue="150"></td><td tdType="minutes" tdValue="160"></td><td tdType="minutes" tdValue="170"></td><td tdType="minutes" tdValue="180"></td><td tdType="minutes" tdValue="190"></td><td tdType="minutes" tdValue="200"></td><td tdType="minutes" tdValue="210"></td><td tdType="minutes" tdValue="220"></td><td tdType="minutes" tdValue="230"></td><td tdType="minutes" tdValue="240"></td><td tdType="minutes" tdValue="250"></td><td tdType="minutes" tdValue="260"></td><td tdType="minutes" tdValue="270"></td><td tdType="minutes" tdValue="280"></td><td tdType="minutes" tdValue="290"></td><td tdType="minutes" tdValue="300"></td><td tdType="minutes" tdValue="310"></td><td tdType="minutes" tdValue="320"></td><td tdType="minutes" tdValue="330"></td><td tdType="minutes" tdValue="340"></td><td tdType="minutes" tdValue="350"></td><td tdType="minutes" tdValue="360"></td><td tdType="minutes" tdValue="370"></td><td tdType="minutes" tdValue="380"></td><td tdType="minutes" tdValue="390"></td><td tdType="minutes" tdValue="400"></td><td tdType="minutes" tdValue="410"></td><td tdType="minutes" tdValue="420"></td><td tdType="minutes" tdValue="430"></td><td tdType="minutes" tdValue="440"></td><td tdType="minutes" tdValue="450"></td><td tdType="minutes" tdValue="460"></td><td tdType="minutes" tdValue="470"></td><td tdType="minutes" tdValue="480"></td><td tdType="minutes" tdValue="490"></td><td tdType="minutes" tdValue="500"></td><td tdType="minutes" tdValue="510"></td><td tdType="minutes" tdValue="520"></td><td tdType="minutes" tdValue="530"></td><td tdType="minutes" tdValue="540"></td><td tdType="minutes" tdValue="550"></td><td tdType="minutes" tdValue="560"></td><td tdType="minutes" tdValue="570"></td><td tdType="minutes" tdValue="580"></td><td tdType="minutes" tdValue="590"></td><td tdType="minutes" tdValue="600"></td><td tdType="minutes" tdValue="610"></td><td tdType="minutes" tdValue="620"></td><td tdType="minutes" tdValue="630"></td><td tdType="minutes" tdValue="640"></td><td tdType="minutes" tdValue="650"></td><td tdType="minutes" tdValue="660"></td><td tdType="minutes" tdValue="670"></td><td tdType="minutes" tdValue="680"></td><td tdType="minutes" tdValue="690"></td><td tdType="minutes" tdValue="700"></td><td tdType="minutes" tdValue="710"></td><td tdType="minutes" tdValue="720"></td><td tdType="minutes" tdValue="730"></td><td tdType="minutes" tdValue="740"></td><td tdType="minutes" tdValue="750"></td><td tdType="minutes" tdValue="760"></td><td tdType="minutes" tdValue="770"></td><td tdType="minutes" tdValue="780"></td><td tdType="minutes" tdValue="790"></td><td tdType="minutes" tdValue="800"></td><td tdType="minutes" tdValue="810"></td><td tdType="minutes" tdValue="820"></td><td tdType="minutes" tdValue="830"></td><td tdType="minutes" tdValue="840"></td><td tdType="minutes" tdValue="850"></td><td tdType="minutes" tdValue="860"></td><td tdType="minutes" tdValue="870"></td><td tdType="minutes" tdValue="880"></td><td tdType="minutes" tdValue="890"></td><td tdType="minutes" tdValue="900"></td><td tdType="minutes" tdValue="910"></td><td tdType="minutes" tdValue="920"></td><td tdType="minutes" tdValue="930"></td><td tdType="minutes" tdValue="940"></td><td tdType="minutes" tdValue="950"></td><td tdType="minutes" tdValue="960"></td><td tdType="minutes" tdValue="970"></td><td tdType="minutes" tdValue="980"></td><td tdType="minutes" tdValue="990"></td><td tdType="minutes" tdValue="1000"></td><td tdType="minutes" tdValue="1010"></td><td tdType="minutes" tdValue="1020"></td><td tdType="minutes" tdValue="1030"></td><td tdType="minutes" tdValue="1040"></td><td tdType="minutes" tdValue="1050"></td><td tdType="minutes" tdValue="1060"></td><td tdType="minutes" tdValue="1070"></td><td tdType="minutes" tdValue="1080"></td><td tdType="minutes" tdValue="1090"></td><td tdType="minutes" tdValue="1100"></td><td tdType="minutes" tdValue="1110"></td><td tdType="minutes" tdValue="1120"></td><td tdType="minutes" tdValue="1130"></td><td tdType="minutes" tdValue="1140"></td><td tdType="minutes" tdValue="1150"></td><td tdType="minutes" tdValue="1160"></td><td tdType="minutes" tdValue="1170"></td><td tdType="minutes" tdValue="1180"></td><td tdType="minutes" tdValue="1190"></td><td tdType="minutes" tdValue="1200"></td><td tdType="minutes" tdValue="1210"></td><td tdType="minutes" tdValue="1220"></td><td tdType="minutes" tdValue="1230"></td><td tdType="minutes" tdValue="1240"></td><td tdType="minutes" tdValue="1250"></td><td tdType="minutes" tdValue="1260"></td><td tdType="minutes" tdValue="1270"></td><td tdType="minutes" tdValue="1280"></td><td tdType="minutes" tdValue="1290"></td><td tdType="minutes" tdValue="1300"></td><td tdType="minutes" tdValue="1310"></td><td tdType="minutes" tdValue="1320"></td><td tdType="minutes" tdValue="1330"></td><td tdType="minutes" tdValue="1340"></td><td tdType="minutes" tdValue="1350"></td><td tdType="minutes" tdValue="1360"></td><td tdType="minutes" tdValue="1370"></td><td tdType="minutes" tdValue="1380"></td><td tdType="minutes" tdValue="1390"></td><td tdType="minutes" tdValue="1400"></td><td tdType="minutes" tdValue="1410"></td><td tdType="minutes" tdValue="1420"></td><td tdType="minutes" tdValue="1430"></td></tr>';
+
+    function loadWorkFlow() {
+        $("#remFlow").hide();
+        var modelId = $("#shiftModel").val();
+        $("#content").empty();
+        jQuery.ajax({
+            async: false,
+            type: "get",
+            url: "$path/getAllWorkflowContent?modelId=" + modelId,
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                if (result) {
+                    var html = $("#shiftTemplate").html();
+                    for (var i = 0; i < result.length; i++) {
+                        var shift = result[i];
+                        $("#content").append(html);
+                        var table = $("table:last");
+                        $(table).attr("tableName", shift.shiftId);
+                        $(table).show();
+                        $(table).find("[tdType=title]").text(shift.shiftName + "(" + shift.shiftCode + ")" + (Math.round(shift.startAt / 60) * 100 + shift.startAt % 60) + "--" + (Math.round(shift.endAt / 60) * 100 + shift.endAt % 60));
+                        $(table).find("[tdType=comment]").text(shift.shiftExplain == null ? "" : shift.shiftExplain);
+                        if (shift.workflowVOList) {
+                            for (var j = 0; j < shift.workflowVOList.length; j++) {
+                                var workflow = shift.workflowVOList[j];
+                                $(table).append(workflowTemplate);
+                                var serialTd = $(table).find("[tdType=serialNumber]:last");
+                                $(serialTd).text(workflow.serialNumber);
+                                $(serialTd).attr("workflowId", workflow.workflowId);
+                                $(table).find("[trType=0]:last").attr("trWorkflowId", workflow.workflowId);
+                                $(table).find("[trType=1]:last").attr("trWorkflowId", workflow.workflowId);
+                            }
+                        }
+                        var workflowLength = shift.shiftNum - (shift.workflowVOList ? shift.workflowVOList.length : 0);
+                        for (var j = 0; j < workflowLength; j++) {
+                            $(table).append(workflowTemplate);
+                        }
+                    }
+                    for (var i = 0; i < result.length; i++) {
+                        var shift = result[i];
+                        if (shift.workflowVOList) {
+                            for (var j = 0; j < shift.workflowVOList.length; j++) {
+                                var workflow = shift.workflowVOList[j];
+                                if (workflow.workflowContentList) {
+                                    for (var k = 0; k < workflow.workflowContentList.length; k++) {
+                                        var content = workflow.workflowContentList[k];
+                                        fillWorkflowContent(workflow.workflowId,content);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function fillWorkflowContent(workflowId,content) {
+        var startTime = content.startTime;
+        var endTime = content.endTime;
+        var rowsNum = content.rowsNum;
+        var tr = $("[trWorkflowId=" +workflowId + "]")[rowsNum];
+        for (var l = startTime + 10; l < endTime; l += 10) {
+            $(tr).find("[tdValue=" + l + "]").remove();
+        }
+        $(tr).find("[tdValue=" + startTime + "]").attr("colspan", (endTime - startTime) / 10);
+        $(tr).find("[tdValue=" + startTime + "]").text(content.content);
+        $(tr).find("[tdValue=" + startTime + "]").attr("contentId",content.contentId);
+        if(content.contentColor){
+            $(tr).find("[tdValue=" + startTime + "]").css("background-color","#"+content.contentColor);
+        }
+    }
+
+    var serialTemplate = "<input style='width: 40px' name='serialInput'/>"
+    var contentTemplate = "<input style='width: 120px' name='contentInput'/>"
+    $(document).on("keypress", "[name=serialInput]", function (event) {
+        if (event.which == 13) {
+            addOrUpdateWorkflow();
+        }
+    });
+
+    $(document).on("keypress", "[name=contentInput]", function (event) {
+        if (event.which == 13) {
+            var left=$(this).offset().left;
+            var top=$(this).offset().top+30;
+            $(".colorPanel").css("left",left);
+            $(".colorPanel").css("top",top);
+            $(".colorPanel").show();
+        }
+    });
+
+    $(document).on("click","[color-value]",function(){
+        var color=$(this).attr("color-value");
+        addOrUpdateWorkflowContent(color);
+    });
+
+    function addOrUpdateWorkflowContent(color) {
+        $(".colorPanel").hide();
+        var text = $("[name=contentInput]");
+        var start=$(text).closest("td").attr("tdValue");
+        var rowsNum=$(text).closest("tr").attr("trType");
+        var end=parseInt(start)+10*$(text).closest("td").attr("colspan");
+        var workflowId=$(text).closest("tr").attr("trWorkflowId");
+        var data={};
+        data.content=$(text).val();
+        data.startTime=start;
+        data.endTime=end;
+        data.workflowId=workflowId;
+        data.rowsNum=rowsNum;
+        data.contentColor=color;
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/workflowContentAdd",
+            data: data,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                var td=$(text).closest("td");
+                $("[name=contentInput]").remove();
+                $(td).attr("contentId",result.contentId);
+                $(td).text(result.content);
+                $(td).css("background-color","#"+color);
+                $(".td-active").removeClass("td-active");
+            }
+        });
+    }
+
+    $(document).on("click", "[tdType=serialNumber]", function () {
+        if ($(this).find("[name=serialInput]").length > 0) {
+            return;
+        }
+        if ($("[name=serialInput]").length > 0) {
+            addOrUpdateWorkflow();
+        }
+        var v = $(this).text();
+        $(this).text("");
+        $(this).append(serialTemplate);
+        $("[name=serialInput]").val(v);
+    });
+
+    function addOrUpdateWorkflow() {
+        var text = $("[name=serialInput]").val();
+        var workflowId = $("[name=serialInput]").closest("td").attr("workflowId");
+        if (workflowId) {
+            jQuery.ajax({
+                async: false,
+                type: "post",
+                url: "$path/workflowUpdate?workflowId=" + workflowId + "&serialNumber=" + text,
+                data: null,
+                dataType: "json",
+                error: function () {
+                    Alert('fail', "网络错误");
+                },
+                success: function (result) {
+                    $("[name=serialInput]").closest("td").text(text);
+                }
+            });
+        } else {
+            var modelId = $("#shiftModel").val();
+            var shiftId = $("[name=serialInput]").closest("table").attr("tableName");
+            jQuery.ajax({
+                async: false,
+                type: "post",
+                url: "$path/workflowAdd?serialNumber=" + text + "&shiftId=" + shiftId + "&modelId=" + modelId,
+                data: null,
+                dataType: "json",
+                error: function () {
+                    Alert('fail', "网络错误");
+                },
+                success: function (result) {
+                    $("[name=serialInput]").closest("td").attr("workflowId", result.workflowId);
+                },
+            });
+        }
+        $("[name=serialInput]").closest("td").text(text);
+        $("[name=serialInput]").remove();
+
+    }
+</script>
+</body>
+</html>

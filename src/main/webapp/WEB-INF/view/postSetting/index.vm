@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>岗位设置</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<!-- 右侧内容 start -->
+<div class="content-header">
+    <div class="float-left">
+        <a class="btnDefault bgGreen" href="#addPost" data-toggle="modal" data-target="#addPost">新增岗位</a>
+    </div>
+</div>
+<!-- 右侧内容 end -->
+<!-- 表格 start -->
+<div class="wrapper">
+    <table class="table" id="postSettingTable">
+        <thead>
+        <tr>
+            <th>岗位名称</th>
+            <th>月工时上限(时)</th>
+            <th>年工时上限(时)</th>
+            <th>每周最少休班(天)</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    <div id="pager" class="page">
+    </div>
+</div>
+<!-- 表格 end -->
+<!-- 新增岗位 -->
+<div class="modal" id="addPost" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">新增岗位</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="addPostSettingForm">
+                    <div class="form_line">
+                        <label>岗位名称</label>
+                        <input type="text" name="postName">
+                    </div>
+                    <div class="form_line">
+                        <label>替班岗</label>
+                        <div class="switch switch-small">
+                            <input name="isBackupPosition" data-size="small" type="checkbox" unchecked/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="addPostSetting()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 编辑岗位 -->
+<div class="modal" id="editPost" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">编辑岗位</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="editPostSettingForm">
+                    <div class="form_line">
+                        <label>岗位名称</label>
+                        <input type="hidden" id="editPostCode" name="postCode" value="站区长">
+                        <input type="text" id="editPostName" name="postName" value="站区长">
+                    </div>
+                    <div class="form_line">
+                        <label>替班岗</label>
+                        <div class="switch switch-small">
+                            <input name="isBackupPosition" data-size="small" type="checkbox" id="editIsBackupPosition"/>
+                        </div>
+                    </div>
+                    <!-- <div class="form_line">
+                         <label>周工时下限</label>
+                         <input type="text" id="editMinWeeklyReason" name="minWeeklyReason">
+                         <span>时</span>
+                     </div>
+                     <div class="form_line">
+                         <label>周工时上限</label>
+                         <input type="text" id="editMaxWeeklyReason" name="maxWeeklyReason">
+                         <span>时</span>
+                     </div>
+                     <div class="form_line">
+                         <label>每周最少休班</label>
+                         <input type="text" id="editPostWeekly" name="postWeekly" value="2">
+                         <span>天</span>
+                     </div>-->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="editPostSetting()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" onclick="" data-dismiss="modal" aria-label="Close">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        tableInit();
+        $("[name=isBackupPosition]").bootstrapSwitch();
+    });
+
+    //首页数据
+    function tableInit() {
+        $("#postSettingTable").jqGrid({
+            url: "$path/postSettings",
+            datatype: "json",
+            mtype: "get",
+            height: 'auto',
+            autowidth: true,
+            /*colNames:['岗位名称','周工时上限','周工时下限','月工时上限','年工时上限','每周最少休班','每周最多休班',"操作"],*/
+            colNames: ['岗位名称', "操作"],
+            colModel: [
+                {name: 'postName', width: '60%'},
+                /*  {name:'minWeeklyReason', width:'15%'},
+                  {name:'maxWeeklyReason', width:'15%'},
+                  {name:'postMonth', width:'15%'},
+                  {name:'postYear', width:'15%'},
+                  {name:'minWeeklyRest', width:'15%'},
+                  {name:'maxWeeklyRest', width:'15%'},*/
+                {
+                    name: 'operation', width: '40%', formatter: function (cellvalue, options, rowObject) {
+                    var str = '';
+                    str = '<a href="javascript:;" isBackupPosition="' + rowObject.isBackupPosition + '" postCode="' + rowObject.postCode + '" postName="' + rowObject.postName + '" minWeeklyReason="' + rowObject.minWeeklyReason + '" maxWeeklyReason="' + rowObject.maxWeeklyReason + '" postWeekly="' + rowObject.postWeekly + '" class="edit postEditBtn">编辑</a>';
+                    str += '<a class="stop postDelBtn" href="javascript:;" postCode="' + rowObject.postCode + '">删除</a>';
+                    return str;
+                }
+                },
+            ],
+            viewrecords: true,//是否在浏览导航栏显示记录总数
+            rowNum: 10,//每页显示记录数
+            pager: $('#pager'),
+            jsonReader: {
+                page: "page",
+                total: "pages",
+                records: "count",
+                root: "results",
+                repeatitems: false,
+                id: "postId"
+            }
+        });
+        jQuery("#postSettingTable").jqGrid('navGrid', '#pager', {edit: false, add: false, del: false});
+    }
+
+    //删除
+    $(document).on("click", ".postDelBtn", function () {
+        var postCode = $(this).attr("postCode");
+        jQuery.ajax({
+            async: false,
+            type: "delete",
+            url: "$path/delPostSettingForm?postCode=" + postCode + "&ifUse=1",
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+            }
+        });
+    })
+
+    //编辑站区设置
+    function editPostSetting() {
+        jQuery.ajax({
+            async: false,
+            type: "put",
+            url: "$path/editPostSettingForm?" + $('#editPostSettingForm').serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                setTimeout(function () {
+                    $("#editPost").modal("hide");
+                    $("#mask", parent.document).hide();
+                }, 500);
+                $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+            }
+        });
+    }
+
+    //添加站区设置
+    function addPostSetting() {
+        console.log($('#addPostSettingForm').serialize());
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/addPostSettingForm",
+            data: $('#addPostSettingForm').serialize(),
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                setTimeout(function () {
+                    $("#addPost").modal("hide");
+                    $("#mask", parent.document).hide();
+                }, 500);
+                $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+            }
+        });
+    }
+
+    //编辑站区设置
+    $(document).on("click", ".postEditBtn", function () {
+        $("#editPostCode").val($(this).attr("postCode"));
+        $("#editPostName").val($(this).attr("postName"));
+        $("#editPostMonth").val($(this).attr("postMonth"));
+        $("#editPostYear").val($(this).attr("postYear"));
+        $("#editPostWeekly").val($(this).attr("postWeekly"));
+        if ($(this).attr("isBackupPosition") == 'on') {
+            $('#editIsBackupPosition').bootstrapSwitch('state', true);
+        } else {
+            $('#editIsBackupPosition').bootstrapSwitch('state', false);
+        }
+
+    if (!($(this).attr("minWeeklyReason"))) {
+        $("#editMinWeeklyReason").val($(this).attr("minWeeklyReason"));
+    }
+    if (!($(this).attr("maxWeeklyReason"))) {
+        $("#editMaxWeeklyReason").val($(this).attr("maxWeeklyReason"));
+    }
+    $("#editPost").modal("show");
+    $("#mask", parent.document).show();
+    })
+</script>
+</html>

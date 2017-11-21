@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>人员分组</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<!-- 右侧内容 start -->
+<div class="content-header">
+    <div class="float-left">
+        <a class="btnDefault bgGreen" href="javascript:;" onclick="addStationArea()" >新增站区</a>
+    </div>
+</div>
+<!-- 右侧内容 end -->
+<!-- 表格 start -->
+<div class="wrapper">
+    <p class="heading">北京地铁运三分公司</p>
+    <div class="stationArea">
+        #foreach($area in $stationArea)
+            <div class="list">
+                <div class="station-head">
+                    <span>$area.getGroupName()</span>
+                    <div class="dropdown">
+                        <button type="button" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">操作
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                            <li role="presentation">
+                                <a role="menuitem" href="javascript:;" class="editStationAreaBtn" groupCode="$area.getGroupCode()" groupName="$area.getGroupName()">修改站区名称</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" href="javascript:;" class="addStationBtn" parentCode="$area.getGroupCode()" data-toggle="modal" data-target="#addStation">添加站点</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" class="delStationAreaBtn" stationAreaCode="$area.getGroupCode()" href="javascript:;">删除站区</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="stations">
+                    <ul>
+                        #foreach($station in $area.getStations())
+                        <li>
+                            <span name="editStationSpan" stationCode="$station.getGroupCode()">$station.getGroupName()</span>
+                            <a class="delete delStation icon-1" stationCode="$station.getGroupCode()" href="javascript:;"></a>
+                            <a class="edit editStation icon-4" href="javascript:;"></a>
+                        </li>
+                        #end
+                        <li class="clear"></li>
+                    </ul>
+                </div>
+            </div>
+        #end
+</div>
+<!-- 表格 end -->
+<!-- 新增站区 -->
+<div class="modal" id="addArea" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">新增站区</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="addStationAreaForm">
+                    <div class="form_line">
+                        <label>站区名称</label>
+                        <input type="text" id="addStationAreaName" name="groupName">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" onclick="saveStationArea()" href="javascript:;">保存</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 修改站区名称 -->
+<div class="modal" id="editArea" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">修改站区名称</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="editStationAreaForm">
+                    <div class="form_line">
+                        <label>站区名称</label>
+                        <input type="hidden" id="editStationAreaCode" name="groupCode">
+                        <input type="text" id="editStationAreaName" name="groupName">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" onclick="editStationArea()" href="javascript:;">保存</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加站点 -->
+<div class="modal" id="addStation" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">添加站点</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="addStationForm">
+                    <div class="form_line">
+                        <label>站点名称</label>
+                        <input type="hidden" id="parentGroupCode" name="parentCode">
+                        <input type="text" id="addStationName" name="groupName">
+                  </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="addStation()">保存</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+var stationCode = '';
+var stationName = '';
+$(function(){
+	//编辑站点名称
+    $(".stations .edit").click(function(){
+        var span = $(this).siblings("span");
+        stationCode = span.attr("stationcode");
+        $("<input type='text' value='"+ span.text() +"'>").insertBefore(span);
+        span.hide();
+        $(this).siblings("input").focus();
+    })
+    //编辑站点名称的输入框失去焦点
+    $(document).on("blur",".stations input",function() {
+        stationName = $(this).val();
+        if (stationName != '') {
+            jQuery.ajax({
+                async: false,
+                type: "put",
+                url: "$path/group/editStation?groupCode="+stationCode+"&groupName="+stationName,
+                data: null,
+                dataType: "json",
+                error: function (request) {
+                    Alert("fail","网络错误");
+                },
+                success: function (data) {
+                    $(this).siblings("span").text(stationName).show();
+                    $(this).remove();
+                    location.replace("$path/grouping");
+                }
+            });
+        } else {
+            Alert("fail","站点名称不能为空");
+        }
+    })
+})
+$(".delStation").click(function(){
+    var groupCode=$(this).attr("stationCode");
+    jQuery.ajax({
+        async: false,
+        type: "delete",
+        url: "$path/grouping/delStationAreaForm?groupCode="+groupCode,
+        data: null,
+        dataType: "json",
+        error: function (request) {
+            Alert("fail","网络错误");
+        },
+        success: function (result) {
+            Alert(result.data, result.message);
+            setTimeout(function(){
+            	$("#mask",parent.document).hide();
+            	location.replace("$path/grouping");
+            },500)
+        }
+    });
+})
+    //删除站区
+    $(".delStationAreaBtn").click(function(){
+        var groupCode=$(this).attr("stationAreaCode");
+        jQuery.ajax({
+            async: false,
+            type: "delete",
+            url: "$path/grouping/delStationAreaForm?groupCode="+groupCode,
+            data: null,
+            dataType: "json",
+            error: function (request) {
+                Alert("fail","网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                setTimeout(function(){
+                	$("#mask",parent.document).hide();
+                	location.replace("$path/grouping");
+                },500)
+            }
+        });
+    })
+    //添加站点按钮
+    $(".addStationBtn").click(function(){
+        var parentCode = $(this).attr("parentCode");
+        $("#parentGroupCode").val(parentCode);
+    })
+    //添加站点保存
+    function addStation() {
+        var stationName = $("#addStationName").val();
+        if (stationName != '') {
+            jQuery.ajax({
+                async: false,
+                type: "post",
+                url: "$path/group/addStationForm",
+                data: $('#addStationForm').serialize(),
+                dataType: "json",
+                error: function (request) {
+                    Alert("fail","网络错误");
+                },
+                success: function (result) {
+                    Alert(result.data,result.message);
+                    setTimeout(function(){
+                        $("#addStation").modal("hide");
+                        $("#mask",parent.document).hide();
+                        location.replace("$path/grouping");
+                    },500);
+                }
+            });
+        } else {
+            Alert("fail", "站点名称不能为空");
+        }
+
+    }
+    //添加站区按钮
+    $(".editStationAreaBtn").click(function(){
+        $("#editArea").modal("show");
+        $("#mask",parent.document).show();
+        var groupCode = $(this).attr("groupCode");
+        var groupName = $(this).attr("groupName");
+        $("#editStationAreaCode").val(groupCode);
+        $("#editStationAreaName").val(groupName);
+   });
+    //编辑站区保存
+    function editStationArea() {
+        var areaName = $("#editStationAreaName").val();
+        if (areaName != '') {
+            jQuery.ajax({
+                async: false,
+                type: "put",
+                url: "$path/group/editStationAreaForm?"+$('#editStationAreaForm').serialize(),
+                data: null,
+                dataType: "json",
+                error: function (request) {
+                    Alert("fail","网络错误");
+                },
+                success: function (result) {
+                    Alert(result.data, result.message);
+                    setTimeout(function(){
+                        $("#editArea .close").click();
+                        $("#editArea").modal("hide");
+                        $("#mask",parent.document).hide();
+                    },500);
+                    location.replace("$path/grouping");
+                }
+            });
+        } else {
+            Alert("fail", "站区名称不能为空");
+        }
+
+    }
+
+    function addStationArea() {
+        $("#addArea").modal("show");
+        $("#mask",parent.document).show();
+    }
+
+    //添加站区
+    function saveStationArea() {
+
+        var areaName = $("#addStationAreaName").val();
+        if (areaName != '') {
+            jQuery.ajax({
+                async: false,
+                type: "post",
+                url: "$path/group/addStationAreaForm",
+                data: $('#addStationAreaForm').serialize(),
+                dataType: "json",
+                error: function (request) {
+                    Alert("fail", "网络错误");
+                },
+                success: function (result) {
+                    Alert(result.data, result.message);
+                    setTimeout(function() {
+                        $("#addArea .close").click();
+                        $("#addArea").modal("hide");
+                        $("#mask",parent.document).hide();
+                        location.replace("$path/grouping");
+                    },800);
+                }
+            });
+        } else {
+            Alert("fail", "站区名称不能为空");
+        }
+    }
+</script>
+</html>

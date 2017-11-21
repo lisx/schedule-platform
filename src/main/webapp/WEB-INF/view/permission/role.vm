@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>权限管理</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<div class="content-header">
+    <div class="float-left">
+        <a class="btnDefault bgGreen" href="$path/permissions/addRole">新增权限方案</a>
+    </div>
+    <div class=" float-right">
+    	<form class="form-container" id="roleForm">
+	        <div class="search-input">
+	            <span class="icon-5"></span>
+	            <input type="text" placeholder="权限方案名称" name="roleName">
+	        </div>
+	        <a class="btnDefault bgBlue queryBtn" href="javascript:;" onclick="getTableData()">查询</a>
+	    </form>
+    </div>
+</div>
+<div class="panel-body">
+    <div class="table-container">
+        <!-- checkbox table -->
+        <table  id="roleTable" class="table table-bordered"></table>
+        <div id="pager" class="page"></div>
+    </div>
+</div>
+<script>
+$(function () {
+	tableInit();
+});
+
+function tableInit(){
+	$("#roleTable").jqGrid({
+        url:"$path/permissions/roleData",
+        datatype:"json", 
+        mtype:"post",
+        height:'auto',
+        autowidth:true,	
+		postData: {
+			search : JSON.stringify($('#roleForm').serializeObject())
+		},
+        colNames:['权限方案名称', '职务描述',"","","操作"],
+        colModel:[
+            {name:'roleName', width:'15%'},
+            {name:'comment', width:'25%'},
+            {name:'roleId', width:'10%',hidden:true},
+            {name:'isDeleted', width:'10%',hidden:true},
+            {name:'', width:'10%',formatter: function(cellvalue,options,rowObject) {
+					var str = '';
+                    str += '</span><a '+ (rowObject.isDeleted == 0 ? 'href="$path/permissions/editRole/' + rowObject.roleId +'" target="myiframe"' : 'class="disabled" href="javascript:;"') +'>权限配置</a>';
+                    str += '<a class="stop" href="javascript:;" onclick="roleStatus('+ rowObject.roleId + (rowObject.isDeleted == 0 ? ',1)">停用</a>' : ',0)">启用</a>');
+					return str;
+            	}
+            },
+        ],
+        viewrecords: true,//是否在浏览导航栏显示记录总数
+        rowNum:10,//每页显示记录数
+        pager:$('#pager'),
+		jsonReader:{
+            page: "page",
+            total: "pages",
+            records: "count",
+            root: "results",
+            repeatitems: false,
+            id: "roleId"
+        },
+        gridComplete:function(){
+        	resize();
+			$("#roleTable tr td[aria-describedby $= 'isDeleted']").each(function(){
+        		var isDeleted = $(this).text();
+        		isDeleted == 1 ? $(this).parent().addClass("disabled") : $(this).parent().removeClass("disabled");
+			})
+        }
+    });
+}
+
+function getTableData() { 
+	$("#roleTable").jqGrid('setGridParam',{
+    	postData: { 
+			search : JSON.stringify($('#roleForm').serializeObject())
+		}
+	}).trigger('reloadGrid'); 
+}
+
+function roleStatus(roleId, isDeleted){
+	jQuery.ajax({
+	   async: false,
+       type: "post",
+       url: "$path/permissions/roleStatus",
+       data: {"roleId":roleId, "isDeleted":isDeleted},
+       dataType: "json",
+       error: function (request) {
+           Alert("fail","网络错误");
+       },
+       success: function (data) {
+			var tdisDeleted = $("#"+roleId).find("[aria-describedby $= 'isDeleted']");
+			var edit = $("#"+roleId).find(".edit");
+			var stop = $("#"+roleId).find(".stop");
+			if(tdisDeleted.text() == '0'){
+				$("#"+roleId).addClass("disabled");
+				stop.attr("onclick","userStatus("+ roleId +","+ 1 +")").text("启用");
+				edit.attr("onclick","").addClass("disabled");
+			}else{
+				$("#"+roleId).removeClass("disabled");
+				stop.attr("onclick","userStatus("+ roleId +","+ 0 +")").text("停用");
+				edit.attr("onclick","editUser("+ roleId +")").removeClass("disabled");
+			}
+			tdisDeleted.text(isDeleted);
+			getTableData();       		
+       	}
+	});
+}
+</script>
+</body>
+</html>

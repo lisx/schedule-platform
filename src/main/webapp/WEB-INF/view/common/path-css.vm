@@ -1,0 +1,11 @@
+#set($path = ${rc.contextPath})
+<link rel="stylesheet" href="$path/static/css/bootstrap.min.css">
+<link rel="stylesheet" href="$path/static/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="$path/static/css/common.css">
+<link rel="stylesheet" href="$path/static/css/font.css">
+<link rel="stylesheet" href="$path/static/css/bootstrap-datetimepicker.css">
+<link rel="stylesheet" href="$path/static/css/style.css">
+<link rel="stylesheet" href="$path/static/css/modal.css">
+<link rel="stylesheet" href="$path/static/css/bootstrap-switch.min.css">
+
+

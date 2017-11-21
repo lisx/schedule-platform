@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.ShiftModelDAO">
+	<resultMap type="com.ducetech.app.model.ShiftModel" id="shiftModelMap">
+        <id column="model_id" property="modelId"/>
+		<result column="model_code" property="modelCode"/>
+    	<result column="model_name" property="modelName"/>
+        <result column="post_id" property="postId"/>
+    	<result column="if_use" property="ifUse"/>
+        <result column="creator_id" property="creatorId"/>
+    	<result column="created_at" property="createdAt"/>
+        <result column="min_weekly_reason" property="minWeeklyReason"/>
+        <result column="max_weekly_reason" property="maxWeeklyReason"/>
+        <result column="min_weekly_rest" property="minWeeklyRest"/>
+        <result column="max_weekly_rest" property="maxWeeklyRest"/>
+        <result column="post_month" property="postMonth"/>
+        <result column="post_year" property="postYear"/>
+        <result column="station_area" property="stationArea"/>
+        <result column="station" property="station"/>
+	</resultMap>
+
+	<!-- 对人员分组的通用查询  -->
+	<select id="selectShiftModel" parameterType="com.ducetech.app.model.ShiftModel" resultMap="shiftModelMap">
+		select *  from shift_model
+		where if_use=0 and post_id=#{postId}
+	</select>
+
+
+    <select id="selectShiftModelByPostGroup" resultMap="shiftModelMap">
+      select * from shift_model
+      where if_use = 0 and post_id=#{postId} and station=#{groupCode}
+    </select>
+    <!--查询单个-->
+    <select id="selectShiftModelByModelCodeId" resultMap="shiftModelMap">
+        SELECT * FROM shift_model WHERE  if_use=0
+        <if test="modelCode != null and modelCode!= ''">
+            AND model_code=#{modelCode}
+        </if>
+        <if test="modelId != null and modelId!= ''">
+            AND model_id=#{modelId}
+        </if>
+    </select>
+    <select id="selectShiftModelByModelCode" resultMap="shiftModelMap">
+        select * from shift_model where  if_use=0 and model_code=#{modelCode}
+    </select>
+    <select id="selectAllModels" resultMap="shiftModelMap">
+        select * from shift_model where  if_use=0
+    </select>
+    <!-- 根据人员分组编码获取 -->
+    <select id="selectByParentCode" resultMap="shiftModelMap">
+       select * from shift_model where if_use=0
+	   and model_code like #{modelCode} and length(model_code)=#{modelCodeLength} order by model_code
+    </select>
+	<!-- 插入新人员分组 -->
+	<insert id="insertShiftModel" useGeneratedKeys="true" keyProperty="modelId">
+		insert into shift_model (model_code,model_name,post_id,if_use,creator_id,created_at,min_weekly_reason,max_weekly_reason,min_weekly_rest,max_weekly_rest,post_month,post_year,station_area,station)
+		values(#{modelCode},#{modelName},#{postId},#{ifUse},#{creatorId},#{createdAt},#{minWeeklyReason},#{maxWeeklyReason},#{minWeeklyRest},#{maxWeeklyRest},#{postMonth},#{postYear},#{stationArea},#{station})
+	</insert>
+	
+    <!-- 删除某人员分组信息 -->
+    <update id="deleteShiftModel" parameterType="String">
+        update shift_model
+        <set>
+            <if test="ifUse != 0">
+                if_use=#{ifUse},
+            </if>
+        </set>
+        where model_id=#{modelCode}
+    </update>
+    <update id="updateShiftModel" parameterType="String">
+        update shift_model
+        <set>
+            <if test="modelName != null and modelName!=''">
+                model_name=#{modelName},
+            </if>
+        </set>
+        where model_code=#{modelCode}
+    </update>
+</mapper>

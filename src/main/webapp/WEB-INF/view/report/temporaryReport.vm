@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>临时安排报表</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<script>
+
+$(function(){
+    var val = new Date();
+    var startAt = val.getFullYear()+ '-' + ( val.getMonth()+1) + '-1';
+    $("#startAt").parent().datetimepicker({
+        format: "YYYY-MM-DD",
+        date: startAt,
+        useCurrent:true
+    });
+    var endDate = new Date(val.getFullYear(),val.getMonth()+1,0);
+    var endAt = endDate.getFullYear()+ '-' + ( endDate.getMonth()+1) + '-' + endDate.getDate();
+    $("#endAt").parent().datetimepicker({
+        format: "YYYY-MM-DD",
+        date:endAt,
+        useCurrent:true
+    });
+    queryBtn();
+    $("#stationAreaQuery").change(function() {
+        var _oneId = this.value;
+        var two_obj = $('#stationQuery');
+        var _html = "<option value=''>请选择</option>";
+        $.getJSON('$path/group/querySubNodes', {oneCode:_oneId}, function(data) {
+            if (data) {
+                for (var i=0;i<data.length;i++) {
+                    var obj = data[i];
+                    _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
+                }
+            }
+            two_obj.html(_html);
+        });
+    }).change();
+    function myPrint(){
+        location.href = "$path/printSchedule?startAt="+$("#startAt").val()+"&endAt="+$("#endAt").val()+"&monthDate="+$("#monthDate").val()+"&queryData="+$("#queryData").val()+"&scheduleType=0"+"&station="+$("#station").val()+"&stationArea="+$("#stationArea").val();
+    }
+})
+
+function queryBtn(){
+    Alert('success',"数据加载中请稍候")
+    //初始化排班表
+    jQuery.ajax({
+        type: "get",
+        url: "$path/scheduleFormData?startAt="+$("#startAt").val()+"&endAt="+$("#endAt").val()+"&queryData="+$("#queryData").val()+"&scheduleType=0"+"&station="+$("#stationQuery").val()+"&stationArea="+$("#stationAreaQuery").val(),
+        data: null,
+        dataType: "json",
+        error: function (xmlHttpReq, status) {
+            Alert("fail", "网络错误");
+        },
+        success: function (data) {
+            var target = $(".scheduleForm");
+            var rightMenu = [];
+            var arr = [];
+            var d = new Date();
+            var today = new Date(d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate());
+            var thead='<tr><th>员工编号</th> <th>姓名</th> <th>岗位</th> <th>站区</th> <th>站点</th> <th>计划工时</th> <th>实际工时</th> <th>结余</th><th>操作</th></tr>';
+            target.find("thead").html(thead);
+            var labels=new Array();
+            var planHours=new Array();
+            var jy=new Array();
+            //遍历排班表数据
+            var tbody = '';
+            for(var i=0;i<data.length;i++){
+                labels[i]=data[i].userName;
+                tbody += '<tr>';
+                tbody += '<td>'+ data[i].userCode + '</td><td>'+ data[i].userName + '</td><td>'+ data[i].postName + '</td><td>'+ data[i].stations[data[i].stationArea] + '</td><td>'+ data[i].stations[data[i].station] + '</td>';
+                tbody += '<td>'+data[i].planHours+'</td><td>'+(data[i].actualHours+data[i].planHours)+'</td><td class="'+(data[i].actualHours>0?"bgRed":"")+'">'+data[i].actualHours+'</td><td><a href="javascript:void(0);" class="showBtn" data-id="'+data[i].userId+'">查看</a></td>';
+                jy[i]=data[i].actualHours;
+                tbody+='</tr>';
+            }
+            target.find("tbody").html(tbody);
+            var ctx1 = document.getElementById("temporaryReport");
+            var myChart1 = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels : labels,
+                    datasets : [
+                        {
+                            backgroundColor : "#3A6BCE",
+                            data : jy
+                        }
+                    ],
+                },
+                options: {
+                    responsive: false,
+                    legend: {
+                        display: false,
+                    },
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                display: true,
+                            },
+                            type: "category",
+                            categoryPercentage: 0.5,
+                            barPercentage: 1.00,
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                autoSkip: false,
+                                beginAtZero: true,
+                                fixedStepSize: 45
+                            },
+                        }],
+                    }
+                }
+            });
+        }
+    });
+}
+$(document).on("click",".showBtn",function(){
+    var userId=$(this).attr("data-id");
+    console.log("++++++"+userId);
+    jQuery.ajax({
+        type: "get",
+        url: "$path/getScheduleLogByUserId?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() +"&userId="+userId,
+        data: null,
+        dataType: "json",
+        error: function (xmlHttpReq, status) {
+            Alert("fail", "网络错误");
+        },
+        success: function (data) {
+            console.log(data);
+            var target = $(".scheduleLogForm");
+            var thead='<tr><th>姓名</th> <th>类型</th> <th>详细</th> <th>日期</th> <th>备注</th> <th>结余</th> <th>创建人</th> <th>创建时间</th></tr>';
+            target.find("thead").html(thead);
+            //遍历排班表数据
+            var tbody = '';
+            for(var i=0;i<data.length;i++){
+                tbody += '<tr>';
+                tbody += '<td>'+ data[i].userName + '</td><td>'+ data[i].logType + '</td><td>'+ data[i].detailType + '</td><td>'+ data[i].startAt+"至"+data[i].endAt + '</td><td>'+ data[i].remark + '</td><td>'+ (data[i].timeAt/60) + '</td><td>'+ data[i].creatorName + '</td><td>'+ data[i].createdAt+ '</td>';
+                tbody+='</tr>';
+            }
+            target.find("tbody").html(tbody);
+            $("#scheduleLogForm").modal("show");
+        }
+    })
+})
+$(document).on("click","#yearBtn",function(){
+    $(this).addClass("bgGreen")
+    $("#monthBtn").removeClass("bgGreen")
+    var val = new Date();
+    var startAt = val.getFullYear()+ '-1' + '-1';
+    $("#startAt").val(startAt);
+    var endAt = val.getFullYear()+ '-12' +'-31';
+    $("#endAt").val(endAt);
+})
+$(document).on("click","#monthBtn",function(){
+    $(this).addClass("bgGreen")
+    $("#yearBtn").removeClass("bgGreen")
+    var val = new Date();
+    var startAt = val.getFullYear()+ '-' + ( val.getMonth()+1) + '-1';
+    $("#startAt").val(startAt);
+    var endDate = new Date(val.getFullYear(),val.getMonth()+1,0);
+    var endAt = endDate.getFullYear()+ '-' + ( endDate.getMonth()+1) + '-' + endDate.getDate();
+    $("#endAt").val(endAt);
+})
+</script>
+<div class="modal" id="scheduleLogForm" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document" style="width: 1000px;">
+        <div class="modal-content" style="width: 1028px;">
+            <div class="modal-header" style="width: 1028px;">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">详细</h4>
+            </div>
+            <div class="modal-body" style="width: 1028px;">
+                <table class="table scheduleLogForm" >
+                    <thead>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 右侧内容 start -->
+<div class="content-header"  style="overflow:visible;">
+    <div class="float-left">
+        <a class="btnDefault bgGreen" href="javascript:;" id="monthBtn">月报</a>
+        <a class="btnDefault" href="javascript:;" id="yearBtn">年报</a>
+        <div class="form_line">
+            <label>时间段</label>
+            <div class='input-group datetimepicker start_time'>
+                <input type='text' name="startAt" id="startAt" class="form-control"/>
+                <em class="input-group-addon">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </em>
+            </div>
+            <span>至</span>
+            <div class='input-group datetimepicker end_time'>
+                <input type='text' name="endAt" id="endAt" class="form-control"/>
+                <em class="input-group-addon">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </em>
+            </div>
+        </div>
+        <div class="form_line">
+            <label>站区</label>
+            <select name="stationArea" id="stationAreaQuery">
+                <option value="">请选择</option>
+                #foreach($group in $!groups)
+                    <option value="$!group.groupCode">$!group.groupName</option>
+                #end
+            </select>
+        </div>
+        <div class="form_line">
+            <label>站点</label>
+            <select name="station" id="stationQuery">
+                <option value="">请选择</option>
+            </select>
+        </div>
+    </div>
+    <div class=" float-right">
+        <div class="search-input">
+            <span class="icon-5"></span>
+            <input type="text" name="queryData" id="queryData" placeholder="姓名/编号">
+        </div>
+        <a class="btnDefault bgBlue queryBtn" onclick="queryBtn()" href="javascript:;">查询</a>
+        <a class="btnDefault" href="javascript:;" onclick="myPrint()">导出</a>
+    </div>
+</div>
+<!-- 右侧内容 end -->
+<!-- 表格 start -->
+<div class="wrapper">
+    <p class="heading"></p>
+    <div class="chart">
+        <ul class="legend">
+            <li>
+                <span class="color-bar planHour"></span>结余总工时
+            </li>
+        </ul>
+        <canvas id="temporaryReport" width="800" height="400"></canvas>
+    </div>
+
+    <table class="table scheduleForm">
+        <thead>
+            <tr>
+                <th>员工编号</th>
+                <th>姓名</th>
+                <th>岗位</th>
+                <th>站区</th>
+                <th>站点</th>
+                <th>计划工时</th>
+                <th>实际工时</th>
+                <th>假期</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>121221</td>
+                <td>高阳</td>
+                <td>站区长</td>
+                <td>西直门站区</td>
+                <td>西直门</td>
+                <td>150</td>
+                <td>160</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>121221</td>
+                <td>叶涛涛</td>
+                <td>站区助理</td>
+                <td>西直门站区</td>
+                <td>西直门</td>
+                <td>150</td>
+                <td>160</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>121221</td>
+                <td>陈云</td>
+                <td>值班站长</td>
+                <td>西直门站区</td>
+                <td>西直门</td>
+                <td>150</td>
+                <td>160</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>121221</td>
+                <td>李双喜</td>
+                <td>站务员</td>
+                <td>西直门站区</td>
+                <td>西直门</td>
+                <td>150</td>
+                <td>160</td>
+                <td>0</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- 表格 end -->
+</body>
+</html>

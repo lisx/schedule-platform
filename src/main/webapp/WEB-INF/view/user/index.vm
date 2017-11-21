@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>人员信息</title>
+    <style>
+        b {
+            color: #ff0000;
+        }
+    </style>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<!-- 右侧内容 start -->
+<form id="userForm">
+<div class="content-header">
+    <div class="float-left">
+        <a class="btnDefault bgGreen" href="#addUser" data-toggle="modal" data-target="#addUser">新增人员</a>
+        <a class="btnDefault" href="#export" data-toggle="modal" data-target="#export">导入</a>
+    </div>
+    <div class=" float-right">
+        <div class="form_line">
+            <label>站区</label>
+            <select name="stationArea" id="stationAreaQuery">
+                <option value="">请选择</option>
+                #foreach($group in $!groups)
+                    <option value="$!group.groupCode">$!group.groupName</option>
+                #end
+            </select>
+        </div>
+        <div class="form_line">
+            <label>站点</label>
+            <select name="station" id="stationQuery">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="search-input">
+            <span class="icon-5"></span>
+            <input type="text" placeholder="姓名/员工编号/岗位" name="userSearch">
+            <input type="hidden" name="userCode">
+            <input type="hidden" name="userName">
+            <input type="hidden" name="userJob">
+        </div>
+        <a class="btnDefault bgBlue"  onclick="getTableData()" href="javascript:void(0);">查询</a>
+    </div>
+</div>
+<!-- 右侧内容 end -->
+<!-- 表格 start -->
+<div class="wrapper">
+    <table class="table" id="userTable">
+    </table>
+    <div id="pager"></div>
+</div>
+<!-- 表格 end -->
+</form>
+<!-- 新增人员 -->
+<div class="modal" id="addUser" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">新增人员</h4>
+            </div>
+            <div class="modal-body">
+                <form id="userAddForm" class="form-container clear">
+                    <div class="form_line">
+                        <label>编号</label>
+                        <input id="userCode" name="userCode" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">姓名</label>
+                        <input id="userName" name="userName" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">站区</label>
+                        <select name="stationArea" id="stationArea" class=" reset-input">
+                            <option value="">请选择</option>
+                            #foreach($group in $!groups)
+                                <option value="$!group.groupCode">$!group.groupName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>站点</label>
+                        <select name="station" id="station" class=" reset-input">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">岗位</label>
+                        <select id="userJob" name="userJob">
+                            <option value="">请选择</option>
+                            #foreach($post in $!posts)
+                                <option value="$!post.postCode">$!post.postName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line" id="addDivGroupName">
+                        <label>分组</label>
+                        <select id="groupName" name="groupName">
+                            <option value="">请选择</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>管理员</label>
+                        <select id="isAdmin" name="isAdmin" onchange="selectAdmin(this.options[this.options.selectedIndex].value)">
+                            <option value="0" selected="selected">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                    <div class="form_line user_pass hidden">
+                        <label class="red">密码</label>
+                        <input type="text" name="password">
+                        <span class="orange">请记录此密码作为下次登录用</span>
+                    </div>
+                    <div class="form_line user_role hidden">
+                        <label>权限方案</label>
+                        <select id="roleIds" name="roleIds">
+                            <option value="">请选择</option>
+                            #foreach($role in $!roles)
+                                <option value="$!role.roleId">$!role.roleName</option>
+                            #end
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="userAdd()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑人员 -->
+<div class="modal" id="editUser" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">编辑人员</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="userEditForm">
+                    <div class="form_line">
+                        <input id="editUserId" name="userId" type="hidden">
+                        <label>编号</label>
+                        <input id="editUserCode" name="userCode" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">姓名</label>
+                        <input id="editUserName" name="userName" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">站区</label>
+                        <select name="stationArea" id="editStationArea" class=" reset-input">
+                            <option value="">请选择</option>
+                            #foreach($group in $!groups)
+                                <option value="$!group.groupCode">$!group.groupName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>站点</label>
+                        <select name="station" id="editStation" class=" reset-input">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">岗位</label>
+                        <select id="editUserJob" name="userJob">
+                            <option value="">请选择</option>
+                            #foreach($post in $!posts)
+                                <option value="$!post.postCode">$!post.postName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>分组</label>
+                        <select id="editGroupName" name="groupName">
+                            <option value="">请选择</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>管理员</label>
+                        <select id="editIsAdmin" name="isAdmin" onchange="selectAdmin(this.options[this.options.selectedIndex].value)">
+                            <option value="0" selected="selected">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                    <div class="form_line user_pass">
+                        <label class="red">密码</label>
+                        <input type="text" id="editPassword" name="password">
+                        <span class="orange">请记录此密码作为下次登录用</span>
+                    </div>
+                    <div class="form_line user_role">
+                        <label>权限方案</label>
+                        <select id="editRoleIds" name="roleIds">
+                            <option value="">请选择</option>
+                            #foreach($role in $!roles)
+                                <option value="$!role.roleId">$!role.roleName</option>
+                            #end
+                        </select>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="userUpdate()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 导入 -->
+<div class="modal" id="export" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">导入人员</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" enctype="multipart/form-data" id="createImpFile">
+                    <div class="form_line">
+                        <p>请选择需要导入的Excel文件(xls,xlsx)</p>
+                        <input type="text"/>
+                        <input class="hidden" type="file" name="fileUpload">
+                        <a class="btn btn-confirm export" href="javascript:;">浏览</a>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:saveLog();">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        tableInit();
+        $("#stationArea").change(function() {
+            var _oneId = this.value;
+            var two_obj = $('#station');
+            var _html = "<option value=''>请选择</option>";
+            $.getJSON('$path/group/querySubNodes', {oneCode:_oneId}, function(data) {
+                if (data) {
+                    for (var i=0;i<data.length;i++) {
+                        var obj = data[i];
+                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
+                    }
+                }
+                two_obj.html(_html);
+            });
+        }).change();
+        $("#editStationArea").change(function() {
+            var _oneId = this.value;
+            var two_obj = $('#editStation');
+            var _html = "<option value=''>请选择</option>";
+            $.getJSON('$path/group/querySubNodes', {oneCode:_oneId}, function(data) {
+                if (data) {
+                    for (var i=0;i<data.length;i++) {
+                        var obj = data[i];
+                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
+                    }
+                }
+                two_obj.html(_html);
+            });
+        }).change();
+        $("#stationAreaQuery").change(function() {
+            var _oneId = this.value;
+            var two_obj = $('#stationQuery');
+            var _html = "<option value=''>请选择</option>";
+            $.getJSON('$path/group/querySubNodes', {oneCode:_oneId}, function(data) {
+                if (data) {
+                    for (var i=0;i<data.length;i++) {
+                        var obj = data[i];
+                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
+                    }
+                }
+                two_obj.html(_html);
+            });
+        }).change();
+        //导入
+        $("#export .export").click(function(){
+        	$(this).prev().click();
+        })
+        $("#export input[type='file']").change(function(){
+        	$(this).siblings("input").val($(this).val());
+        })
+    });
+    function tableInit(){
+        $("#userTable").jqGrid({
+            url:"$path/users",
+            datatype:"json",
+            mtype:"get",
+            height:'auto',
+            autowidth:true,
+            postData: {
+                search : JSON.stringify($('#userForm').serializeObject())
+            },
+            colNames:['编号', '姓名', '岗位',  '站区','站点','分组','管理员'  ,"操作"],
+            colModel:[
+                {name:'userCode', width:'15%'},
+                {name:'userName', width:'15%'},
+                {name:'userJob', width:'15%'},
+                {name:'stationArea', width:'15%'},
+                {name:'station', width:'15%'},
+                {name:'groupName', width:'15%'},
+                {name:'isAdmin', width:'10%',formatter:function(cellvalue,options,rowObject){
+                    return rowObject.isAdmin == 1 ? '是' : '否';
+                }},
+                {name:'operation', width:'10%',formatter:function(cellvalue,options,rowObject){
+                    var	str='';
+                        str = '<a href="javascript:;"' + (rowObject.isDeleted == 0 ? 'onclick="editUser('+ rowObject.userId +')" class="edit"' : 'class="edit disabled"') +'>编辑</a>';
+                        str += '<a class="stop" href="javascript:;" onclick="userDel('+ rowObject.userId+')">删除</a>';
+                    return str;
+                }},
+            ],
+            viewrecords: true,//是否在浏览导航栏显示记录总数
+            rowNum:10,//每页显示记录数
+            pager:$('#pager'),
+            jsonReader:{
+                page: "page",
+                total: "pages",
+                records: "count",
+                root: "results",
+                repeatitems: false,
+                id: "userId"
+            }
+        });
+        jQuery("#userTable").jqGrid('navGrid','#pager',{edit:false,add:false,del:false});
+    }
+
+    function editUser(userId){
+        jQuery.ajax({
+            type: "get",
+            url: "$path/users/"+userId ,
+            data: null,
+            dataType: "json",
+            error: function (xmlHttpReq, status) {
+                Alert("fail","网络错误");
+            },
+            success: function (data) {
+                selectAdmin(data.isAdmin);
+                $("#editUserId").val(userId);
+                $("#editIsAdmin").val(data.isAdmin);
+                $("#editUserName").val(data.userName);
+                $("#editUserCode").val(data.userCode);
+                $("#editUserJob").val(data.userJob);
+                $("#editStationArea").val(data.stationArea);
+                reloadStation(data.stationArea);
+                $("#editStation").val(data.station);
+                $("#editPassword").val(data.userPass);
+                $("#editRoleIds").val(data.roleIds);
+                $("#editUser").modal('show');
+                $("#mask",parent.document).show();
+            }
+        });
+    }
+
+    function reloadStation(oneId) {
+        var two_obj = $('#editStation');
+        var _html = "<option value=''>请选择</option>";
+        jQuery.ajax({
+            async: false,
+            type: "get",
+            url: "$path/group/querySubNodes",
+            data: {oneCode:oneId},
+            dataType: "json",
+            error: function (xmlHttpReq, status) {
+                Alert("fail","网络错误");
+            },
+            success: function (data) {
+                if (data) {
+                    for (var i=0;i<data.length;i++) {
+                        var obj = data[i];
+                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
+                    }
+                }
+                two_obj.html(_html);
+            }
+        });
+    }
+
+    function userUpdate(){
+        var result = formValidation($("#userEditForm"));
+        if (!result) {
+            return false;
+        }
+        jQuery.ajax({
+            async: false,
+            type: "put",
+            url: "$path/users?" + $('#userEditForm').serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail',"网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+	            setTimeout(function(){
+	                $("#editUser").modal('hide');
+	            },500)
+	            $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+            }
+        })
+    }
+
+    function userDel(userId){
+        jQuery.ajax({
+            async: false,
+            type: "put",
+            url: "$path/users/" + userId + "/userDel",
+            dataType: "json",
+            error: function () {
+                Alert(0,"网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                getTableData();
+            }
+        });
+    }
+    function getTableData() {
+        var search=$("input[name=userSearch").val();
+        $("input[name=userCode").val(search);
+        $("input[name=userName").val(search);
+        $("input[name=userJob").val(search);
+        $("#userTable").jqGrid('setGridParam',{
+            postData: {
+                search : JSON.stringify($('#userForm').serializeObject())
+            }
+        }).trigger('reloadGrid');
+    }
+    function selectAdmin(isAdmin){
+        if(isAdmin==1){
+            $(".user_pass").removeClass("hidden");
+            $(".user_role").removeClass("hidden");
+        } else {
+            $(".user_pass").addClass("hidden");
+            $(".user_role").addClass("hidden");
+        }
+    }
+    function userAdd(){
+        var result = formValidation($("#userAddForm"));
+        if (!result) {
+            return false;
+        }
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/user/addUser",
+            data: $('#userAddForm').serialize(),
+            dataType: "json",
+            error: function (request) {
+                Alert("fail", "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                setTimeout(function(){
+                    $("#addUser").modal("hide");
+                },500)
+                $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+            }
+        });
+    }
+
+    function isValidateFile() {
+        var fileName = $.trim($("input[name='fileUpload']").val());
+        var extend = ""!=fileName?fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase():"";
+        if (""!=extend&&",xls,xlsx,".indexOf(","+extend+",")>-1) {
+            return true;
+        } else if (""==extend) {
+            Alert("fail", "文件未加载完成,或未上传文件");
+            return false;
+        } else {
+            Alert("fail", "目前仅支持excel文件");
+            return false;
+        }
+    }
+
+    function saveLog() {
+        if (isValidateFile()) {
+            var formData = new FormData($( "#createImpFile" )[0]);
+            jQuery.ajax({
+                async: false,
+                type: "post",
+                url: "$path/user/createImpFile",
+                data: formData,
+                // 告诉jQuery不要去处理发送的数据
+                processData : false,
+                // 告诉jQuery不要去设置Content-Type请求头
+                contentType : false,
+                dataType: "json",
+                error: function (request) {
+                    Alert("fail", "网络错误");
+                    setTimeout(function(){
+                        $("#export").modal("hide");
+                    },500);
+                },
+                success: function (result) {
+                    Alert(result.data, result.message);
+                    setTimeout(function(){
+                        $("#export").modal("hide");
+                    },500);
+                    $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                }
+            });
+        }
+    }
+
+    //表单验证
+    function formValidation(form) {
+        var obj = form.find(".require").next();
+        var n = 0;
+        obj.each(function(){
+            //文本框验证
+            if(($(this).is("input") && $.trim($(this).val()) == '') ||
+                    ($(this).is(".dropDown") && $(this).find(".select-drop li").length == 0) ||
+                    ($(this).is("select") && $(this).val() == 0) ||
+                    ($(this).is("textarea") && $.trim($(this).val()) == '') ||
+                    ($(this).is(".datetimepicker") && $.trim($(this).find("input").val()) == '')
+            ){
+                var text = $(this).prev().text();
+                var error = text.substring(0);
+                var str = ($(this).is("select") ? '<b>请选择'+ error +'</b>' : '<b>'+ error +'不为空</b>');
+                if($(this).next().is("b")){
+                    str = ($(this).is("select") ? '请选择'+ error : error +'不为空');
+                    $(this).next().text(str);
+                }else{
+                    $(str).insertAfter($(this));
+                }
+                n++;
+            }else{
+                if($(this).next().is("b")){
+                    $(this).next().text('');
+                }
+            }
+        })
+        return (n == 0 ? true : false);
+    }
+</script>
+</body>
+</html>

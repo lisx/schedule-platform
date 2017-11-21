@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.ScheduleInfoDAO">
+	<resultMap type="com.ducetech.app.model.ScheduleInfo" id="scheduleInfoMap">
+        <id column="schedule_info_id" property="scheduleInfoId"/>
+        <result column="log_id" property="logId"/>
+		<result column="model_id" property="modelId"/>
+    	<result column="shift_id" property="shiftId"/>
+    	<result column="shift_name" property="shiftName"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_code" property="userCode"/>
+        <result column="user_name" property="userName"/>
+        <result column="total_at" property="totalAt"/>
+        <result column="schedule_date" property="scheduleDate"/>
+        <result column="schedule_day" property="scheduleDay"/>
+        <result column="schedule_week" property="scheduleWeek"/>
+        <result column="schedule_desc" property="scheduleDesc"/>
+        <result column="station" property="station"/>
+        <result column="station_area" property="stationArea"/>
+        <result column="if_leave" property="ifLeave"/>
+        <result column="leave_type" property="leaveType"/>
+        <result column="post_name" property="postName"/>
+    	<result column="if_use" property="ifUse"/>
+        <result column="creator_id" property="creatorId"/>
+    	<result column="created_at" property="createdAt"/>
+        <result column="group_name" property="groupName"/>
+        <result column="shift_num" property="shiftNum"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="shift_code" property="shiftCode"/>
+        <result column="shift_color" property="shiftColor"/>
+	</resultMap>
+
+    <select id="deleteExistInfo"  >
+        DELETE  FROM schedule_info
+        WHERE schedule_date>=#{scheduleDate} AND model_id=#{modelId} AND group_name=#{groupName}
+    </select>
+    <!--查询指定日期区间中的所有数据休假天数-->
+    <select id="selectScheduleInfoSumDay" parameterType="String" resultType="java.lang.Integer" >
+        SELECT IFNULL(count(if_use),0)  AS if_use FROM schedule_info
+        WHERE if_use=0 AND if_leave=1 AND user_id=#{userId} AND schedule_date BETWEEN #{startAt} AND #{endAt}
+    </select>
+    <!--查询指定日期区间中的所有数据工时-->
+    <select id="selectScheduleInfoSum" parameterType="String" resultType="java.lang.Integer" >
+        SELECT IFNULL(SUM(total_at),0)  AS total_at FROM schedule_info
+        WHERE if_use=0 AND user_id=#{userId} AND schedule_date BETWEEN #{startAt} AND #{endAt}
+    </select>
+    <select id="selectScheduleInfoGroup" parameterType="String" resultType="java.lang.Integer" >
+        SELECT COUNT(shift_name)  AS shif_num FROM schedule_info
+        WHERE if_use=0 AND user_id=#{userId} AND schedule_date BETWEEN #{startAt} AND #{endAt}
+        AND shift_name=#{shiftName}
+    </select>
+    <!--查询指定日期区间中的所有数据-->
+    <select id="selectScheduleInfo" parameterType="String" resultMap="scheduleInfoMap">
+        select * from schedule_info
+        where if_use=0
+        <if test="userCode!=null and userCode!='' and userCode!='{}'||userName!=null and userName!='' and userName!='{}'|| postName!=null and postName!='' and postName!='{}'">
+            AND (user_code=#{userCode} or user_name like '%' #{userName} '%' or post_Name=#{postName})
+        </if>
+        <if test="stationArea!=null and stationArea!='' and stationArea!='undefined'">
+            and station_area like CONCAT(#{stationArea},'%')
+        </if>
+        <if test="station!=null and station!='' and station!='undefined'">
+            and station=#{station}
+        </if>
+        and schedule_date between #{startAt} and #{endAt}
+    </select>
+	<select id="getRelevanceInfo" resultMap="scheduleInfoMap">
+		select *
+        from schedule_info e
+        where schedule_day = #{date} and e.shift_id in
+        <foreach collection="idList" item="shiftId" index="index"
+            open="(" close=")" separator=",">
+            #{shiftId}
+        </foreach>
+	</select>
+    <!--查询指定人的所有数据-->
+    <select id="selectScheduleInfoByUser" parameterType="String" resultMap="scheduleInfoMap">
+        select * from schedule_info
+        where if_use=0 and user_id=#{userId} and schedule_date between #{startAt} and #{endAt}
+    </select>
+    <select id="selectFutureScheduleInfoByUser" resultMap="scheduleInfoMap">
+        select * from schedule_info
+        where if_use=0 and user_id=#{userId} and schedule_date > #{startAt}
+    </select>
+    <!--查询指定id的数据-->
+    <select id="selectScheduleInfoById" parameterType="String" resultMap="scheduleInfoMap">
+        select * from schedule_info
+        where if_use=0 and schedule_info_id=#{scheduleInfoId}
+    </select>
+
+    <insert id="insertScheduleInfo" parameterType="com.ducetech.app.model.ScheduleInfo">
+		insert into schedule_info (log_id,model_id, shift_id,shift_name, user_id,user_name,total_at,schedule_date,schedule_day,schedule_week, schedule_desc, station,station_area,if_leave,post_name,if_use,creator_id,created_at,user_code,group_name,serial_number,shift_code,shift_color)
+		values(#{logId},#{modelId},#{shiftId},#{shiftName},#{userId},#{userName},#{totalAt},#{scheduleDate},#{scheduleDay},#{scheduleWeek},#{scheduleDesc},#{station},#{stationArea},#{ifLeave},#{postName},#{ifUse},#{creatorId},#{createdAt},#{userCode},#{groupName},#{serialNumber},#{shiftCode},#{shiftColor})
+	</insert>
+    <insert id="insertBatch" parameterType="java.util.List">
+		insert into schedule_info (log_id,model_id, shift_id,shift_name, user_id,user_name,total_at,schedule_date,schedule_day,schedule_week, schedule_desc, station,station_area,if_leave,post_name,if_use,creator_id,created_at,user_code,group_name,serial_number,shift_code,shift_color)
+		values
+		<foreach collection="batch" item="item" index="index" separator=",">
+        (#{item.logId},#{item.modelId},#{item.shiftId},#{item.shiftName},#{item.userId},#{item.userName},#{item.totalAt},
+            #{item.scheduleDate},#{item.scheduleDay},#{item.scheduleWeek},#{item.scheduleDesc},#{item.station},
+            #{item.stationArea},#{item.ifLeave},#{item.postName},#{item.ifUse},#{item.creatorId},#{item.createdAt},
+            #{item.userCode},#{item.groupName},#{item.serialNumber},#{item.shiftCode},#{item.shiftColor})
+        </foreach>
+	</insert>
+
+    <!--更新数据-->
+    <update id="updateScheduleInfo" parameterType="com.ducetech.app.model.ScheduleInfo">
+        UPDATE schedule_info
+        <set>
+            <if test="ifLeave != null ">
+                if_leave=#{ifLeave},
+            </if>
+            <if test="leaveType != null ">
+                leave_type=#{leaveType},
+            </if>
+            <if test="logId != null ">
+                log_id=#{logId},
+            </if>
+            <if test="scheduleDesc != null ">
+                schedule_desc=#{scheduleDesc},
+            </if>
+        </set>
+        WHERE schedule_info_id=#{scheduleInfoId}
+    </update>
+
+    <update id="changeUser" parameterType="com.ducetech.app.model.ScheduleInfo">
+        UPDATE schedule_info
+        <set>
+                user_id=#{userId},
+                user_code=#{userCode},
+                user_name=#{userName},
+                schedule_desc=#{scheduleDesc}
+        </set>
+        WHERE schedule_info_id=#{scheduleInfoId}
+    </update>
+
+
+    <delete id="deleteAreaScheduleInfo">
+        DELETE FROM schedule_info WHERE schedule_date BETWEEN #{startAt} AND #{endAt}
+        <if test="userName != '' ">
+            AND user_name IS NULL
+        </if>
+    </delete>
+
+    <update id="updateScheduleInfoChangeShift" parameterType="com.ducetech.app.model.vo.ChangeShiftVO">
+        update schedule_info t1,schedule_info t2
+        set t1.user_id = t2.user_id,t2.user_id=t1.user_id,t1.user_name = t2.user_name,t2.user_name =t1.user_name,t1.user_code = t2.user_code,t2.user_code=t1.user_code
+        where t1.user_id = #{userId}
+        and t2.user_id=#{changeUserId}
+        and t1.schedule_date = t2.schedule_date
+        and t1.schedule_date in (select t.sd from (select schedule_date sd from schedule_info where schedule_date >= #{scheduleDate}) t)
+    </update>
+</mapper>

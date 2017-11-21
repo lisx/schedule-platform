@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自动排班</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<script>
+    $(document).on("click","#saveSchedule",function(){
+        jQuery.ajax({
+            type: "get",
+            url: "$path/saveScheduling",
+            dataType: "json",
+            error: function (e) {
+                Alert('fail',"网络错误");
+            },
+            success: function (result) {
+                Alert(result, "保存成功");
+            }
+        });
+    });
+    $(document).on("click","#btnGenerate",function(){
+        Alert('success',"正在排班中,请稍后!");
+        jQuery.ajax({
+            type: "get",
+            url: "$path/autoZky?year="+$("#dateYear").val(),
+            data: null,
+            dataType: "json",
+            error: function (e) {
+                Alert('fail',"网络错误");
+            },
+            success: function (data) {
+                var target = $(".scheduleForm");
+                var rightMenu = [];
+                var arr = [];
+                var d = new Date();
+                var today = new Date(d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate());
+                for(var i=0;i<data.length;i++){
+                    var thead='';
+                    //遍历排班表标题栏
+                    thead = '<tr><th rowspan="2">分组</th>';
+                    for(var j=0;j<data[i].scheduleInfoList.length;j++){
+                        var date = new Date(data[i].scheduleInfoList[j].scheduleDate);
+                        var day = (date.getMonth()+1)+'.'+date.getDate();
+                        thead += '<th>'+ day +'</th>';
+                        var dataDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+                        if(date < today){
+                            rightMenu.push('');
+                            arr.push('');
+
+                        }else{
+                            rightMenu.push('rightMenu');
+                            arr.push(dataDate)
+                        }
+                    }
+                    thead += '</tr>';
+                    thead += '<tr>';
+                    for(var j=0;j<data[i].scheduleInfoList.length;j++){
+                        thead += '<th>'+ data[i].scheduleInfoList[j].scheduleWeek +'</th>';
+                    }
+                    thead += '</tr>';
+                    target.find("thead").html(thead);
+                    break;
+                }
+                //遍历排班表数据
+                var tbody = '';
+                for(var i=0;i<data.length;i++){
+                    tbody += '<tr>' +
+                            '<td>'+data[i].groupName+'</td>'
+                    var jhgs=0;
+                    for(var j=0;j<data[i].scheduleInfoList.length;j++){
+                        var color="";
+                        var ifLeave=data[i].scheduleInfoList[j].ifLeave;
+                        if(ifLeave==1||ifLeave==4){
+                            color="bgGreen";
+                        }else if(ifLeave==2||ifLeave==3||ifLeave==5){
+                            color="bgYellow";
+                        }else{
+                            color="";
+                        }
+                        tbody += '<td class="'+rightMenu[j]+' '+color+'" data-logId="'+data[i].scheduleInfoList[j].logId+'" data-scheduleInfoId="'+data[i].scheduleInfoList[j].scheduleInfoId+'" data-userId="'+data[i].userId+'" data-totalAt="'+data[i].scheduleInfoList[j].totalAt+'" data-scheduleInfoId="'+data[i].scheduleInfoList[j].scheduleInfoId+'" data-date="'+ arr[j] +'">'+ data[i].scheduleInfoList[j].shiftName +'</td>';
+                    }
+                    tbody += '</tr>';
+                }
+                target.find("tbody").html(tbody);
+                $("#saveSchedule").show();
+            }
+        });
+    });
+</script>
+    <div class="content-header" style="overflow:visible;">
+        <div class="float-left">
+            <form class="form-container clear" id="autoForm">
+                <div class="form_line">
+                    <label>输入排班时间</label>
+                    <div class='input-group datetimepicker'>
+                        <input type='text' class="form-control" name="year" id="dateYear"/>
+                        <em class="input-group-addon">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </em>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class=" float-right">
+            <a class="btnDefault bgBlue autoBtn" href="javascript:;" id="btnGenerate">自动生成排班</a>
+        </div>
+    </div>
+    </div>
+    <!-- 表格 start -->
+    <div class="wrapper" style="padding-top:0;">
+        <div class="tab-content">
+            <div class="tab-pane in active" id="tab1">
+                <div class="schedule">
+                    <table class="scheduleForm">
+                        <thead>
+                        <tr id="theHead0">
+                        </tr>
+                        <tr id="theHead1">
+                        </tr>
+                        </thead>
+                        <tbody id="theBody">
+                        </tbody>
+                    </table>
+                    <div class="page">
+                        <div class="float-right">
+                            <a class="btnDefault bgBlue" href="javascript:;" id="saveSchedule" style="display: none">确认执行排班</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 表格 end -->
+</div>
+</body>
+</html>

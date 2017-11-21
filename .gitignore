@@ -1,0 +1,9 @@
+**/.DS_Store
+.project
+.settings/
+target/
+.classpath
+.idea
+src/main/resources/jdbc.properties
+src/main/resources/logback.xml
+*.iml

@@ -1,0 +1,19 @@
+/* 权限配置 */
+.permission{margin:10px;}
+	.thead{padding:0 10px;height:50px;line-height:50px;background:#D7E4FF;}
+		.thead span{float:left;width:30%;color:#333;}
+	.tbody{padding:0 10px;}
+		.tbody .list{border-bottom:1px solid #eee;}
+		.tbody .list label{float:left;height:36px;line-height:36px;color:#888;}
+		.tbody .list>label{width:100%;}
+			.tbody label input{float:left;margin-top:12px;margin-right:5px;}
+			.tbody label label{line-height:36px;}
+		.tbody .list>ul{float:left;width:60%;margin-left:30%;}
+			.tbody .list li{width:100%;overflow:hidden;clear:both;}
+			.tbody .list ul li *{float:left;}
+			.tbody .list li ul{width:100%;}
+				.tbody .list li ul input{margin-left:20px;}
+				.tbody .list li>label,.tbody .list li>span{width:50%;}
+				.tbody .list li span{line-height:36px;color:#888;}
+.panel-body .form_line textarea{width:300px;padding:5px;}
+.red-star::before{content:"*";color:red;margin-right:3px;}

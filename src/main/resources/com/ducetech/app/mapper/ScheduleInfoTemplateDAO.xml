@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.ScheduleInfoTemplateDAO">
+    <resultMap type="com.ducetech.app.model.ScheduleInfoTemplate" id="scheduleInfoTemplateMap">
+        <id column="id" property="id"/>
+        <result column="model_id" property="modelId"/>
+        <result column="shift_id" property="shiftId"/>
+        <result column="shift_name" property="shiftName"/>
+        <result column="shift_color" property="shiftColor"/>
+        <result column="shift_minutes" property="shiftMinutes"/>
+        <result column="week_number" property="weekNumber"/>
+        <result column="week_day" property="weekDay"/>
+        <result column="order_index" property="orderIndex"/>
+        <result column="updator_id" property="updatorId"></result>
+    </resultMap>
+
+    <select id="selectScheduleInfoTemplateByModelId" resultMap="scheduleInfoTemplateMap"
+            parameterType="java.lang.String">
+		select * from schedule_info_template where model_id = #{modelId} order by order_index asc;
+	</select>
+    <select id="selectByModelIdAndWeek" resultMap="scheduleInfoTemplateMap">
+		select * from schedule_info_template where model_id = #{modelId} and week_number = #{weekNumber} and week_day=#{weekDay};
+	</select>
+
+    <insert id="insertScheduleInfoTemplate" parameterType="com.ducetech.app.model.ScheduleInfoTemplate">
+		insert into schedule_info_template (model_id,shift_id,shift_name,shift_color,shift_minutes,week_number,week_day,order_index,updator_id) values (#{modelId},#{shiftId},#{shiftName},#{shiftColor},#{shiftMinutes},#{weekNumber},#{weekDay},#{orderIndex},#{updatorId})
+	</insert>
+
+    <update id="updateScheduleInfoTemplate" parameterType="com.ducetech.app.model.ScheduleInfoTemplate">
+        update schedule_info_template
+        <set>
+            week_number = #{weekNumber},
+            week_day = #{weekDay},
+            order_index = #{orderIndex},
+            updator_id = #{updatorId},
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByModelId">
+        DELETE FROM schedule_info_template WHERE model_id = #{modelId}
+    </delete>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.PostSettingDAO">
+    <resultMap type="com.ducetech.app.model.PostSetting" id="postSettingMap">
+        <id column="post_id" property="postId"/>
+        <result column="post_code" property="postCode"/>
+        <result column="post_name" property="postName"/>
+        <result column="min_weekly_reason" property="minWeeklyReason"/>
+        <result column="max_weekly_reason" property="maxWeeklyReason"/>
+        <result column="post_month" property="postMonth"/>
+        <result column="post_year" property="postYear"/>
+        <result column="min_weekly_rest" property="minWeeklyRest"/>
+        <result column="max_weekly_rest" property="maxWeeklyRest"/>
+        <result column="if_use" property="ifUse"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="updator_id" property="updatorId"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="is_backup_position" property="isBackupPosition"></result>
+    </resultMap>
+    <!-- 根据岗位设置编码获取 -->
+    <select id="selectPostSettingByPostCode" resultMap="postSettingMap">
+        select post_id, post_code, post_name,min_weekly_reason,max_weekly_reason,post_month,post_year,if_use, creator_id, updator_id, created_at, updated_at from post_setting where  if_use=0 and post_code=#{postCode}
+    </select>
+    <select id="selectPostSettingByPostName" resultMap="postSettingMap">
+        select post_id, post_code, post_name,min_weekly_reason,max_weekly_reason,post_month,post_year,if_use, creator_id, updator_id, created_at, updated_at from post_setting where  if_use=0 and post_name=#{postName}
+    </select>
+    <!-- 插入岗位设置 -->
+    <insert id="insertPostSetting" useGeneratedKeys="true" keyProperty="postId">
+        insert into post_setting (post_code,post_name,min_weekly_reason,max_weekly_reason,post_month,post_year,min_weekly_rest,max_weekly_rest,if_use,creator_id,created_at,is_backup_position)
+        values(#{postCode},#{postName},#{minWeeklyReason},#{maxWeeklyReason},#{postMonth},#{postYear},#{minWeeklyRest},#{maxWeeklyRest},#{ifUse},#{creatorId},#{createdAt},#{isBackupPosition})
+    </insert>
+    <!-- 更新某人员分组信息 -->
+    <update id="updatePostSetting" parameterType="com.ducetech.app.model.PostSetting">
+        update post_setting
+        <!--这里存在着问题，待修改-->
+        <set>
+            <if test="postName != null or postName != ''">
+                post_name=#{postName},
+            </if>
+            <if test="minWeeklyReason != null or minWeeklyReason != ''">
+                min_weekly_reason=#{minWeeklyReason},
+            </if>
+            <if test="maxWeeklyReason != null or maxWeeklyReason != ''">
+                max_weekly_reason=#{maxWeeklyReason} ,
+            </if>
+            <if test="postMonth != null and postMonth != ''">
+                post_month=#{postMonth},
+            </if>
+            <if test="postYear != null and postYear != ''">
+                post_year=#{postYear},
+            </if>
+            <if test="minWeeklyRest != null and minWeeklyRest!=''">
+                min_weekly_rest=#{minWeeklyRest}
+            </if>
+            <if test="maxWeeklyRest != null and maxWeeklyRest!=''">
+                max_weekly_rest=#{maxWeeklyRest}
+            </if>
+            <if test="updatorId != null and updatorId != ''">
+                updator_id=#{updatorId},
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                updated_at=#{updatedAt},
+            </if>
+                is_backup_position=#{isBackupPosition}
+        </set>
+        where post_code=#{postCode}
+    </update>
+    <update id="deletePostSetting" parameterType="com.ducetech.app.model.PostSetting">
+        update post_setting
+        <set>
+            <if test="ifUse != 0">
+                if_use=#{ifUse},
+            </if>
+        </set>
+        where post_code=#{postCode}
+    </update>
+    <select id="selectPostSetting" resultMap="postSettingMap">
+        select * from post_setting where  if_use=0
+    </select>
+    <!-- 根据人员分组编码获取 -->
+    <select id="selectByParentCode" resultMap="postSettingMap">
+        select * from post_setting
+        where if_use=0 and post_code like #{postCode} and length(post_code)=#{postCodeLength} order by post_code
+    </select>
+
+    <!--根据岗位id查询岗位-->
+    <select id="selectPostSettingByPostId" parameterType="string" resultMap="postSettingMap">
+        select * from post_setting
+        where if_use=0 and post_id=#{postId}
+    </select>
+
+    <!--获取备班岗位-->
+    <select id="selectBackupPostSettings" resultMap="postSettingMap">
+      select * from post_setting
+      where is_backup_position is not null and if_use=0;
+    </select>
+</mapper>

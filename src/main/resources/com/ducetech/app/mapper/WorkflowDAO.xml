@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.WorkflowDAO">
+    <resultMap type="com.ducetech.app.model.Workflow" id="workflowMap">
+        <id column="workflow_id" property="workflowId"/>
+        <result column="post_id" property="postId"/>
+        <result column="model_id" property="modelId"/>
+        <result column="shift_id" property="shiftId"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="updator_id" property="updatorId"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insertWorkflow" parameterType="com.ducetech.app.model.Workflow">
+        insert into workflow (post_id,model_id,shift_id,serial_number,creator_id,updator_id,is_deleted,created_at,updated_at)
+                   values (#{postId},#{modelId},#{shiftId},#{serialNumber},#{creatorId},#{updatorId},#{isDeleted},#{createdAt},#{updatedAt})
+    </insert>
+
+    <delete id="deleteWorkflowByWorkflowId" parameterType="java.lang.Integer">
+        update workflow set is_deleted = '1' where workflow_id = #{workflowId};
+    </delete>
+
+    <update id="updateWorkflow" parameterType="com.ducetech.app.model.Workflow">
+        update workflow
+        <set>
+            <if test="postId != null">
+                post_id=#{postId},
+            </if>
+            <if test="modelId != null">
+                model_id=#{modelId},
+            </if>
+            <if test="shiftId != null">
+                shift_id=#{shiftId},
+            </if>
+            serial_number=#{serialNumber},
+            updator_id=#{updatorId},
+            updated_at=#{updatedAt},
+        </set>
+        where is_deleted = '0' and workflow_id = #{workflowId}
+    </update>
+
+    <select id="selectWorkflows" parameterType="com.ducetech.app.model.Workflow" resultMap="workflowMap">
+        select * from workflow where is_deleted = 0
+        <if test="shiftId != null">
+            and shift_id = #{shiftId}
+        </if>
+    </select>
+
+    <select id="selectWorkflowsByShiftId" resultMap="workflowMap">
+        select * from workflow where is_deleted = 0
+            and shift_id = #{shiftId}
+    </select>
+
+    <select id="selectWorkflowByWorkflowId" parameterType="java.lang.Integer" resultMap="workflowMap">
+        select * from workflow where is_deleted = 0
+        <if test="workflowId != null">
+            and workflow_id=#{workflowId}
+        </if>
+    </select>
+</mapper>

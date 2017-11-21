@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自动排班</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+
+    <style>
+        .schedule table th,
+        .schedule table td {
+            padding: 0;
+            line-height: 40px;
+        }
+
+        .td-active {
+            background-color: #eaeaea !important;
+        }
+
+        .drag {
+            position: absolute;
+            border: 1px solid #ddd;
+            background: #FBF2BD;
+            text-align: center;
+            cursor: move;
+        }
+
+        #remarks{
+            display: none;
+            position: absolute;
+            width: 300px;
+            height: auto;
+            font-size: 14px;
+            line-height: 20px;
+            background-color: #80c291;
+        }
+        .user-table td{
+            font-size: 16px;
+            border: solid 1px grey;
+            width: 64px;
+            height: 20px;
+            line-height: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<script>
+
+    var codes = "";
+
+    $(document).on("change","select",function () {
+        $("#theHead0").empty();
+        $("#theBody").empty();
+        $("#dailyAverage").empty();
+        $("#weeklyAverage").empty();
+        $("#monthlyAverage").empty();
+        $("#yearlyAverage").empty();
+        $("#minimiumWorkerCount").empty();
+        $(".btnDefault").hide();
+        $("#btnLoad").show();
+        $("#btnGenerate").show();
+    });
+
+    $(document).on("click", "#btnSave", function () {
+        var empty=$("td[tdType=-1]:empty");
+        if(empty.length>0){
+            Alert('fail', "还有岗位未排班");
+            return;
+        }
+        var modelId = $("select").val();
+        var stationId = $(".menu .active a").attr("data-groupId");
+        var userIds = "";
+        $("td[tdType=-1]").each(function () {
+            userIds += $(this).attr("userId");
+            userIds += ",";
+        });
+        var startAt = $("#startAt").val();
+        jQuery.ajax({
+            type: "get",
+            url: "$path/saveScheduling?modelId=" + modelId + "&userIds=" + userIds + "&stationId=" + stationId + "&startAt=" + startAt,
+            dataType: "json",
+            error: function (e) {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result, "保存成功");
+            }
+        });
+    });
+
+
+    $(document).on("click", ".schedule table td", function () {
+        var type = $(this).attr("tdType");
+        if (type == '8'||type == '-1') {
+            return;
+        }
+        if ($(this).hasClass("td-active")) {
+            $(this).removeClass("td-active");
+            $("#btnChange").hide();
+        } else {
+            var actived = $(".td-active");
+            if (actived.length > 1) {
+                Alert("不可选中", "选中节点过多");
+                return;
+            } else if (actived.length == 0) {
+                $(this).addClass("td-active");
+            } else {
+                var a = actived[0];
+                if ($(a).attr("tdType") != type) {
+                    Alert("不可选中", "类型不同");
+                    return;
+                }
+                $(this).addClass("td-active");
+                $("#btnChange").show();
+            }
+        }
+
+    });
+
+    var pos = {x: 0, y: 0, ts: 0, obj: null};
+    $(document).on("mouseover", "[tdType]", function (e) {
+        var timestamp = new Date().getTime();
+        var type = $(this).attr("tdType");
+        if ((!type) || type == '8') {
+            return;
+        }
+        pos.x = e.pageX;
+        pos.y = e.pageY;
+        pos.ts = timestamp;
+        if (pos.obj != this&&$(this).offset()) {
+            pos.obj = this;
+            setTimeout(checkover, 1500);
+        }
+    }).on("mouseout", "[tdType]", function () {
+        pos.obj = null;
+        $("#remarks").hide();
+    });
+
+    var checkover = function () {
+        var timestamp = new Date().getTime();
+        if (timestamp - pos.ts < 1400) {
+            return;
+        }
+        if(!$(pos.obj).offset()){
+            return ;
+        }
+        var type = $(pos.obj).attr("tdType");
+        var left = $(pos.obj).offset().left;
+        var top = $(pos.obj).offset().top + 40;
+        $("#remarks").hide();
+        if (type < 0) {
+            var userId = $(pos.obj).attr("userId");
+            var startAt = $("#startAt").val();
+            jQuery.ajax({
+                type: "get",
+                url: "getUserScheduleInfoById?userId=" + userId + "&startAt=" + startAt,
+                data: null,
+                dataType: "json",
+                error: function (xmlHttpReq, status) {
+                    Alert("fail", "网络错误");
+                },
+                success: function (data) {
+                    if (data) {
+                        var str = '';
+                        str += '<hr><p class="head">' + data.startAt + ':</p>';
+                        str += '<p class="con">年度计划工时:' + data.planYearHour + '</p>';
+                        str += '<p class="con">年度实际工时:' + data.actualYearHour + '</p>';
+                        str += '<p class="con">月度计划工时:' + data.planMonthHour + '</p>';
+                        str += '<p class="con">月度实际工时:' + data.actualMonthHour + '</p>';
+                        $("#remarks").html(str).css({"left": left + 'px', "top": top + "px"}).show();
+                    }
+                }
+            });
+        } else {
+            var text=$(pos.obj).find("div").text();
+            var shiftId=$(pos.obj).find("div").attr("shiftId");
+            jQuery.ajax({
+                type: "get",
+                url: "getWorkflowContentByCode?shiftId=" + shiftId+"&text="+text,
+                data: null,
+                dataType: "json",
+                error: function (xmlHttpReq, status) {
+                    Alert("fail", "网络错误");
+                },
+                success: function (data) {
+                    if (data.data) {
+                        var str = '';
+                        $("#remarks").empty();
+                        for(var i=0;i<data.data.length;i++){
+                            var content=data.data[i];
+                            var p="<p class='con'> "+Math.round(content.startTime/60)+":"+(content.startTime%60)+" ——  "+Math.round(content.endTime/60)+":"+(content.endTime%60)+": "+content.content+" </p>"
+                            $("#remarks").append(p);
+                        }
+                        $("#remarks").css({"left": left + 'px', "top": top + "px"}).show();
+                    }
+                }
+            });
+        }
+    }
+
+    $(document).on("click", "#btnChange", function () {
+        var actived = $(".td-active");
+        if (actived.length != 2) {
+            Alert("操作失败", "无法定位交换节点");
+        }
+        var first = actived[0];
+        var last = actived[1];
+        var type = $(first).attr("tdType");
+        if (type < 0) {
+            var fuid = $(first).attr("userId");
+            var luid = $(last).attr("userId");
+            var funame = $(first).text();
+            var luname = $(last).text();
+            $(first).attr("userId", luid);
+            $(last).attr("userId", fuid);
+            $(first).text(luname);
+            $(last).text(funame);
+            $(first).removeClass("td-active");
+            $(last).removeClass("td-active");
+            $("td[tLength]").each(function (n) {
+                calcWeeklyTime(n);
+            });
+        } else {
+            var id1 = first.id;
+            var id2 = last.id;
+            var modelId = $("select").val();
+            jQuery.ajax({
+                type: "get",
+                url: "$path/changeData?modelId=" + modelId + "&id1=" + id1 + "&id2=" + id2,
+                dataType: "json",
+                error: function (e) {
+                    Alert('fail', "网络错误");
+                },
+                success: function (result) {
+                    var fhtml = $(first).html();
+                    var lhtml = $(last).html();
+                    $(first).removeClass("td-active");
+                    $(last).removeClass("td-active");
+                    var fbgcolor = $(first).css("background-color");
+                    var lbgcolor = $(last).css("background-color");
+                    $(first).html(lhtml);
+                    $(last).html(fhtml);
+                    $(first).css("background-color", lbgcolor);
+                    $(last).css("background-color", fbgcolor);
+                    $("#btnChange").hide();
+                }
+            });
+        }
+    });
+
+    $(document).on("click", "[tdType=-1]", function (e) {
+        $(this).addClass("td-active");
+        $("#select-user").css("top",e.pageY).css("left",e.pageX+100).show();
+        $(".user-table td").css("color","green");
+        $("[tdType=-1]").each(function () {
+            var userId=$(this).attr("userId");
+            if(userId.length>0){
+                $(".user-table td[userId="+userId+"]").css("color","orange");
+            }
+        });
+    });
+
+    $(document).on("click",".user-table td",function () {
+        var userId=$(this).attr("userId");
+        var userName=$(this).attr("userName");
+        var selected=$(".td-active[tdType=-1]").attr("userId");
+        var weekNumber=$(".td-active[tdType=-1]").attr("weekNumber");
+        if(userId=='-1'){
+            $(".user-table td[userId="+selected+"]").css("color","green");
+        }
+        $("[tdType=-1][userId="+userId+"]").attr("userId","").text("");
+        $(".td-active[tdType=-1]").attr("userId",userId).text(userName).removeClass("td-active");
+        $("#select-user").hide();
+        if(userId!='-1'){
+            var modelId = $("select").val();
+            jQuery.ajax({
+                type: "get",
+                url: "$path/changeOwner?modelId=" + modelId + "&userId=" + userId+"&userName="+userName+"&weekNumber="+weekNumber,
+                data: null,
+                dataType: "json",
+                error: function (e) {
+                    Alert('fail', "网络错误");
+                },
+                success: function (result) {
+                    if(result.error){
+                        Alert('fail', result.error);
+                        return ;
+                    }
+                }
+            });
+        }
+    });
+
+    $(document).on("click", "#btnGenerate", function () {
+        Alert('success', "正在排班中,请稍后!");
+        var stationId = $(".menu .active a").attr("data-groupId");
+        var zwyId = $("select").val();
+        var startAt = $("#startAt").val();
+        console.log("autoBtn");
+        jQuery.ajax({
+            type: "get",
+            url: "$path/autoScheduling?stationId=" + stationId + "&zwyId=" + zwyId,
+            data: null,
+            dataType: "json",
+            error: function (e) {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                if(result.error){
+                    Alert('fail', result.error);
+                    return ;
+                }
+                $("#tab1").addClass("active");
+                $("#timepick").show();
+                $("#btnSave").show();
+                var data = result.data;
+                $("#theHead0").empty();
+                $("#theHead0").append("<th>站务员</th>");
+                for (var i = 0; i < 7; i++) {
+                    $("#theHead0").append("<th>" + i + "</th>");
+                }
+                $("#theHead0").append("<th>周工时</th>");
+                $("#theBody").empty();
+                for (var i = 0; i < result.weeks; i++) {
+                    var node = "<tr  ><td class='userName' tdType='-1' userId='' weekNumber='"+i+"'></td>";
+                    for (var j = 0; j < 7; j++) {
+                        node += "<td tdType='" + j + "' id='row" + i + "col" + j + "' ></td>";
+                    }
+                    node += "<td tdType='8' id='time" + i + "' tLength='" + i + "'>0</td>";
+                    node += "</tr>";
+                    $("#theBody").append(node);
+                }
+                for (var i = 0; i < data.length; i++) {
+                    var template = data[i];
+                    var tdId = "row" + template.weekNumber + "col" + template.weekDay;
+                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "'>" + template.shiftName + "</div>";
+                    $("#" + tdId).html(html);
+                    $("#" + tdId).css("background-color", "#" + template.shiftColor);
+                }
+                $("td[tLength]").each(function (n) {
+                    calcWeeklyTime(n);
+                });
+                $("#btnLoad").hide();
+                codes = result.codes;
+                setCodes();
+                calcAverage();
+                initUserTable(result.users);
+            }
+        });
+    });
+
+    $(document).on("click", "#btnLoad", function () {
+        var modelId = $("select").val();
+        var stationId = $(".menu .active a").attr("data-groupId");
+        jQuery.ajax({
+            type: "get",
+            url: "$path/loadTemplate?modelId=" + modelId + "&stationId=" + stationId,
+            data: null,
+            dataType: "json",
+            error: function (e) {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                if(result.error){
+                    Alert('fail', result.error);
+                    return ;
+                }
+                $("#tab1").addClass("active");
+                $("#timepick").show();
+                $("#btnSave").show();
+                var data = result.data;
+                $("#theHead0").empty();
+                $("#theHead0").append("<th>站务员</th>");
+                for (var i = 0; i < 7; i++) {
+                    $("#theHead0").append("<th>" + i + "</th>");
+                }
+                $("#theHead0").append("<th>周工时</th>");
+                $("#theBody").empty();
+                for (var i = 0; i < result.weeks; i++) {
+                    var node = "<tr  ><td class='userName' tdType='-1' userId='' weekNumber='"+i+"'></td>";
+                    for (var j = 0; j < 7; j++) {
+                        node += "<td tdType='" + j + "' id='row" + i + "col" + j + "' ></td>";
+                    }
+                    node += "<td tdType='8' id='time" + i + "' tLength='" + i + "'>0</td>";
+                    node += "</tr>";
+                    $("#theBody").append(node);
+                }
+                for (var i = 0; i < data.length; i++) {
+                    var template = data[i];
+                    var tdId = "row" + template.weekNumber + "col" + template.weekDay;
+                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "'>" + template.shiftName + "</div>";
+                    $("#" + tdId).html(html);
+                    $("#" + tdId).css("background-color", "#" + template.shiftColor);
+                }
+                $("td[tLength]").each(function (n) {
+                    calcWeeklyTime(n);
+                });
+                $("#btnLoad").hide();
+                codes = result.codes;
+                setCodes();
+                calcAverage();
+                initUserTable(result.users);
+                drawOwners(result.owners);
+
+            }
+        });
+    });
+
+
+    $(document).on("click", ".menu a", function () {
+        var stationId = $(".menu .active a").attr("data-groupId");
+        jQuery.ajax({
+            type: "get",
+            url: "$path/loadGroup?" + "&groupId=" + stationId,
+            data: null,
+            dataType: "json",
+            error: function (e, c, a) {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                $("#autoForm").empty();
+                if(result.models){
+                    var appending = "<div class='form_line'><label>选择班制 </label>";
+                    appending += "<select style='width:400px;' name='zwyId'>";
+                    for (var i = 0; i < result.models.length; i++) {
+                        appending += "<option value=" + result.models[i].modelId + ">" + result.models[i].modelName + "</option>";
+                    }
+                    appending += "</select>";
+                    $("#autoForm").append(appending);
+                    $("#btnGenerate").show();
+                    $("#btnLoad").show();
+                    $("#btnSave").hide();
+                }
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("#startAt").parent().datetimepicker({
+            format: "YYYY-MM-DD",
+            date: new Date(),
+            useCurrent: true
+        });
+    });
+
+    function initUserTable(users) {
+        $(".user-table").empty();
+        var rowNum=users.length/6;
+        {
+            var tr=$("<tr></tr>");
+            $(tr).append($("<td userId='-1' userName=''>取消</td>"));
+            $(".user-table").append(tr);
+        }
+        for(var i=0;i<rowNum;i++){
+            var tr=$("<tr></tr>");
+            for(var j=0;j<6;j++){
+                var index=i*6+j;
+                if(index>=users.length){
+                    continue;
+                }
+                var user=users[index];
+                var td=$("<td></td>");
+                td.attr("userId",user.userId).attr("userName",user.userName);
+                td.text(user.userName);
+                $(tr).append(td);
+            }
+            $(".user-table").append(tr);
+        }
+    }
+
+    function drawOwners(owners) {
+        for(var i=0;i<owners.length;i++){
+            var userId=owners[i].userId;
+            var userName=owners[i].userName;
+            var week=owners[i].weekNumber;
+            $("[tdType=-1]:eq("+week+")").attr("userId",userId).text(userName);
+            $(".user-table td[userId='"+userId+"']").css("color","orange");
+        }
+    }
+
+    function calcWeeklyTime(n) {
+        if (n != null && n != undefined) {
+            var timeTd = $("td[tLength]:eq(" + n + ")");
+            var works = $(timeTd).closest("tr").find("div[duration]");
+            var time = 0;
+            for (var i = 0; i < works.length; i++) {
+                time += parseInt($(works[i]).attr("duration"));
+            }
+            $(timeTd).text(time / 60);
+        }
+    }
+
+    function calcAverage() {
+        var times = 0;
+        var length = $("[tdType=-1]").length;
+        $("div[duration]").each(function (n) {
+            times += parseInt($(this).attr("duration"));
+        });
+        var daily = times / length / 60 / 7;
+        var weekly = daily * 7;
+        var monthly = daily * 30;
+        var yearly = daily * 365;
+        $("#dailyAverage").text(Math.round(daily * 1000) / 1000);
+        $("#weeklyAverage").text(Math.round(weekly * 1000) / 1000);
+        $("#monthlyAverage").text(Math.round(monthly * 1000) / 1000);
+        $("#yearlyAverage").text(Math.round(yearly * 1000) / 1000);
+        $("#minimiumWorkerCount").text(length);
+        $(".noPlan").show();
+    }
+
+    function setCodes() {
+        if (codes == null || codes == undefined || codes === "") {
+            return;
+        }
+        var shifts = $("div[shiftId]");
+        var codeNumber = {};
+        for (var i = 0; i < shifts.length; i++) {
+            var shiftId = $(shifts[i]).attr("shiftId");
+            if (!codes.hasOwnProperty(shiftId)) {
+                return;
+            }
+            if (!codeNumber.hasOwnProperty(shiftId)) {
+                codeNumber[shiftId] = 0;
+            }
+            var number = codeNumber[shiftId];
+            var code = codes[shiftId][number % codes[shiftId].length];
+            $(shifts[i]).text(code);
+            codeNumber[shiftId] = number + 1;
+        }
+    }
+
+</script>
+<div class="menu">
+    <p class="menu-head">永泰庄站区</p>
+    <ul class="nav nav-tabs">
+        #foreach($grouping in $groupingList)
+            <li><a href="#tab2" data-groupId="$grouping.groupId" data-toggle="tab">$grouping.groupName</a></li>
+        #end
+    </ul>
+</div>
+<div class="content">
+    <div class="content-header" style="overflow:visible;display: inline-block">
+
+        <div class="form-container clear" id="autoForm">
+
+
+        </div>
+        <div id="timepick" style="display: none">
+            <span class="title">选择开始日期</span>
+            <span class='input-group datetimepicker'>
+                <input type='text' name="startAt" id="startAt" class="form-control"/>
+                <em class="input-group-addon">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </em>
+            </span>
+            <p class="noPlan" style="display: none;"><em>?</em>日平均<span id="dailyAverage" class="blue"></span>小时,
+                周平均<span id="weeklyAverage" class="blue"></span>小时,
+                30日平均<span id="monthlyAverage" class="blue"></span>小时,
+                365日平均<span id="yearlyAverage" class="blue"></span>小时,
+                最少人数<span id="minimiumWorkerCount" class="blue"></span>人</p>
+        </div>
+        <a class="btnDefault bgOrange autoBtn" href="javascript:;" id="btnLoad" style="display:none">加载模板</a>
+        <a class="btnDefault bgBlue autoBtn" href="javascript:;" id="btnGenerate" style="display:none">生成模板</a>
+        <a class="btnDefault bgGreen autoBtn" href="javascript:;" id="btnSave" style="display:none">保存排班</a>
+        <a class="btnDefault bgOrange autoBtn" href="javascript:;" id="btnChange" style="display:none">交换</a>
+
+    </div>
+    <!-- 表格 start -->
+    <div class="wrapper" style="padding-top:0;">
+        <div class="tab-content">
+            <div class="tab-pane in active" id="tab1">
+                <div class="schedule">
+                    <table class="scheduleForm">
+                        <thead>
+                        <tr id="theHead0">
+                        </thead>
+                        <tbody id="theBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane" id="tab2">
+                <p class="noPlan"><em>?</em>请选择各个岗位的排班方案，并点击右侧的<span class="blue">生成模板</span>按钮</p>
+            </div>
+        </div>
+    </div>
+    <!-- 表格 end -->
+    <div id="remarks" ></div>
+    <div id="select-user" style="display: none;background-color:white;position:absolute;left: 30%; top: 30%; z-index: 20">
+        <table class="user-table">
+
+        </table>
+    </div>
+</div>
+</body>
+</html>

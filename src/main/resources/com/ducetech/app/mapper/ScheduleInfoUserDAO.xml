@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.ScheduleInfoUserDAO">
+    <resultMap type="com.ducetech.app.model.ScheduleInfoUser" id="scheduleInfoUserMap">
+        <id column="id" property="id"/>
+        <result column="model_id" property="modelId"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="week_number" property="weekNumber"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="scheduleInfoUserMap"
+            parameterType="java.lang.Long">
+		select * from schedule_info_user where id = #{id};
+	</select>
+    <select id="selectByModel" resultMap="scheduleInfoUserMap"
+            parameterType="java.lang.String">
+		select * from schedule_info_user where model_id = #{modelId} order by week_number asc;
+	</select>
+    <select id="selectByModelAndWeek" resultMap="scheduleInfoUserMap">
+		select * from schedule_info_user where model_id = #{modelId} and week_number=#{weekNumber} ;
+	</select>
+    <select id="selectByModelAndUser" resultMap="scheduleInfoUserMap">
+		select * from schedule_info_user where model_id = #{modelId} and user_id=#{userId} ;
+	</select>
+
+    <insert id="insert" parameterType="com.ducetech.app.model.ScheduleInfoUser">
+		insert into schedule_info_user (model_id,user_id,user_name,week_number) values (#{modelId},#{userId},#{userName},#{weekNumber})
+	</insert>
+
+
+    <delete id="deleteById">
+        DELETE FROM schedule_info_user WHERE id = #{id}
+    </delete>
+</mapper>

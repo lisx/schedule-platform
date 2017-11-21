@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>排班表格</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+    <script src="$path/static/js/scheduleForm.js" type="text/javascript"></script>
+    <style>
+
+        .status{
+            left:0;
+            top:0;
+            width: 20px;
+            height:20px;
+        }
+    </style>
+</head>
+<body>
+<!-- 右侧内容 start -->
+<div class="content-header" style="overflow:visible;">
+    <div class="float-left">
+        <a class="btnDefault active" href="#tab1" onclick="zbftn()" data-toggle="tab">周表</a>
+        <a class="btnDefault" href="#tab2" onclick="ybftn()" data-toggle="tab">月表</a>
+        <div class="tab-content float-left">
+            <div id="tab1" class="tab-pane active">
+                <div class="form_line">
+                    <label>时间段</label>
+                    <select id="dateSelec" name="dateSelect">
+                        <option value="一周">一周</option>
+                        <option value="两周">二周</option>
+                    </select>
+                    <div class='input-group datetimepicker'>
+                        <input type='text' name="startAt" id="startAt" class="form-control"/>
+                        <em class="input-group-addon">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </em>
+                    </div>
+                    <span>至</span>
+                    <div class='input-group datetimepicker'>
+                        <input type='text' name="endAt" id="endAt" class="form-control"/>
+                        <em class="input-group-addon">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </em>
+                    </div>
+                </div>
+            </div>
+            <div id="tab2" class="tab-pane">
+                <div class="form_line">
+                    <label>时间段</label>
+                    <div class='input-group datetimepicker month'>
+                        <input type='text' class="form-control" name="monthDate" id="monthDate"/>
+                        <em class="input-group-addon">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </em>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=" float-right">
+        <div class="form_line">
+            <label>站区</label>
+            <select name="stationArea" id="stationAreaQuery">
+                <option value="">请选择</option>
+                #foreach($group in $!groups)
+                    <option value="$!group.groupCode">$!group.groupName</option>
+                #end
+            </select>
+        </div>
+        <div class="form_line">
+            <label>站点</label>
+            <select name="station" id="stationQuery">
+                <option value="">请选择</option>
+            </select>
+        </div>
+        <div class="search-input">
+            <span class="icon-5"></span>
+            <input type="text" name="queryData" id="queryData" placeholder="姓名/编号">
+        </div>
+        <a class="btnDefault bgBlue queryBtn" onclick="queryBtn()" href="javascript:;">查询</a>
+        <a class="btnDefault" href="javascript:;" onclick="myPrint()">导出</a>
+        <a class="btnDefault" href="javascript:;" onclick="mySinglePrint()">导出个人</a>
+        <script>
+            $("#stationAreaQuery").change(function () {
+                var _oneId = this.value;
+                var two_obj = $('#stationQuery');
+                var _html = "<option value=''>请选择</option>";
+                $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+                    if (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var obj = data[i];
+                            _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                        }
+                    }
+                    two_obj.html(_html);
+                });
+            }).change();
+
+
+
+            function myPrint() {
+                console.log("打印方法开始:");
+                location.href = "$path/printXiZhiMenSchedule?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
+                console.log("打印方法结束:");
+            }
+            function mySinglePrint() {
+                if(!$("#stationQuery").val()){
+                    Alert("导出失败","未选择站点");
+                    return ;
+                }
+                location.href = "$path/printSingleXiZhiMenSchedule?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
+            }
+        </script>
+    </div>
+    <div class="clear"></div>
+</div>
+<!-- 右侧内容 end -->
+<!-- 表格 start -->
+<div class="wrapper">
+    <div class="heading">
+        <ul class="float-right">
+            <a class="btnDefault bgGreen" href="javascript:;" id="btnToggle" >显示颜色</a>
+            <li><span class="bgYellow"></span>换班/加班</li>
+            <li><span class="bgGreen"></span>替班/请假</li>
+            <li><span class="bgRed"></span>结余</li>
+        </ul>
+    </div>
+    <div id="print">
+        <div class="schedule">
+            <table class="scheduleForm" style="display: none;">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>5</th>
+                    <th>6</th>
+                    <th>7</th>
+                    <th>8</th>
+                    <th>9</th>
+                    <th>10</th>
+                    <th>11</th>
+                    <th>12</th>
+                    <th>13</th>
+                    <th>14</th>
+                    <th>15</th>
+                    <th>16</th>
+                    <th class="dark"></th>
+                    <th class="dark"></th>
+                    <th class="dark"></th>
+                </tr>
+                <tr>
+                    <th>姓名</th>
+                    <th>岗位</th>
+                    <th>星期一</th>
+                    <th>星期二</th>
+                    <th>星期三</th>
+                    <th>星期四</th>
+                    <th>星期五</th>
+                    <th>星期六</th>
+                    <th>星期天</th>
+                    <th>星期一</th>
+                    <th>星期二</th>
+                    <th>星期三</th>
+                    <th>星期四</th>
+                    <th>星期五</th>
+                    <th>星期六</th>
+                    <th>星期天</th>
+                    <th class="dark">计划工时</th>
+                    <th class="dark">实际工时</th>
+                    <th class="dark">假期</th>
+                </tr>
+                </thead>
+                <tbody>
+##                <tr>
+##                    <td class="dark">A</td>
+##                    <td>综控员</td>
+##                    <td>早</td>
+##                    <td>早</td>
+##                    <td>中</td>
+##                    <td>中</td>
+##                    <td>晚</td>
+##                    <td>早</td>
+##                    <td>休</td>
+##                    <td class="bgGreen">中</td>
+##                    <td class="bgYellow">早</td>
+##                    <td>晚</td>
+##                    <td>晚</td>
+##                    <td>晚</td>
+##                    <td>休</td>
+##                    <td>夜</td>
+##                    <td>65</td>
+##                    <td class="edit">67</td>
+##                    <td class="bgRed">2</td>
+##                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- 表格 end -->
+<!-- 备注信息 -->
+<div id="remarks" class="hidden">
+    <p class="head">旷工</p>
+    <p class="con">2017年4月11日</p>
+    <p class="con">备注：因个人原因请假一天</p>
+    <ul class="editRecord">
+        <li>
+            <em></em>
+            <p>2017-4-11 14：23：32</p>
+            <p>曹骏一对此条状态进行了创建</p>
+        </li>
+    </ul>
+</div>
+<!-- 右键菜单 -->
+<div id="rightMenu" class="hidden">
+    <a href="#editHoliday" data-toggle="modal" data-target="#editHoliday">假期编辑</a>
+    <a href="#shiftChange" data-toggle="modal" data-target="#shiftChange">班次变更</a>
+    <a href="#provisionalDisposition" data-toggle="modal" data-target="#provisionalDisposition">临时安排</a>
+    <a href="#minersAbsence" data-toggle="modal" data-target="#minersAbsence">旷工缺勤</a>
+    <a href="#overtimeWork" data-toggle="modal" data-target="#overtimeWork">补班加班</a>
+##    <a href="#prepareShift" onclick="initPrepareShift()" data-toggle="modal" data-target="#prepareShift">备班</a>
+    <a href="#replaceShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#replaceShift">替班</a>
+</div>
+<!-- 备班 -->
+##<div class="modal" id="prepareShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+##    <div class="modal-dialog " role="document">
+##        <div class="modal-content">
+##            <div class="modal-header">
+##                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+##                <h4 class="modal-title">备班</h4>
+##            </div>
+##            <div class="modal-body">
+##                <input id="minDate" type="hidden">
+##                <form class="form-container" id="editPrepareShift">
+##                    <div class="form_line">
+##                        <input name="userId" type="hidden">
+##                        <input name="scheduleInfoId" type="hidden">
+##                        <input name="logId" id="logId" type="hidden">
+##                        <input name="stationArea" id="psStationArea" type="hidden">
+##                        <input name="station" id="psStation"  type="hidden">
+##                        <input name="logType" type="hidden" value="备班">
+##                        <label>备班人员</label>
+##                        <select name="detailType" id="prepareUserSelect">
+##                        </select>
+##                    </div>
+##                    <div class="form_line">
+##                        <label>备班时间</label>
+##                        <div class='input-group datetimepicker'>
+##                            <input type='text' class="form-control" name="startAt"/>
+##                            <em class="input-group-addon">
+##                                <i class="glyphicon glyphicon-calendar"></i>
+##                            </em>
+##                        </div>
+##                        <span>至</span>
+##                        <div class='input-group datetimepicker'>
+##                            <input type='text' name="endAt" class="form-control"/>
+##                            <em class="input-group-addon">
+##                                <i class="glyphicon glyphicon-calendar"></i>
+##                            </em>
+##                        </div>
+##                    </div>
+##                    <div class="form_line">
+##                        <label>备注</label>
+##                        <textarea name="remark"></textarea>
+##                    </div>
+##                    <div class="clear"></div>
+##                </form>
+##            </div>
+##            <div class="modal-footer">
+##                <a class="btn btn-confirm" href="javascript:;" onclick="editPrepare()">备班</a>
+##                <a class="btn btn-red" href="javascript:;" onclick="editPrepareDel()">取消</a>
+##            </div>
+##        </div>
+##    </div>
+##</div>
+##<script>
+##    //初始化备班人员
+##    function initPrepareShift() {
+##        var psStationArea = $('#psStationArea').val();
+##        var psStation = $('#psStation').val();
+##        jQuery.ajax({
+##            async: false,
+##            type: "get",
+##            url: "$path/getPrepareUser?stationArea="+psStationArea+"&station="+psStation+"&userJob=000100",
+##            data: null,
+##            dataType: "json",
+##            error: function () {
+##                Alert('fail', "网络错误");
+##            },
+##            success: function (result) {
+##                var prepareUserSelect = $("#prepareUserSelect");
+##                var option;
+##                for(var i = 0; i < result.length; i++) {
+##                    option += '<option value="' + result[i].userId + '">工号:'+ result[i].userCode + " 姓名:" + result[i].userName +'</option>';
+##                }
+##                prepareUserSelect.html(option);
+##            }
+##        });
+##    }
+##
+##    //备班
+##    function editPrepare() {
+##        jQuery.ajax({
+##            async: false,
+##            type: "post",
+##            url: "$path/editHolidayForm?" + $("#editPrepareShift").serialize(),
+##            data: null,
+##            dataType: "json",
+##            error: function () {
+##                Alert('fail', "网络错误");
+##            },
+##            success: function (result) {
+##                Alert(result.data, result.message);
+##                $("#rightMenu").addClass("hidden");
+##                $("#prepareShift").modal('hide');
+##                queryBtn();
+##            }
+##        });
+##    }
+##
+##    //取消
+##    function editPrepareDel() {
+##        $("#rightMenu").addClass("hidden");
+##        $("#editHoliday").modal('hide');
+##    }
+##</script>
+
+<!-- 替班 -->
+<div class="modal" id="replaceShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">替班</h4>
+            </div>
+            <div class="modal-body">
+                <input id="minDate" type="hidden">
+                <form class="form-container" id="replaceShiftForm">
+                    <div class="form_line">
+                        <label>站区</label>
+                        <select name="stationArea" id="rsStationAreaQuery">
+                            <option value="">请选择</option>
+                            #foreach($group in $!groups)
+                                <option value="$!group.groupCode">$!group.groupName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>站点</label>
+                        <select name="station" id="rsStationQuery">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <input name="userId" type="hidden">
+                        <input name="scheduleInfoId" type="hidden">
+                        <input name="logId" id="logId" type="hidden">
+                        <input name="stationArea" id="rsStationArea" type="hidden">
+                        <input name="station" id="rsStation"  type="hidden">
+                        <input name="groupName" id="rsGroupName"  type="hidden">
+                        <input name="logType" type="hidden" value="替班">
+                        <label>替班人员</label>
+                        <select name="detailType" id="replaceUserSelect">
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>替班时间</label>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' class="form-control" name="startAt"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                        <span>至</span>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' name="endAt" class="form-control"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="editReplaceShift()">替班</a>
+                <a class="btn btn-red" href="javascript:;" onclick="editReplaceShiftDel()">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#rsStationAreaQuery").change(function () {
+        var _oneId = this.value;
+        var two_obj = $('#rsStationQuery');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    $("#rsStationQuery").change(function () {
+        var _oneId = this.value;
+        var _station = $("#rsStationAreaQuery").val();
+        var two_obj = $('#replaceUserSelect');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/getPrepareUser', {stationArea: _station,station: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + '<option value="' + data[i].userId + '">工号:'+ data[i].userCode + " 姓名:" + data[i].userName +'</option>';
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    //初始化替班人员和站区站点
+    function initReplaceShift() {
+        var rsStationArea = $('#rsStationArea').val();
+        var rsStation = $('#rsStation').val();
+        var rsGroupName = $('rsGroupName').val();
+
+        var rsStationAreaQuery = $("#rsStationAreaQuery");
+        rsStationAreaQuery.val(rsStationArea);
+        rsStationAreaQuery.change();
+        var rsStationQuery = $("#rsStationQuery");
+        rsStationQuery.val(rsStation);
+        rsStationQuery.change();
+    }
+
+
+
+    //换班
+    function editReplaceShift() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/editReplaceShiftForm?" + $("#replaceShiftForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#replaceShift").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+
+    //取消
+    function editReplaceShiftDel() {
+        $("#rightMenu").addClass("hidden");
+        $("#replaceShift").modal('hide');
+    }
+</script>
+
+
+<!-- 假期编辑 -->
+<div class="modal" id="editHoliday" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">假期编辑</h4>
+            </div>
+            <div class="modal-body">
+                <input id="minDate" type="hidden">
+                <form class="form-container" id="editHolidayForm">
+                    <div class="form_line">
+                        <input name="userId" type="hidden">
+                        <input name="scheduleInfoId" type="hidden">
+                        <input name="logId" id="logId" type="hidden">
+                        <input name="logType" type="hidden" value="假期编辑">
+                        <label>假期类型</label>
+                        <select name="detailType">
+                            <option>病假/病</option>
+                            <option>事假/事</option>
+                            <option>婚假/婚</option>
+                            <option>丧假/丧</option>
+                            <option>探亲假/探</option>
+                            <option>生育津贴假/产1</option>
+                            <option>企业延长产假/产2</option>
+                            <option>男方陪产假/产陪</option>
+                            <option>计生假/计</option>
+                            <option>工伤假/工</option>
+                            <option>旷工假/旷</option>
+                            <option>搬家假/搬</option>
+                            <option>出差假/差</option>
+                            <option>迟到/迟</option>
+                            <option>早退/早退</option>
+                            <option>年假/年</option>
+                            <option>其他假/其</option>
+                            <option>调休/调</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>假期时间</label>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' class="form-control" name="startAt"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                        <span>至</span>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' name="endAt" class="form-control"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="editHoliday()">假期上报</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+                <a class="btn btn-red" href="javascript:;" onclick="editHolidayDel()">撤销假期</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function editHoliday() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/editHolidayForm?" + $("#editHolidayForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#editHoliday").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+    function editHolidayDel() {
+        jQuery.ajax({
+            async: false,
+            type: "delete",
+            url: "$path/editHolidayFormRevoke?" + $("#editHolidayForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#editHoliday").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+    //班次变更
+    function shiftChange() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/shiftChangeForm?" + $("#shiftChangeForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#shiftChange").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+</script>
+<!-- 班次变更 -->
+<div class="modal" id="shiftChange" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">班次变更</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="shiftChangeForm">
+                    <input name="userId" type="hidden">
+                    <input name="scheduleInfoId" type="hidden">
+                    <input name="logType" type="hidden" value="班次变更">
+                    <div class="form_line">
+                        <label>班次</label>
+                        <select name="detailType">
+                            <option>早班</option>
+                            <option selected>中班</option>
+                            <option>晚班</option>
+                            <option>休息</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="shiftChange()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 临时安排 -->
+<script>
+    function provisionalDisposition() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/provisionalDispositionForm?" + $("#provisionalDispositionForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#provisionalDisposition").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+</script>
+<div class="modal" id="provisionalDisposition" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">临时安排</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="provisionalDispositionForm">
+                    <input name="userId" type="hidden">
+                    <input name="scheduleInfoId" type="hidden">
+                    <input name="logType" type="hidden" value="临时安排">
+                    <div class="form_line">
+                        <label>临时安排类型</label>
+                        <select name="detailType">
+                            <option>培训</option>
+                            <option>演练</option>
+                            <option>会议</option>
+                            <option>活动</option>
+                            <option>考试</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>额外占用工时</label>
+                        <select name="timeAt">
+                            <option value="1">1小时</option>
+                            <option value="2">2小时</option>
+                            <option value="3">3小时</option>
+                            <option value="4">4小时</option>
+                            <option value="5">5小时</option>
+                            <option value="6">6小时</option>
+                            <option value="7">7小时</option>
+                            <option value="8">8小时</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="provisionalDisposition()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function minersAbsenceForm() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/minersAbsenceForm?" + $("#minersAbsenceForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#minersAbsence").modal("hide");
+                queryBtn();
+            }
+        });
+    }
+    function minersAbsenceFormRevoke() {
+        jQuery.ajax({
+            async: false,
+            type: "delete",
+            url: "$path/minersAbsenceForm?" + $("#minersAbsenceForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#minersAbsence").modal("hidden");
+                queryBtn();
+            }
+        });
+    }
+</script>
+<!-- 旷工缺勤 -->
+<div class="modal" id="minersAbsence" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">旷工缺勤</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="minersAbsenceForm">
+                    <input name="userId" type="hidden">
+                    <input name="scheduleInfoId" type="hidden">
+                    <input name="logId" id="logId" type="hidden">
+                    <input name="logType" type="hidden" value="旷工缺勤">
+                    <div class="form_line">
+                        <label>缺勤工时</label>
+                        <select name="timeAt">
+                            <option value="1">1小时</option>
+                            <option value="2">2小时</option>
+                            <option value="3">3小时</option>
+                            <option value="4">4小时</option>
+                            <option value="5">5小时</option>
+                            <option value="6">6小时</option>
+                            <option value="7">7小时</option>
+                            <option value="8">8小时</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="minersAbsenceForm()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+                <a class="btn btn-red" href="javascript:;" onclick="minersAbsenceFormRevoke()">撤销缺勤</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function overtimeWork() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/overtimeWorkForm?" + $("#overtimeWorkForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#overtimeWork").modal("hide");
+                queryBtn();
+            }
+        });
+    }
+    function overtimeWorkRevoke() {
+        jQuery.ajax({
+            async: false,
+            type: "delete",
+            url: "$path/overtimeWorkForm?" + $("#overtimeWorkForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#overtimeWork").modal("hidden");
+                queryBtn();
+            }
+        });
+    }
+</script>
+<!-- 补班加班 -->
+<div class="modal" id="overtimeWork" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">补班加班</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-container clear" id="overtimeWorkForm">
+                    <input name="userId" type="hidden">
+                    <input name="scheduleInfoId" type="hidden">
+                    <input name="logId" id="logId" type="hidden">
+                    <input name="logType" type="hidden" value="补班加班">
+                    <div class="form_line">
+                        <label>加班工时</label>
+                        <select name="timeAt">
+                            <option value="1">1小时</option>
+                            <option value="2">2小时</option>
+                            <option value="3">3小时</option>
+                            <option value="4">4小时</option>
+                            <option value="5">5小时</option>
+                            <option value="6">6小时</option>
+                            <option value="7">7小时</option>
+                            <option value="8">8小时</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="overtimeWork()">确定</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+                <a class="btn btn-red" href="javascript:;" onclick="overtimeWorkRevoke()">取消加班</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        zbftn();
+        //初始化日期控件
+        $("#editHoliday .datetimepicker").datetimepicker({
+            format: "YYYY-M-D",
+            date: new Date(),
+            useCurrent: true
+        });
+        $("#editHoliday .datetimepicker").eq(0).find("input").blur(function () {
+            $("#editHoliday .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
+        })
+
+        //初始化日期控件
+//        $("#prepareShift .datetimepicker").datetimepicker({
+//            format: "YYYY-M-D",
+//            date: new Date(),
+//            useCurrent: true
+//        });
+//        $("#prepareShift .datetimepicker").eq(0).find("input").blur(function () {
+//            $("#editHoliday .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
+//        })
+
+        //初始化日期控件
+        $("#replaceShift .datetimepicker").datetimepicker({
+            format: "HH:mm",
+            useCurrent: false
+        });
+        $("#replaceShift .datetimepicker").eq(0).find("input").blur(function () {
+            $("#editHoliday .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
+        })
+
+        //周表月表选择
+        $(".content-header .float-left .btnDefault").click(function () {
+            $(this).addClass("active").siblings(".btnDefault").removeClass("active");
+        })
+        //周表选择一周或者两周自动赋值第二个日期框
+        $("#startAt").blur(function () {
+            endDate();
+        })
+        $("#dateSelec").change(function () {
+            endDate();
+        })
+    })
+    function endDate() {
+        var dateSelec = $("#dateSelec").val();
+        var val = new Date($("#startAt").val());
+        if (dateSelec == '一周') {
+            var endDate = new Date((val / 1000 + 6 * 86400) * 1000);
+        } else {
+            var endDate = new Date((val / 1000 + 13 * 86400) * 1000);
+        }
+        var endAt = endDate.getFullYear() + '-' + ( endDate.getMonth() + 1) + '-' + endDate.getDate();
+        console.log(endAt)
+        $("#endAt").val(endAt);
+    }
+</script>
+<script>
+    zbftn();
+    function zbftn() {
+        $("#monthDate").val('');
+        var val = new Date();
+        var startAt = val.getFullYear() + '-' + ( val.getMonth() + 1) + '-' + val.getDate();
+        $("#startAt").parent().datetimepicker({
+            format: "YYYY-M-D",
+            date: startAt,
+            useCurrent: true
+        });
+        var endDate = new Date((val / 1000 + 6 * 86400) * 1000);
+        var endAt = endDate.getFullYear() + '-' + ( endDate.getMonth() + 1) + '-' + endDate.getDate();
+        $("#endAt").parent().datetimepicker({
+            format: "YYYY-M-D",
+            date: endAt,
+            useCurrent: true
+        });
+//        queryBtn();
+    }
+
+    function ybftn() {
+        $("#endAt").val('');
+        $("#startAt").val('');
+        $("#monthDate").parent().datetimepicker({
+            format: "YYYY-M",
+            date: new Date(),
+            useCurrent: true
+        });
+        queryBtn();
+    }
+
+    function queryBtn() {
+        Alert('success', "数据加载中请稍候")
+        $("#btnChange").hide();
+        //初始化排班表
+        jQuery.ajax({
+            type: "get",
+            url: "$path/scheduleFormData?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val(),
+            data: null,
+            dataType: "json",
+            error: function (xmlHttpReq, status) {
+                Alert("fail", "网络错误");
+            },
+            success: function (data) {
+                var target = $(".scheduleForm");
+                $(target).show();
+                var rightMenu = [];
+                var arr = [];
+                var d = new Date();
+                var today = new Date(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate());
+                for (var i = 0; i < data.length; i++) {
+                    var thead = '';
+                    //遍历排班表标题栏
+                    thead = '<tr><th rowspan="2">姓名</th><th rowspan="2">岗位</th>';
+                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
+                        var date = new Date(data[i].scheduleInfoList[j].scheduleDate);
+                        var day = (date.getMonth() + 1) + '.' + date.getDate();
+                        thead += '<th>' + day + '</th>';
+                        var dataDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                        if (date < today) {
+                            rightMenu.push('');
+                            arr.push('');
+
+                        } else {
+                            rightMenu.push('rightMenu');
+                            arr.push(dataDate)
+                        }
+                    }
+                    thead += '<th colspan=11>总计:' + data[i].scheduleInfoList.length + '天</th></tr>';
+                    thead += '<tr>';
+                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
+                        thead += '<th>' + data[i].scheduleInfoList[j].scheduleWeek + '</th>';
+                    }
+                    thead += '<th>计划工时</th><th>实际工时</th><th>结余</th>';
+                    thead += '</tr>';
+                    target.find("thead").html(thead);
+                    break;
+                }
+                //遍历排班表数据
+                var tbody = '';
+                for (var i = 0; i < data.length; i++) {
+                    tbody += '<tr><td tdType="' + data[i].userId + '">' + data[i].userName + '</td>';
+                    tbody += '<td>' + data[i].postName + '</td>';
+                    var jhgs = 0;
+                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
+                        var color = "";
+                        var clz="";
+                        var ifLeave = data[i].scheduleInfoList[j].ifLeave;
+
+                        if (ifLeave == 1 || ifLeave == 4 || ifLeave == 6) {
+                            color = "#70BF41";
+                            clz="bgGreen";
+                        } else if (ifLeave == 2 || ifLeave == 3 || ifLeave == 5) {
+                            color = "#F5D328";
+                            clz="bgYellow";
+                        } else {
+                            color = "";
+                        }
+                        tbody += '<td style="position: relative" tdType=shift serialNumber="' + data[i].scheduleInfoList[j].serialNumber + '" shiftName="' + data[i].scheduleInfoList[j].shiftName
+                                + '" colorStyle="'+color+'" class="' + rightMenu[j] +" "+clz+ '" data-logId="' + data[i].scheduleInfoList[j].logId
+                                + '" colorCode="#'+data[i].scheduleInfoList[j].shiftColor+'" data-scheduleInfoId="' + data[i].scheduleInfoList[j].scheduleInfoId + '" data-userId="'
+                                + data[i].userId + '" data-totalAt="' + data[i].scheduleInfoList[j].totalAt + '" data-shiftId='+data[i].scheduleInfoList[j].shiftId+' data-stationArea="'
+                                + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
+                    }
+                    tbody += '<td>' + data[i].planHours + '</td><td>' + (data[i].actualHours + data[i].planHours) + '</td><td class="' + (data[i].actualHours > 0 ? "bgRed" : "") + '">' + data[i].actualHours + '</td>';
+                    tbody += '</tr>';
+                }
+                target.find("tbody").html(tbody);
+                $("td[serialNumber]").each(function () {
+                    var html="";
+                    var text=$(this).text();
+                    var serialNumber = $(this).attr("serialNumber");
+                    if (serialNumber != null && serialNumber != undefined && serialNumber != "null" && serialNumber != "") {
+                        html+=serialNumber;
+                    }else{
+                        html+=text;
+                    }
+                    $(this).html(html);
+                });
+            }
+        });
+    }
+
+    var colorType=['colorStyle','colorCode'];
+    var currentColor=0;
+    $(document).on("click","#btnToggle",function(){
+        var type=colorType[currentColor++%colorType.length];
+        $("td[serialNumber]").each(function () {
+            var c = $(this).attr(type);
+            if (c != null && c != undefined && c != "null" && c != "") {
+                $(this).css("background-color",c);
+            }else{
+                $(this).css("background-color","#DCDEE0");
+            }
+        });
+        $(this).text("切换颜色")
+    });
+</script>
+</body>
+</html>

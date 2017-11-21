@@ -1,0 +1,1133 @@
+@import "color";
+@blue:#3A6BCE;
+@black:#1a1a1a;/* 深灰色 */
+@border:#e5e5e5;
+@red:#EC1C24;
+@green:#39B44A;
+ul,ol {
+  list-style: none;
+  margin-bottom :0;
+}
+p{
+  margin:0;
+}
+input {
+  margin: 0;
+}
+textarea {
+  resize: none;
+}
+.clear-float {
+  clear: both;
+  overflow: hidden;
+}
+.blue{
+  color: @blue;
+}
+/* 重置a标签的默认样式 */
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+}
+/* 公共图标按钮样式 */
+.btnDefault{
+  padding:0 20px;
+  text-align: center;
+  line-height: 34px;
+  float: left;
+  margin-left:5px;
+  border:1px solid @border;
+  border-radius:5px;
+  box-sizing: border-box;
+  background: #fff;
+  &.bgGreen,&.bgBlue,&.bgOrange{
+    *{
+      color: #fff !important;
+    }
+  }
+  &.bgGreen{
+    background: @green;
+    color: #fff;
+  }
+  &.bgBlue{
+    background: @blue;
+    color:#fff;
+  }
+  &.bgOrange{
+    background: @orange;
+  }
+}
+select {
+  height: 25px;
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0;
+}
+
+.float-left {
+  float: left;
+}
+.float-right {
+  float: right;
+}
+/* 最外层容器 */
+.wrapper {
+  padding:15px;
+  background:#fff;
+}
+/* 标题栏 */
+.content-header {
+  min-height:60px;
+  clear: both;
+  overflow: hidden;
+  padding:10px 15px 0;
+  border-bottom: 1px solid @border;
+  .float-left{
+    line-height:32px;
+    .bgGreen{
+      margin-left:0;
+    }
+    .title{
+      float: left;
+      line-height:32px;
+      color: @red;
+      margin-right:20px;
+    }
+    .btnDefault.active{
+      background:@blue;
+      color: #fff;
+    }
+  }
+  #dateSelec{
+    margin-right:10px;
+  }
+  .float-right{
+    *{
+      float: left;
+    }
+    .search-input{
+      width:300px;
+      height:38px;
+      border:1px solid @border;
+      border-radius: 5px;
+      background: #fff;
+      *{
+        float:left;
+      }
+      span{
+        width:40px;
+        line-height:38px;
+        text-align: center;
+        color: @blue;
+      }
+      input{
+        border:0;
+        line-height:30px;
+        margin-top:4px;
+        color: #999;
+        outline:none;
+      }
+    }
+    .btnDefault{}
+    margin-bottom:10px;
+  }
+}
+/* 按钮组合 */
+.btn-inline {
+  .btn-operate {
+    margin-left:5px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  a {
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+/* 表格样式 */
+.ui-jqgrid{
+  thead{
+    tr{
+      background: #D7E4FF;
+      th{
+        padding:0 8px !important;
+        line-height:50px;
+        color: #808080;
+        font-weight: normal;
+        color: #333;
+        border:0;
+        .ui-jqgrid-resize{
+          display: none;
+        }
+      }
+    }
+  }
+  .table {
+    border:0;
+    tr{
+      outline: none;
+      &:nth-of-type(2n+1){
+        background: #F9F9F9;
+      }
+      td{
+        padding:0 8px;
+        line-height:50px;
+        border:0;
+        border-bottom:1px solid @border;
+        color: @black;
+        a{
+          float: left;
+          margin-left:10px;
+          color: #1887EC;
+          &:nth-of-type(1){
+            margin-left:0;
+          }
+        }
+      }
+    }
+    .disabled{
+      td{
+        color:#999;
+      }
+    }
+    .jqgfirstrow td{
+      padding:0 !important;
+    }
+  }
+}
+/* 分页 */
+#pager,.page{
+  overflow: hidden;
+  clear: both;
+  #pg_pager{
+    float: right;
+    .ui-pg-table{
+      margin-right:30px;
+    }
+    .ui-icon{
+      font-family:"icomoon";
+      color: @blue;
+      margin: 0 5px;
+      line-height:30px;
+    }
+    .ui-icon-seek-first:before{
+      content:"\ea21";
+    }
+    .ui-icon-seek-end:before{
+      content:"\ea22";
+    }
+    .ui-icon-seek-prev:before{
+      content:"\ea23";
+    }
+    .ui-icon-seek-next:before{
+      content:"\ea24";
+    }
+    .ui-pg-input{
+      border:1px solid @border;
+      margin:0 5px;
+      text-align:center;
+    }
+  }
+  ul{
+    float: right;
+    border:1px solid @border;
+    border-left:0;
+    li{
+      float: left;
+      width:30px;
+      line-height:30px;
+      border-left:1px solid @border;
+      text-align: center;
+      &.active{
+        background: @blue;
+        color: #fff;
+      }
+    }
+  }
+}
+/* 状态样色 */
+.red{
+  color: #C0272D !important;
+}
+.orange{
+  color: @orange !important;
+}
+.gray{
+  color: #989898 !important;
+}
+.green{
+  color: #009145 !important;
+}
+/*表单部分*/
+.form-container{
+  margin-top: 10px;
+  width:100%;
+}
+.form_line{
+  float:left;
+  margin:0 10px 10px;
+  &>*{
+    float: left;
+  }
+  label{
+    min-width:70px;
+    text-align:right;
+    line-height:34px;
+    color: @black;
+    margin-right:10px;
+  }
+  .datetimepicker{
+    width:130px;
+    input{
+      padding:6px;
+      border-color:@border;
+    }
+    .input-group-addon{
+      border-color:@border;
+    }
+  }
+  >span{
+    margin:0 5px;
+    line-height:32px;
+  }
+  &>input[type="text"],select,.section>input[type="text"],.section select{
+    width:130px;
+    height:36px;
+    padding:0 5px;
+    border:1px solid @border;
+    border-radius:3px;
+  }
+  .section .datetimepicker{
+    width:187px;
+    input{
+      width:146px !important;
+    }
+    .input-group-addon{
+      padding:8px 12px;
+    }
+  }
+  textarea{
+    border:1px solid @border;
+  }
+  a.button{
+    width:120px;
+    height:32px;
+    line-height:32px;
+    border-radius:3px;
+    background:@blue;
+    color: #fff;
+    text-align: center;
+  }
+}
+.time-slot{
+  input{
+    width: 85px !important;
+  }
+  em.input-group-addon,input{
+    border-radius:0;
+  }
+  .to{
+    width:8px !important;
+    height:1px;
+    background:#999;
+    font-size:0;
+    display: inline-block;
+    margin:15px 5px 0;
+  }
+}
+.mar-t20{
+  margin-top:20px;
+}
+/* 模态框样式重写 */
+.modal-backdrop{
+  background-color:#fff;
+}
+.modal{
+  .modal-dialog{
+    width:700px;
+  }
+  .modal-content{
+    border-radius:0;
+    border:0;
+    .modal-body{
+      min-height:200px;
+      .table-box{
+        width:100%;
+        max-height:500px;
+        overflow-y: auto;
+      }
+    }
+  }
+  .modal-header{
+    height:40px;
+    padding:0 15px;
+    background: @blue;
+    *{
+      color: #fff;
+    }
+    h4{
+      font-size:16px;
+      font-weight:normal;
+      line-height:40px;
+    }
+    a{
+      margin-top:10px;
+      opacity:1;
+      font-size:18px;
+    }
+  }
+}
+.btn{
+  width:100px;
+  height:34px;
+  border-raius:5px;
+  box-sizing: border-box;
+  &.btn-confirm:hover{
+    color: #fff;
+  }
+  &.btn-red{
+    background: @red;
+    color: #fff;
+  }
+}
+.btn-cancel{
+  border:1px solid @border;
+  background: #fff;
+}
+.btn-confirm{
+  background: @blue;
+  color: #fff;
+}
+/* 模态框 */
+.modal{
+  .form-container{
+    .form_line{
+      width:100%;
+      p{
+        width:100%;
+        line-height:32px;
+      }
+      label{
+        width:100px;
+        margin-right:10px;
+        &.require:before{
+          content:"*";
+          color:red;
+          font-size:14px;
+          margin-right:3px;
+        }
+      }
+      input,select{
+        width:400px;
+        margin-right:5px;
+      }
+      .btn{
+        margin-left:10px;
+      }
+      &.psw{
+        input{
+          width:350px;
+        }
+        p{
+          text-indent:100px;
+        }
+      }
+      .section{
+        >*{
+          float: left;
+        }
+        input{
+          width:217px;
+        }
+        span{
+          margin:0 5px;
+        }
+      }
+    }
+    span{
+      line-height:32px;
+      margin-right:10px;
+      &.orange{
+        color: @orange;
+      }
+    }
+    .datetimepicker {
+      input {
+        margin-right: 0;
+        width: 174px;
+      }
+    }
+    textarea{
+      width: 540px;
+      height:80px;
+      border-radius:3px;
+      padding:5px;
+      line-height:20px;
+    }
+  }
+  .wrapper{
+    padding:0;
+    margin:15px 0 0;
+  }
+}
+/* 人员分组 */
+.bgYellow{
+  background:#F5D328;
+}
+.bgGreen{
+  background:#70BF41;
+}
+.bgRed{
+  background:#EC5D57;
+}
+.heading{
+  font-size:20px;
+  padding:10px 0 20px;
+  .orange{
+    font-size:20px;
+    margin-left:20px;
+  }
+  ul{
+    li{
+      float: left;
+      margin-left:30px;
+      span{
+        width:40px;
+        height:20px;
+        float: left;
+        margin-right:7px;
+      }
+    }
+  }
+}
+/* 下拉菜单样式重写 */
+.dropdown{
+  position: absolute;
+  right:5px;
+  top:5px;
+  outline: none;
+  button{
+    background: @blue;
+    width:80px;
+    height:30px;
+    line-height:30px;
+    padding:0;
+    color: #fff;
+    font-size:16px;
+    span{
+      color: #fff;
+      border-width:6px;
+      margin-left:5px !important;
+    }
+    &:hover{
+      color:#fff;
+    }
+  }
+  .dropdown-menu{
+    right:0;
+    left:auto;
+    width:100px;
+    border:1px solid @border;
+    border-radius: 0;
+    li{
+      padding:10px 0;
+      a:hover{
+        background: none;
+      }
+      &:nth-last-of-type(1) a{
+        color: @red;
+      }
+    }
+  }
+}
+.stationArea{
+  overflow: hidden;
+  clear:both;
+  .list{
+    width:400px;
+    float:left;
+    margin-right:10px;
+    background: #f1f1f1;
+    .station-head{
+      height:40px;
+      background: #D7E4FF;
+      position: relative;
+      span{
+        margin-left:10px;
+        line-height:40px;
+      }
+    }
+    .stations{
+      height:310px;
+      overflow: auto;
+      padding:5px 10px;
+      li{
+        width:100%;
+        height:40px;
+        float: left;
+        background: #fff;
+        margin:5px 0;
+        *{
+          line-height:40px;
+        }
+        span{
+          float: left;
+          margin-left:10px;
+        }
+        a{
+          float:right;
+          margin-right:10px;
+          &.icon-1{
+            color: @red;
+          }
+          &.icon-4{
+            color:@blue;
+          }
+        }
+        input{
+          width:200px;
+          float: left;
+          height:28px;
+          margin:5px;
+          padding:3px;
+          border:1px solid @border;
+          line-height:28px;
+        }
+      }
+      .clear{
+        height:0;
+        padding:0;
+        margin:0;
+      }
+    }
+  }
+}
+/* 权限列表 */
+.post{
+  width:100%;
+  margin:15px 0;
+  float: left;
+  td{
+    padding:5px 8px;
+    color: #000;
+    vertical-align:top;
+    p{
+      line-height:24px;
+      color: #666;
+    }
+    input{
+      float: left;
+      margin-right:5px;
+    }
+  }
+  .indent{
+    input{
+      margin-left:30px;
+    }
+  }
+}
+/* 班次设置 */
+.menu{
+  position: absolute;
+  width:160px;
+  height:100%;
+  background:#e5e5e5;
+  left:0;
+  top:0;
+  *{
+    text-indent:40px;
+    width:100%;
+  }
+  .menu-head{
+    background:#CBCBCB;
+    line-height:60px;
+    font-size:20px;
+  }
+  .nav-tabs{
+    border:0;
+    li>a{
+      line-height:40px;
+      border:0;
+      border:0;
+      border-radius:0;
+      padding:10px 0;
+    }
+    >li>a:hover,>li.active>a, >li.active>a:focus, >li.active>a:hover{
+      background: #fff;
+      border:0;
+    }
+  }
+}
+.content{
+  margin-left:160px;
+}
+.shifts{
+  float: left;
+  width:100%;
+  border:0;
+  margin-top:17px;
+  margin-bottom:10px;
+  li{
+    position: relative;
+    margin-right:10px;
+    a,a:hover,a:focus{
+      background: @blue;
+      color: #fff;
+      border-radius:5px;
+      border:2px solid @blue;
+      padding:5px 15px;
+    }
+    &.active{
+      a,a:hover,a:focus{
+        border:2px solid @blue;
+        background: #fff;
+        color: @blue;
+      }
+    }
+    >span{
+      position: absolute;
+      width:18px;
+      height:18px;
+      background:@red;
+      color: #fff;
+      text-align: center;
+      line-height:18px;
+      right:-4px;
+      top:-4px;
+      font-size:14px;
+      border-radius:50%;
+    }
+  }
+}
+.table-header{
+  position: relative;
+  width:100%;
+  height:50px;
+  margin:10px 0;
+  >span{
+    position: absolute;
+    left:0;
+    top:10px;
+    padding-left:5px;
+    height:30px;
+    line-height:30px;
+    border-left:4px solid @blue;
+    cursor: pointer;
+    &.gray{
+      border:0;
+    }
+  }
+  .dropdown{
+    right:0;
+    button{
+      width:100px;
+      height:40px;
+    }
+  }
+}
+/* 添加新方案 */
+.newPlan{
+  display: block;
+  width:260px;
+  line-height:60px;
+  border:2px dashed @blue;
+  text-align: center;
+  color: @blue;
+  font-size:18px;
+  margin-top:20px;
+}
+/* 柱状图 */
+#myChart{
+  width:800px;
+  height:400px;
+}
+.chart{
+  ul{
+    float: right;
+    margin-bottom:20px;
+    li{
+      float: left;
+      width:200px;
+      span{
+        float:left;
+        width:20px;
+        height:20px;
+        margin-right:10px;
+        &.realHour{
+          background: @green;
+        }
+        &.planHour{
+          background:@blue;
+        }
+      }
+    }
+  }
+  margin-bottom:30px;
+}
+/* 排班表格 */
+.schedule{
+  width:100%;
+  table{
+    min-width:100%;
+    margin-bottom:20px;
+    th,td{
+      min-width:50px;
+      text-align: center;
+      border:2px solid #fff;
+      padding:8px;
+    }
+    th{
+      background: #767C85;
+      color: #fff;
+      font-weight:normal;
+    }
+    td{
+      position: relative;
+      background: #DCDEE0;
+      color: #000;
+      z-index:1;
+      &.bgYellow{
+        background:#F5D328;
+        z-index:2;
+      }
+      &.bgGreen{
+        background:#70BF41;
+      }
+      &.bgRed{
+        background:#EC5D57;
+      }
+      input{
+        border:1px solid @border;
+        width:80px;
+        height:30px;
+        padding:5px;
+        line-height:30px;
+        text-align: center;
+      }
+    }
+    .dark{
+      background:#535761;
+      color: #fff;
+    }
+  }
+  .page{
+    .float-left{
+      span{
+        margin-left:10px;
+        line-height:38px;
+      }
+    }
+  }
+  .foot{
+    overflow: hidden;
+    clear: both;
+    .btnDefault{
+      width:120px;
+    }
+  }
+}
+/* 新增自动排班 */
+.noPlan{
+  padding:10px;
+  margin:20px 0;
+  em{
+    display: inline-block;
+    width:20px;
+    height:20px;
+    background: #989898;
+    color: #fff;
+    border-radius:50%;
+    text-align: center;
+    line-height:20px;
+    margin-right:5px;
+  }
+}
+/* 排班审批 */
+.no-mes{
+  margin-bottom:20px;
+  padding:0 15px;
+  font-size:20px;
+}
+.approvalList{
+  overflow: hidden;
+  clear: both;
+  li{
+    border:1px solid @border;
+    margin-bottom:10px;
+    position: relative;
+    .checkbox{
+      position: absolute;
+      width:70px;
+      height:100%;
+      background:#f1f1f1;
+      margin:0;
+      border-right:1px solid @border;
+      >*{
+        position: absolute;
+        top:50%;
+      }
+      input{
+        width:16px;
+        height:16px;
+        left:50%;
+        background: #fff;
+        margin:-8px 0 0 -8px;
+      }
+      span{
+        width:100%;
+        line-height:20px;
+        text-align:center;
+        margin-top:-10px;
+      }
+    }
+    .vacationInfo{
+      position: relative;
+      margin-left:70px;
+      padding:40px 15px 10px;
+      overflow: hidden;
+      clear: both;
+      .head{
+        width:100%;
+        height:40px;
+        position: absolute;
+        left:0;
+        top:10px;
+        *{
+          line-height:24px;
+        }
+        span{
+          border-left:4px solid @blue;
+          text-indent:15px;
+          font-size:18px;
+          color: @blue;
+        }
+        em{
+          color:#999;
+          margin-right:10px;
+        }
+      }
+      .col{
+        float: left;
+        min-width:150px;
+        >*{
+          line-height:40px;
+          float: left;
+        }
+        em{
+          color: #B2B2B2;
+          margin-right:8px;
+        }
+      }
+      .col2{
+        min-width:400px;
+      }
+      .col3{
+        width:100%;
+      }
+    }
+  }
+}
+.approvalHeading{
+  margin-bottom:20px;
+  .float-left{
+    border-left:4px solid @blue;
+    padding-left:10px;
+  }
+}
+.approvalSchedule{
+  padding-bottom:15px;
+  margin-bottom:10px;
+  border-bottom:1px solid @border;
+  .schedule{
+    min-height:100px !important;
+  }
+  &:nth-last-child(1){
+    border:0;
+  }
+}
+#remarks{
+  position: absolute;
+  width:260px;
+  padding:10px;
+  top:38px;
+  left:0;
+  background: #FFFBE9;
+  border:1px solid #FFDEB3;
+  z-index:10;
+  p{
+    line-height:30px;
+    text-align: left;
+    color: #1a1a1a;
+  }
+  .head{
+    font-size:18px;
+    margin-bottom:10px;
+  }
+}
+#rightMenu{
+  position: absolute;
+  width:140px;
+  left:0;
+  top:38px;
+  border:1px solid #E5E5E5;
+  background:#fff;
+  z-index:11;
+  a{
+    display:block;
+    padding:0 20px;
+    line-height: 40px;
+    border-top:1px solid @border;
+    color: #1a1a1a;
+  }
+}
+/* 班次设置添加部分样式 */
+.shiftInfo{
+  >ul{
+    width:520px;
+    height:auto;
+    padding:10px 10px 0;
+    background:#f1f1f1;
+    margin-top:10px;
+    >li{
+      float: left;
+      width:100%;
+      height:40px;
+      margin-bottom:10px;
+      background: #fff;
+      box-sizing: border-box;
+      >*,>div>*{
+        float: left;
+        line-height:40px;
+      }
+      >div{
+        &.time{
+          width:260px;
+          >span{
+            padding:0 10px;
+          }
+        }
+        &.peopleNum{
+          width:180px;
+          >span{
+            width:40px;
+          }
+          input{
+            border:0;
+            width:40px;
+            outline: none;
+          }
+        }
+        margin-left:10px;
+        >em{
+          color: @blue;
+          margin-left:10px;
+          cursor: pointer;
+        }
+        .datetimepicker{
+          width:60px;
+          margin-top:3px;
+          input,>em{
+            border:0;
+            background: none;
+            outline: none;
+            box-shadow: none;
+            padding:0;
+          }
+          >em i{
+            color: @blue;
+          }
+        }
+      }
+      >em{
+        color: @red;
+        font-weight:bold;
+        font-size:20px;
+        margin-left:10px;
+        cursor: pointer;
+      }
+      &.add{
+        background: none;
+        border:2px dashed @blue;
+        a{
+          display: block;
+          width:100%;
+          text-align: center;
+          color: @blue;
+        }
+      }
+      &.clear{
+        float: none;
+        height:0;
+      }
+    }
+  }
+}
+/* 方案验算 */
+.testResult{
+  border-top:1px solid @border;
+  margin-top:10px;
+  >p{
+    padding:10px;
+    span{
+      margin-left:50px;
+    }
+  }
+  ul{
+    padding:10px 0;
+    border-bottom:1px solid @border;
+    li{
+      overflow:hidden;
+      clear: both;
+      margin-left:120px;
+      margin-bottom:20px;
+      *{
+        float: left;
+      }
+      em{
+         margin-right:15px;
+        line-height:26px;
+         &.icon-danger{
+           color: @orange;
+           font-size:18px;
+         }
+         &.icon-success{
+           color: @green;
+         }
+       }
+      span{
+        width:500px;
+        line-height:26px;
+        color: #333;
+      }
+    }
+  }
+  .result{
+    padding:20px 0 30px;
+    overflow: hidden;
+    clear: both;
+    *{
+      line-height:30px;
+      float: left;
+    }
+    em{
+      font-size:24px;
+      margin-left:120px;
+      margin-right:10px;
+      &.icon-right{
+        color: @green;
+      }
+      &.icon-wrong{
+        color: @orange;
+      }
+    }
+    span{
+      font-size:20px;
+      color: #333;
+    }
+  }
+}

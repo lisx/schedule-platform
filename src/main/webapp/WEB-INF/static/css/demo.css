@@ -1,0 +1,855 @@
+/**
+ * create by: zhangboya on  16/7/27
+ */
+/* 主要的蓝色 */
+/* 边框颜色*/
+/* 字体灰 */
+/* 背景灰 */
+/* 链接禁用灰 */
+/* 表头背景 */
+/* 标识某些状态的蓝色 */
+/* 应急修背景 */
+/* 故障修背景 */
+/*模态框主题蓝色*/
+/*.gray 颜色*/
+/*边框颜色*/
+/*深蓝色*/
+/*浅蓝色字体*/
+/*白色*/
+/*橙黄*/
+/*默认颜色*/
+.form-control {
+  display: inline-block;
+  border-radius: 0px;
+}
+/*背景色*/
+.modal {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+/*灰色字体*/
+.font-gray {
+  color: #cbcbcb;
+  font-weight: normal;
+}
+/*红色字体*/
+.font-red {
+  color: red !important;
+}
+/*绿色字体*/
+.font-green {
+  color: #40ab4a;
+}
+/*橙色字体*/
+.font-orange {
+  color: orange;
+}
+.icon-20 {
+  color: #ffffff;
+  font-size: 18px;
+}
+/*模态框高为400*/
+.height400 {
+  min-height: 300px;
+  max-height: 400px;
+}
+.modal-dialog {
+  min-height: 400px;
+  max-height: 500px;
+}
+/*宽度*/
+.width600 {
+  width: 600px;
+}
+/*宽度*/
+.width1000 {
+  width: 800px;
+}
+.width900 {
+  width: 900px;
+}
+/*分页*/
+.pagination {
+  margin: 10px 0px;
+}
+/*没有padding -值*/
+.datetimepicker.no-padding {
+  padding: 0px;
+}
+/*计划列表 plan-list-data*/
+.plan-list-data .data-catalog {
+  padding: 10px 15px;
+  border-bottom: 1px solid #e5e5e4;
+}
+.plan-list-data .data-catalog p {
+  overflow: hidden;
+  margin: 10px 0px;
+}
+.plan-list-data .data-catalog p b {
+  font-size: 14px;
+}
+.plan-list-data .data-catalog p span {
+  font-size: 10px;
+  color: #989898;
+}
+/*新建计划*/
+.new-plan {
+  padding: 10px 15px;
+  text-align: center;
+  height: 96px;
+  line-height: 90px;
+  border-bottom: 1px solid #e5e5e4;
+}
+.new-plan a {
+  font-size: 14px;
+  text-decoration: underline;
+}
+/****************************模态框部分***********************************/
+/*初始化蓝色主题模态框*/
+.modal-dialog .modal-content {
+  border-radius: 0px;
+}
+.modal-dialog .modal-content .modal-footer {
+  padding: 15px 0;
+  margin: 0 15px;
+  border-top: none;
+}
+.modal-dialog .data-list-head {
+  font-weight: normal;
+}
+.modal-dialog .data-list span {
+  text-indent: 0px;
+  float: none;
+}
+.modal-dialog .modal-header {
+  background-color: #648ef1;
+  padding: 8px 15px 8px 20px;
+  color: #ffffff;
+  border: none;
+}
+.modal-dialog .modal-header button {
+  opacity: 1;
+}
+.modal-dialog .modal-title {
+  font-size: 16px;
+}
+.modal-dialog .modal-body {
+  padding: 20px 20px;
+}
+.modal-dialog .btnGroup {
+  margin: 10px 0px;
+}
+.modal-dialog .btnGroup .btn-operate {
+  margin-left: 10px;
+}
+.modal-dialog .btnGroup [class*="icon-"] {
+  margin-top: 0px;
+}
+.modal-dialog ul[role="tablist"] {
+  margin-bottom: 10px;
+}
+/*分页头样式定义*/
+ul.nav.nav-tabs > li > a {
+  padding: 5px 10px;
+  color: black;
+  border-radius: 0px;
+}
+/*tab-content公共样式*/
+div.tab-content-head {
+  padding: 4px 10px;
+  border: 1px solid #e5e5e5;
+  border-top: none;
+  height: 200px;
+}
+/*定义表头公共样式*/
+div.title {
+  border: 1px solid #f1f1f1;
+  background-color: #eff7f9;
+  color: #808080;
+  font-weight: normal;
+}
+/*定义分页公用样式*/
+.tableOutter {
+  padding: 5px;
+}
+/*modal #modifyAll*/
+.modifyAll form {
+  margin: 30px 0px 0px 50px;
+}
+.modifyAll form label {
+  width: 80px;
+}
+.modifyAll form .form-control {
+  display: inline-block;
+  width: 60%;
+}
+/* modal addEquip 设备新增*/
+.addEquip .modal-body {
+  padding: 5px 20px;
+}
+.addEquip em {
+  width: 40px;
+}
+/*模态框equipAdd*/
+.equipAdd .form-group {
+  margin-top: 5px;
+}
+.equipAdd .datetimepicker {
+  padding: 0;
+}
+.equipAdd .form-control {
+  height: 29px;
+}
+/* modal equipDetails*/
+.equipDetails .icon-22,
+.equipDetails .icon-21 {
+  font-size: 15px;
+  border: 1px solid #517b9a;
+  color: #517b9a;
+  margin-left: 10px;
+  text-indent: 0px;
+  margin-top: 6px;
+}
+/* modal changeFailureRepair*/
+.changeFailureRepair .icon-22,
+.changeFailureRepair .icon-21 {
+  font-size: 15px;
+  border: 1px solid #517b9a;
+  color: #517b9a;
+  margin-left: 10px;
+  text-indent: 0px;
+  margin-top: 6px;
+}
+.changeFailureRepair .modal-dialog {
+  width: 670px;
+}
+.changeFailureRepair .faultandling {
+  padding-top: 20px;
+  border-top: 1px solid #e5e5e4;
+}
+.changeFailureRepair .Auditing select {
+  width: 200px;
+}
+/*modal faultDetails*/
+.faultDetails hr {
+  margin: 20px 0px;
+}
+/*box-border*/
+.box-border {
+  border: 1px solid #cbcbcb;
+  padding: 5px;
+  margin-top: 40px;
+  height: 230px;
+}
+/****************************页面部分***********************************/
+/*公用部分*/
+h4 {
+  font-weight: normal;
+}
+/*定义容器头部的提示文字*/
+.panel-batten {
+  background-color: #FFFFFF;
+  padding: 15px;
+  /*overflow: hidden;*/
+}
+.panel-batten .top-content {
+  margin-top: 5px;
+}
+/*蓝色cell格子样式*/
+.deep {
+  background-color: #1887ec;
+}
+.light {
+  background-color: #30c9e8;
+}
+div.deep,
+div.light {
+  height: 36px;
+  font-size: 20px;
+  text-align: center;
+  padding-top: 5px;
+  line-height: 36px;
+}
+.content {
+  padding: 16px 0px 0px 0px;
+}
+/*设置宽度*/
+.w-658 {
+  width: 645px !important;
+}
+/*蓝色字体颜色*/
+.blue-font {
+  color: #1887ec;
+}
+/*背景色为黑色*/
+.back-gray {
+  background-color: #e5e5e5;
+  display: inline-block;
+  width: 210px;
+  height: 30px;
+  font-size: 12px;
+  line-height: 30px;
+  margin-right: 10px;
+  padding-left: 5px;
+}
+/*绿色,红色,灰色按钮组的样式*/
+.but-list {
+  line-height: 3;
+  margin-left: 10px;
+}
+.but-list a {
+  border-radius: 50%;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 1px;
+  float: left;
+  margin: 7px 2px;
+}
+/* attrAdmin 属性管理页面*/
+.attrAdmin [type='text'] {
+  width: 412px;
+}
+.attrAdmin .panel-bottom {
+  margin-top: 20px;
+}
+.attrAdmin form {
+  margin-top: 10px;
+}
+.attrAdmin form .but-list {
+  display: block;
+}
+.attrAdmin ul.top-row {
+  overflow: hidden;
+}
+.attrAdmin ul.top-row div,
+.attrAdmin ul.top-row li {
+  margin: 3px;
+  width: 170px;
+  background: #1887ec;
+  text-align: center;
+}
+.attrAdmin ul.top-row div a,
+.attrAdmin ul.top-row li a,
+.attrAdmin ul.top-row div a:hover,
+.attrAdmin ul.top-row li a:hover,
+.attrAdmin ul.top-row div a:active,
+.attrAdmin ul.top-row li a:active,
+.attrAdmin ul.top-row div a:visited,
+.attrAdmin ul.top-row li a:visited,
+.attrAdmin ul.top-row div a:link,
+.attrAdmin ul.top-row li a:link {
+  line-height: 36px;
+  color: white;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.attrAdmin ul.top-row li:last-child {
+  background-color: #cbcbcb;
+}
+.attrAdmin ul.top-row .active {
+  background: #30c9e8;
+}
+.attrAdmin ul.top-row .active a {
+  background: none;
+}
+.attrAdmin .nav-tabs {
+  border: none;
+}
+.attrAdmin a.deep,
+.attrAdmin a.light {
+  display: block;
+  height: 36px;
+  color: #FFFFFF;
+  font-size: 14px;
+  line-height: 36px;
+}
+.attrAdmin .gray .icon-9 {
+  color: #ffffff;
+  font-size: 10px;
+}
+/*check-box 列表组*/
+.check-list {
+  margin: 20px 0px;
+}
+.check-list label {
+  width: auto;
+}
+.check-list > div {
+  display: inline-block;
+  float: right;
+}
+/*添加细则 addDetails 页面*/
+.addDetails form {
+  clear: both;
+}
+.addDetails .multi-detail {
+  margin-top: 20px;
+}
+.addDetails .footer .btn {
+  margin: 10px 0px 0px 10px;
+}
+.addDetails [name='detailsForm'] [type='text'] {
+  width: 412px;
+}
+.addDetails [name='detailsForm'] .row:first-child .icon-arrow-up2 {
+  color: #cbcbcb;
+  cursor: default;
+}
+.addDetails [name='detailsForm'] .row:last-child .icon-arrow-down2 {
+  color: #cbcbcb;
+  cursor: default;
+}
+/*董事会 directors 页面*/
+.directors-title {
+  background-color: #e5e5e5;
+  overflow: hidden;
+}
+.directors-title .title-right {
+  padding: 8px;
+  background-color: #cbcbcb;
+  font-size: 10px;
+  height: 37px;
+}
+.directors-title select {
+  width: 120px;
+  height: 28px;
+  margin: 5px;
+  border-radius: 5px;
+}
+.directors-title .edit-button,
+.directors-title .search {
+  padding: 6px;
+}
+.directors-title .edit-button .form-group,
+.directors-title .search .form-group {
+  display: inline-block;
+}
+.directors {
+  height: 100%;
+  overflow-y: auto ;
+  background-color: #FFFFFF;
+}
+.directors .paging {
+  margin-right: 5px;
+}
+.directors a.blue-font {
+  margin-right: 10px;
+}
+/*bootstrap 下拉*/
+#calendarView .dropdown {
+  display: inline-block;
+  margin: 0px 10px;
+  position: relative;
+}
+#calendarView .dropdown .caret {
+  position: absolute;
+  right: 10px;
+  top: 14px;
+}
+#calendarView .dropdown .dropdown-toggle {
+  background: none;
+  border-radius: 0px;
+  width: 90px;
+  height: 30px;
+}
+/* slider 轮播 */
+.slider {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 640px;
+  background-color: #E9ECEF;
+  padding-top: 20px;
+}
+.slider > a {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  color: #999;
+  z-index: 11;
+  text-align: center;
+  font-size: 50px;
+  color: #ddd;
+  top: 50%;
+  mragin-top: -25px;
+}
+.slider .icon-arrow-left {
+  left: 40px;
+}
+.slider .icon-arrow-right {
+  right: 40px;
+}
+.slider .calendar_slider {
+  position: absolute;
+}
+.slider .calendar_slider .date {
+  margin: 0px 10px;
+  float: left;
+  background-color: #ffffff;
+  height: 600px;
+}
+.slider .calendar_slider > span {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #eea236;
+}
+.slider .calendar_slider span.left {
+  top: 50%;
+}
+.slider .calendar_slider span.right {
+  top: 50%;
+  right: 0;
+}
+.slider .calendar_slider .panelTitle.orange {
+  background-color: orange !important;
+}
+.slider .calendar_slider .panelTitle {
+  height: 50px;
+  background-color: #23527c;
+  color: #ffffff;
+}
+.slider .calendar_slider .panelTitle h1 {
+  margin: 10px 0px 10px 10px;
+  float: left;
+  font-size: 20px;
+}
+.slider .calendar_slider .panelTitle .year {
+  float: right;
+  margin: 20px 20px 0px 0px;
+  color: #FFFFFF;
+}
+.main .alert-box,
+.main .ztree-box {
+  top: 30%;
+}
+/*alert 提示框*/
+.alert-box,
+.ztree-box {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  margin-left: -200px;
+  width: 400px;
+  border: 1px solid #cbcbcb;
+  z-index: 1000;
+}
+.alert-box.ztree-box,
+.ztree-box.ztree-box {
+  display: none;
+}
+.alert-box .alert-box-title,
+.ztree-box .alert-box-title,
+.alert-box .ztree-box-title,
+.ztree-box .ztree-box-title {
+  padding: 10px 8px;
+  overflow: hidden;
+}
+.alert-box .alert-box-title .float-left,
+.ztree-box .alert-box-title .float-left,
+.alert-box .ztree-box-title .float-left,
+.ztree-box .ztree-box-title .float-left {
+  color: #fff;
+}
+.alert-box .alert-box-title [class*='icon-'],
+.ztree-box .alert-box-title [class*='icon-'],
+.alert-box .ztree-box-title [class*='icon-'],
+.ztree-box .ztree-box-title [class*='icon-'] {
+  color: #fff;
+}
+.alert-box .alert-body,
+.ztree-box .alert-body,
+.alert-box .ztree-body,
+.ztree-box .ztree-body {
+  padding: 20px 0px;
+  background-color: #fff;
+}
+.alert-box .alert-body [class*='icon-'],
+.ztree-box .alert-body [class*='icon-'],
+.alert-box .ztree-body [class*='icon-'],
+.ztree-box .ztree-body [class*='icon-'] {
+  font-size: 36px;
+}
+.alert-box .alert-body p,
+.ztree-box .alert-body p,
+.alert-box .ztree-body p,
+.ztree-box .ztree-body p {
+  font-weight: bold;
+  margin: 10px 0px 20px 0px;
+}
+.alert-box .alert-footer,
+.ztree-box .alert-footer,
+.alert-box .ztree-footer,
+.ztree-box .ztree-footer {
+  overflow: hidden;
+  background-color: #fcfcfc;
+  padding: 3px 10px;
+}
+.alert-box .alert-footer .btn.btn-cancel,
+.ztree-box .alert-footer .btn.btn-cancel,
+.alert-box .ztree-footer .btn.btn-cancel,
+.ztree-box .ztree-footer .btn.btn-cancel {
+  margin-left: 20px;
+  margin-top: 5px;
+  background-color: #e2e2e2;
+  color: #4d4d4d;
+}
+.ztree-box {
+  top: 25% !important;
+}
+.ztree-box .ztree-box-title {
+  background-color: #1887ec;
+}
+.ztree-box .zTree {
+  position: static;
+}
+.alert-box.success .alert-box-title,
+.alert-box.success .btn-back {
+  background-color: #1887ec;
+}
+.alert-box .icon-delete {
+  color: #FF4431;
+}
+.alert-box .icon-checkbox {
+  color: #7AC843;
+}
+.alert-box .icon-13 {
+  color: #FF921E;
+}
+.alert-box.danger .alert-box-title,
+.alert-box.danger .btn-back {
+  background-color: #FF921E;
+}
+/*企业信息页面*/
+[name='company-enterprise'] .row {
+  margin-bottom: 10px;
+}
+[name='company-enterprise'] label {
+  width: 90px;
+  font-weight: normal;
+}
+[name='company-enterprise'] .text-left {
+  text-align: left;
+}
+[name='company-enterprise'] .radio-inline {
+  color: #4d4d4d;
+}
+[name='company-enterprise'] input,
+[name='company-enterprise'] select {
+  border: 1px solid #ddd;
+  box-shadow: none;
+  font-size: 12px;
+}
+.contacts-info {
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+.contacts-info b {
+  margin-left: 20px;
+  margin-right: 40px;
+  font-size: 16px;
+}
+/*故障类型新增*/
+[name='flautTypeForm'] [type='text'] {
+  width: 412px;
+}
+/*单选可移动增删改项目*/
+.radio-list :first-child .but-list .icon-arrow-up2 {
+  color: #cbcbcb;
+  cursor: default;
+}
+.radio-list :last-child .but-list .icon-arrow-down2 {
+  color: #cbcbcb;
+  cursor: default;
+}
+.re-name {
+  width: 100px;
+  height: 25px;
+  position: absolute;
+  top: 8px;
+  left: 5px;
+  border: none;
+  font-weight: normal;
+}
+.re-name:focus {
+  box-shadow: none;
+}
+/*modal 框 amendmentRules*/
+.amendmentRules img {
+  width: 70px;
+  height: 20px;
+}
+.amendmentRules .data-list-item.disabled span {
+  color: #bbb;
+}
+/* modal editDetails*/
+.editDetails .modal-footer,
+.modifyAll .modal-footer,
+.attrAdd .modal-footer,
+.addEquip .modal-footer,
+.changeFailureRepair .modal-footer,
+.checkDetails .modal-footer {
+  border-top: 1px solid #e5e5e4 !important;
+}
+/*modal .attrAdd*/
+.attrAdd [type='checkbox'] {
+  float: left;
+  margin-top: 7px;
+  margin-right: 4px;
+}
+.left_mask,
+.right_mask {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 200px;
+  z-index: 10;
+}
+.right_mask {
+  right: 0px;
+  background-position: -100px 0;
+}
+.left_mask {
+  left: 0px;
+  background-position: 0 0;
+}
+/*我的计划页面*/
+.wrapper ul.nav-tab {
+  margin-left: 10px;
+  height: 28px;
+}
+/*增加按钮 样式*/
+.add {
+  height: 29px;
+  text-align: center;
+}
+.add .icon-9.plus {
+  color: #4d4d4d;
+  line-height: 30px;
+  margin-top: 0px;
+}
+#maintenanceRules .outter-Ul .inner-Ul {
+  margin-left: 40px;
+  display: none;
+}
+#maintenanceRules .outter-Ul .inner-Ul li {
+  height: 20px;
+  line-height: 20px;
+  margin: 5px 0px;
+  width: 150px;
+}
+#maintenanceRules h6 {
+  display: block;
+  width: 150px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  background-color: #eef6f8 ;
+}
+/*我的计划-新增（编辑）-修改细则*/
+span.on_off,
+span.on_gray,
+span.off_gray {
+  display: block;
+  width: 50px;
+  height: 20px !important;
+  background-image: url(../img/on-off.png);
+  margin-top: 10px;
+}
+span.on_off.on,
+span.on_gray.on,
+span.off_gray.on {
+  background-position: 0 -20px;
+  cursor: pointer;
+}
+span.on_off.off,
+span.on_gray.off,
+span.off_gray.off {
+  background-position: 0 -41px;
+  cursor: pointer;
+}
+span.on_off.on_gray,
+span.on_gray.on_gray,
+span.off_gray.on_gray {
+  background-position: 0 -41px;
+}
+span.on_off.off_gray,
+span.on_gray.off_gray,
+span.off_gray.off_gray {
+  background-position: 0 -1px;
+}
+.month_plan,
+.auto_plan {
+  display: none;
+  position: relative;
+}
+.month_plan em,
+.auto_plan em {
+  height: 30px;
+}
+.week_month_plan_timepicker {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  right: 0;
+  top: 32px;
+  width: 280px;
+  border: 1px solid #cbcbcb;
+  background-color: #fff;
+  padding: 5px;
+}
+.week_month_plan_timepicker .picker-title {
+  height: 35px;
+  background-color: #E7ECF2;
+}
+.week_month_plan_timepicker .picker-title .glyphicon {
+  padding: 10px;
+}
+.week_month_plan_timepicker .picker-title .center {
+  cursor: pointer;
+  float: left;
+  width: 150px;
+  height: 30px;
+  line-height: 30px;
+  margin-left: 30px;
+  margin-top: 2px;
+  text-align: center;
+}
+.week_month_plan_timepicker .picker-body {
+  margin: 15px 0px 15px 0px;
+}
+.week_month_plan_timepicker .picker-body li {
+  cursor: pointer;
+  width: 60px;
+  height: 50px;
+  margin: 3px;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 4px;
+}
+.week_month_plan_timepicker .picker-body li:hover {
+  background-color: #eee;
+}
+.week_month_plan_timepicker .picker-body li.active,
+.week_month_plan_timepicker .picker-body li.now {
+  background-color: #489eed;
+  color: #fff;
+}
+.auto-height > div.data-list-item {
+  height: auto;
+  padding: 5px 0px;
+}
+.auto-height > div.data-list-item span {
+  height: auto;
+}
+.auto-height input[type=checkbox] {
+  display: inline-block;
+}
+.auto-height .the-range-checkbox {
+  height: 35px;
+  display: block;
+}
+.auto-height a.the-range-checkbox {
+  color: #8f8d8d;
+}

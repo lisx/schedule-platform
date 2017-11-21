@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.UserDAO">
+	<resultMap type="com.ducetech.app.model.User" id="userMap">
+		<id column="user_id" property="userId"/>
+    	<result column="password" property="password"/>
+		<result column="user_pass" property="userPass"/>
+    	<result column="secret_key" property="secretKey"/>
+    	<result column="user_code" property="userCode"/>
+        <result column="user_job" property="userJob"/>
+        <result column="user_name" property="userName"/>
+    	<result column="station_area" property="stationArea"/>
+    	<result column="station" property="station"/>
+    	<result column="creator_id" property="creatorId"/>
+    	<result column="created_at" property="createdAt"/>
+    	<result column="is_deleted" property="isDeleted"/>
+        <result column="is_admin" property="isAdmin"/>
+        <result column="group_name" property="groupName"/>
+	</resultMap>
+	
+	<!-- 登录 -->
+	<select id="selectUserByUserName" resultMap="userMap">
+		select * from user where user_name=#{userName}
+	</select>
+    <select id="selectUserByUserCode" resultMap="userMap">
+        select * from user where user_code=#{userCode}
+    </select>
+    <select id="selectUserByStation" resultMap="userMap">
+        select * from user where station=#{station}
+    </select>
+	<!-- 获取某用户的全部菜单权限 -->
+	<select id="selectPermissionByUserId" resultType="String">
+		select permission_str from permission where permission.permission_id in(select 
+		role_permission.permission_id from role_permission where role_permission.role_id 
+		in (select user_role.role_id from user_role where user_role.user_id=#{userId}))
+	</select>
+	
+	<!-- 根据ID精确查找用户 -->
+	<select id="selectUserByUserId" resultMap="userMap">
+		select * from user where user_id=#{userId}
+	</select>
+	
+	<!-- 对用户的通用查询  -->
+	<select id="selectUser" parameterType="com.ducetech.app.model.User" resultMap="userMap">
+		select * from user where 1=1
+		<if test="userCode!=null and userCode!='' and userCode!='{}'||userName!=null and userName!='' and userName!='{}'|| userJob!=null and userJob!='' and userJob!='{}'">
+			AND (user_code=#{userCode} or user_name like '%' #{userName} '%' or user_job=#{userJob})
+		</if>
+		<if test="stationArea!=null and stationArea!=''">
+			and station_area like CONCAT(#{stationArea},'%')
+		</if>
+		<if test="station!=null and station!=''">
+			and station=#{station}
+		</if>
+
+		<if test="isAdmin!=null and isAdmin!=''">
+			and is_admin=#{isAdmin}
+		</if>
+		<if test="creatorId!=null and creatorId!=''">
+			and creator_id=#{creatorId}
+		</if>
+		<if test="createdAt!=null and createdAt!=''">
+			and created_at=#{createdAt}
+		</if>
+			and is_deleted!='1'
+	</select>
+	
+	<!-- 插入新用户 -->
+	<insert id="insertUser" useGeneratedKeys="true" keyProperty="userId">
+		insert into user (password,user_pass,user_code,user_name,station_area,station,creator_id,created_at,is_admin,secret_key,user_job,group_name)
+		values(#{password},#{userPass},#{userCode},#{userName},#{stationArea},#{station},#{creatorId},#{createdAt},#{isAdmin},#{secretKey}, #{userJob}, #{groupName})
+	</insert>
+    <update id="deleteUserById" parameterType="com.ducetech.app.model.User">
+        update user
+        <set>
+        <if test="isDeleted != null and isDeleted != ''">
+            is_deleted=#{isDeleted},
+        </if>
+        </set>
+        where user_id=#{userId}
+    </update>
+	<!-- 更新某用户信息 -->
+	<update id="updateUser" parameterType="com.ducetech.app.model.User">
+		update user 
+		<set>
+			<if test="password != null and password != ''">
+				password=#{password},
+			</if>
+			<if test="userPass != null and userPass != ''">
+				user_pass=#{userPass},
+			</if>
+			<if test="userCode != null and userCode != ''">
+				user_code=#{userCode},
+			</if>
+			<if test="userName != null and userName != ''">
+				user_name=#{userName},
+			</if>
+			<if test="userJob != null and userJob != ''">
+                user_job=#{userJob},
+			</if>
+			<if test="stationArea != null and stationArea != ''">
+                station_area=#{stationArea},
+			</if>
+			<if test="station != null and station != ''">
+                station=#{station},
+			</if>
+			<if test="creatorId!=null and creatorId!=''">
+				creator_id=#{creatorId},
+			</if>
+			<if test="createdAt!=null and createdAt!=''">
+				created_at=#{createdAt},
+			</if>
+			<if test="isDeleted!=null and isDeleted!=''">
+				is_deleted=#{isDeleted},
+			</if>
+            <if test="isAdmin!=null and isAdmin!=''">
+                is_admin=#{isAdmin},
+            </if>
+            <if test="groupName!=null and groupName!=''">
+                group_name=#{groupName},
+            </if>
+		</set>
+		where user_id=#{userId}
+	</update>
+	
+	<!-- 通过角色ID获取人员  -->
+	<select id="selectUsersByRoleId" resultMap="userMap">
+		select user_id, user_code, password,user_pass,secret_key, user_name, station_area, station, creator_id, created_at, is_deleted,is_admin from user where user_id in (select user_id from user_role where role_id=#{roleId})
+	</select>
+	<select id="selectUserCountByStation" resultType="Integer">
+		select count(1) from user where station=#{station}
+	</select>
+
+	<select id="getPrepareUser" resultMap="userMap" parameterType="com.ducetech.app.model.User">
+		select * from user where station = #{station} and station_area = #{stationArea} and user_job = #{userJob}
+	</select>
+</mapper>

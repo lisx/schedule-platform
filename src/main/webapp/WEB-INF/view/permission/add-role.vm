@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增权限方案</title>
+	<style>
+        b {
+			color: red;
+		}
+	</style>
+    #parse('common/path-css.vm')
+    <link href="$path/static/css/newStyle.css" rel="stylesheet">
+	#parse('common/path-js.vm')
+    <script src="$path/static/js/main.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="content-header">
+    <div class="float-left">
+    	<a class="btnDefault bgBlue" href="javascript:;" onclick="saveRole()">提交</a>
+    	<a class="btnDefault" href="$path/permissions/role" target="myiframe">返回</a>
+    </div>
+</div>
+<div class="panel-body">
+    <form id="roleForm" class="form_container">
+    	<input type="hidden" id="permissionIds" name="permissionIds"/>
+        <div class="form_line">
+            <label for="name" class="require red-star">权限方案名称：</label>
+            <input type="text" name="roleName" placeholder="请输入">
+        </div>
+        <div class="form_line">
+            <label for="describe">权限方案描述：</label>
+            <textarea name="comment" rows="3" placeholder="请输入"></textarea>
+        </div>
+    </form>
+    <div class="permission">
+		<div class="thead clear">
+			<span>模块名称</span>
+			<span>职务</span>
+			<span>职务描述</span>
+		</div>
+		<div class="tbody"></div>
+	</div>
+</div>
+<script>
+$(function () {
+	getAllPermission();
+});
+
+function getAllPermission(){
+	jQuery.ajax({
+       async: false,
+       type: "get",
+       url: "$path/permissions/getAllPermission",
+       dataType: "json",
+       error: function (request) {
+       		Alert("网络错误", "fail");
+       },
+       success: function (data) {
+    		var arr1 = [],arr2 = [];
+    		//permissionId等于1的字段不显示
+    		for(i=0;i<data.length;i++){
+    			if(data[i].permissionId == 1){
+    				data.splice(i,1);
+    				break;
+    			}
+    		} 
+    		//找出所有一级字段
+    		var strP = '';
+    		for(i=0;i<data.length;i++){
+    			if(data[i].parentPermissionId == 1){
+    				strP += '<div class="list clear" data-node="node'+ data[i].permissionId +'">';
+    				strP += '<label class="P-role"><input type="checkbox" code="'+ data[i].permissionId +'"/>'+ data[i].name +'</label></div>';
+    				arr1.push(data[i].permissionId);
+    			}
+    		}   
+    		$(".tbody").append(strP);
+    		//找出所有二级字段
+    		for(var j=0;j<data.length;j++){
+    			for(i=0;i<data.length;i++){
+    				if(data[i].parentPermissionId == data[j].permissionId){
+	    				var strS1 = '';
+	    				var obj = $("[data-node='node"+ data[i].parentPermissionId +"']");
+						var comment = data[i].comment == undefined ? "暂无描述" : data[i].comment;
+						strS1 += '<li data-node="node'+ data[i].permissionId +'">';
+						strS1 += '<label><input type="checkbox" code="'+ data[i].permissionId +'"/>'+data[i].name+'</label><span>'+ comment +'</span></li>';
+						if(obj.find("ul").length == 0){
+							obj.append("<ul></ul>");
+						}
+						obj.find("ul").append(strS1);
+    				}
+	    		}
+    		}     		
+       	}
+    });
+}
+
+function saveRole(){
+	var result = formValidation($("#roleForm"));
+	if(!result){
+		return false;
+	}
+	var arr = [];
+	$(".permission :checked").each(function(){
+		arr.push($(this).attr("code"));
+	})	
+	var str = arr.join(",");
+	$("#permissionIds").val(str);
+    jQuery.ajax({
+       async: false,
+       type: "post",
+       url: "$path/permissions/saveRole",
+       data: $('#roleForm').serialize(),
+       dataType: "json",
+       error: function (request) {
+           Alert("fail","网络错误");
+       },
+       success: function (rs) {
+           Alert(rs.data, rs.message);
+       		setTimeout(function(){
+       			$("#mask",parent.document).hide();
+       			setTimeout(function(){
+       				location.href="$path/permissions/role";
+       			},400)
+       		},2000)
+       		  		
+       	}
+    });
+}
+</script>
+</body>
+</html>

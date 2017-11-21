@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.GroupingDAO">
+	<resultMap type="com.ducetech.app.model.Grouping" id="groupingMap">
+        <id column="group_id" property="groupId"/>
+		<result column="group_code" property="groupCode"/>
+    	<result column="group_name" property="groupName"/>
+    	<result column="group_order" property="groupOrder"/>
+    	<result column="is_deleted" property="isDeleted"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="updator_id" property="updatorId"/>
+    	<result column="created_at" property="createdAt"/>
+    	<result column="updated_at" property="updatedAt"/>
+	</resultMap>
+
+	<!-- 根据人员分组名称获取 -->
+	<select id="selectGroupingByGroupName" resultMap="groupingMap">
+		SELECT group_id, group_code, group_name, group_order,is_deleted, creator_id, updator_id, created_at, updated_at FROM grouping WHERE group_name=#{groupName} AND is_deleted=0
+	</select>
+
+    <!-- 根据人员分组编码获取 -->
+    <select id="selectGroupingByGroupCode" resultMap="groupingMap">
+        SELECT group_id, group_code, group_name, group_order,is_deleted, creator_id, updator_id, created_at, updated_at FROM grouping WHERE group_code=#{groupCode} AND is_deleted=0
+    </select>
+
+    <!-- 根据人员分组编码获取 -->
+    <select id="selectByParentCode" resultMap="groupingMap">
+        SELECT group_id, group_code, group_name, group_order,is_deleted, creator_id, updator_id, created_at, updated_at FROM grouping
+            WHERE is_deleted=0 AND group_code LIKE #{groupCode} AND LENGTH(group_code)=#{groupCodeLength} ORDER BY group_code
+    </select>
+
+	<!-- 根据ID精确查找人员分组 -->
+	<select id="selectGroupingByGroupId" resultMap="groupingMap">
+		SELECT group_id, group_code, group_name, group_order,is_deleted, creator_id, updator_id, created_at, updated_at FROM grouping WHERE group_id=#{groupId} AND is_deleted=0
+	</select>
+	
+	<!-- 对人员分组的通用查询  -->
+	<select id="selectGrouping" parameterType="com.ducetech.app.model.Grouping" resultMap="groupingMap">
+		SELECT group_id, group_code, group_name, group_order,is_deleted, creator_id, updator_id, created_at, updated_at FROM grouping WHERE is_deleted=0
+		<if test="groupCode!=null and groupCode!=''">
+			AND group_code=#{groupCode}
+		</if>
+		<if test="groupName!=null and groupName!=''">
+			AND group_name LIKE CONCAT('%',#{groupName},'%')
+		</if>
+		<if test="creatorId!=null and creatorId!=''">
+			AND creator_id=#{creatorId}
+		</if>
+		<if test="createdAt!=null and createdAt!=''">
+			AND created_at=#{createdAt}
+		</if>
+		<if test="isDeleted!=null and isDeleted!=''">
+			AND is_deleted=#{isDeleted}
+		</if>
+	</select>
+	
+	<!-- 插入新人员分组 -->
+	<insert id="insertGrouping" useGeneratedKeys="true" keyProperty="groupingId">
+		insert into grouping (group_code,group_name,group_order,is_deleted,creator_id,created_at)
+		values(#{groupCode},#{groupName},#{groupOrder},#{isDeleted},#{creatorId},#{createdAt})
+	</insert>
+	
+	<!-- 更新某人员分组信息 -->
+	<update id="updateGrouping" parameterType="com.ducetech.app.model.Grouping">
+		update grouping 
+		<set>
+			<if test="groupCode != null and groupCode != ''">
+				group_code=#{groupCode},
+			</if>
+			<if test="groupName != null and groupName != ''">
+				group_name=#{groupName},
+			</if>
+            <if test="isDeleted != 0">
+				is_deleted=#{isDeleted},
+            </if>
+		</set>
+		where group_code=#{groupCode}
+	</update>
+    <!-- 删除某人员分组信息 -->
+    <update id="deleteGrouping" parameterType="com.ducetech.app.model.Grouping">
+        update grouping set is_deleted=1 where group_code like #{groupCode}
+    </update>
+
+	<select id="queryGroupsByLength" resultMap="groupingMap">
+		SELECT group_id, group_code, group_name, group_order,is_deleted, creator_id, updator_id, created_at, updated_at FROM grouping WHERE LENGTH(group_code)=${len} AND is_deleted=0
+	</select>
+</mapper>

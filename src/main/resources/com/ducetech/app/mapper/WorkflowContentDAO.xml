@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.app.dao.WorkflowContentDAO">
+    <resultMap type="com.ducetech.app.model.WorkflowContent" id="workflowContentMap">
+        <id column="content_id" property="contentId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="content" property="content"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="updator_id" property="updatorId"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="workflow_id" property="workflowId"/>
+        <result column="start_location" property="startLocation"/>
+        <result column="end_location" property="endLocation"/>
+        <result column="rows_num" property="rowsNum"/>
+        <result column="content_color" property="contentColor"/>
+    </resultMap>
+
+    <insert id="insertWorkflowContent" parameterType="com.ducetech.app.model.WorkflowContent">
+        insert into workflow_content (content_id,start_time,end_time,content,creator_id,updator_id,is_deleted,created_at,updated_at,workflow_id,start_location,end_location,rows_num,content_color)
+        values (null,#{startTime},#{endTime},#{content},#{creatorId},#{updatorId},#{isDeleted},#{createdAt},#{updatedAt},#{workflowId},#{startLocation},#{endLocation},#{rowsNum},#{contentColor})
+    </insert>
+
+    <delete id="deleteWorkflowContentById" parameterType="java.lang.Integer">
+        update workflow_content set is_deleted = '1' where content_id = #{workflowContentId};
+    </delete>
+
+    <update id="updateWorkflowCotent" parameterType="com.ducetech.app.model.WorkflowContent">
+        update workflow_content
+        <set>
+            start_time=#{startTime},
+            end_time=#{endTime},
+            content=#{content},
+            content_color=#{contentColor},
+            <if test="rowsNum != null">
+                start_location=#{startLocation},
+            </if>
+            <if test="colsNum != null">
+                end_location=#{endLocation},
+            </if>
+            <if test="contentLen != null">
+                rows_num=#{rowsNum}
+            </if>
+            <if test="updatorId != null">
+                updator_id = #{updatorId},
+            </if>
+            updated_at = #{updatedAt},
+            <if test="workflowId != null">
+                workflow_id = #{workflowId},
+            </if>
+        </set>
+        where is_deleted = '0' and content_id = #{contentId}
+    </update>
+
+    <select id="selectWorkflowContentById" parameterType="java.lang.Integer"
+            resultMap="workflowContentMap">
+        select * from workflow_content where is_deleted = 0 and contentId = #{workflowContentId}
+    </select>
+
+    <select id="selectWorkflowContents" parameterType="com.ducetech.app.model.WorkflowContent"
+            resultMap="workflowContentMap">
+        select * from workflow_content where is_deleted = 0
+        <if test="workflowId != null">
+            and workflow_id=#{workflowId}
+        </if>
+    </select>
+    <select id="selectWorkflowContentsByWorkflowId" parameterType="java.lang.Integer" resultMap="workflowContentMap">
+        select * from workflow_content where is_deleted = 0
+            and workflow_id = #{workflowId}
+    </select>
+
+    <delete id="deleteWorkflowContentByWorkflowId" parameterType="java.lang.Integer">
+         update workflow_content set is_deleted = '1' where workflow_id = #{workflowId};
+    </delete>
+</mapper>

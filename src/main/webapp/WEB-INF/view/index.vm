@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>运三公司新班制辅助管理系统</title>
+    #parse('common/path-css.vm')
+    #parse('common/path-js.vm')
+</head>
+<body>
+<div id="mask"></div>
+<!--  头部 start -->
+<div class="navbar header">
+    <div class="header-left">
+        <div class="logo">
+            <img src="$path/static/img/logo.png" alt="北京地铁">
+        </div>
+        <p>运三公司新班制辅助管理系统</p>
+    </div>
+    <div class="dropdown">
+        <button type="button" class="btn dropdown-toggle" id="dropdownMenu" data-toggle="dropdown">$user.userName
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+            <li role="presentation">
+                <a href="$path/logout">退出</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!--  头部 end -->
+<!-- 左侧菜单 start -->
+<section>
+    <div class="tab-content">
+        <!-- 系统设置 start -->
+        <div role="tabpanel" class="tab-pane fade in active" id="sideMenu">
+            <div class="panel">
+                #if($shiro.hasPermission("系统设置"))
+                    <a class="active" href="#part1" data-toggle="collapse" data-parent="#sideMenu">系统设置</a>
+                    <div class="collapse in slide-menu" id="part1">
+                        #if($shiro.hasPermission("系统设置-人员管理"))
+                            <a class="active" href="$path/user" target="myiframe">
+                                <span class="icon-19"></span>人员管理
+                            </a>
+                        #end
+                        #if($shiro.hasPermission("系统设置-人员分组"))
+                            <a href="$path/grouping" target="myiframe">
+                                <span class="icon-18"></span>人员分组
+                            </a>
+                        #end
+                        #if($shiro.hasPermission("系统设置-权限管理"))
+                            <a href="$path/permissions/role" target="myiframe">
+                                <span class="icon-17"></span>权限管理
+                            </a>
+                        #end
+                    </div>
+                #end
+            </div>
+            <div class="panel">
+                #if($shiro.hasPermission("排班管理"))
+                    <a href="#part2" data-toggle="collapse" data-parent="#sideMenu">排班管理</a>
+                    <div class="collapse slide-menu" id="part2">
+                        <a href="$path/scheduleForm" target="myiframe">
+                            <span class="icon-16"></span>排班表格
+                        </a>
+                        <a href="$path/automaticScheduling" target="myiframe">
+                            <span class="icon-6"></span>新增排班
+                        </a>
+                        <a href="$path/workflowSetting" target="myiframe">
+                            <span class="icon-6"></span>工作流程
+                        </a>
+                    </div>
+                #end
+            </div>
+            <div class="panel">
+                #if($shiro.hasPermission("排班设置"))
+                    <a href="#part3" data-toggle="collapse" data-parent="#sideMenu">排班设置</a>
+                    <div class="collapse slide-menu" id="part3">
+                        #if($shiro.hasPermission("排班设置-班次设置"))
+                            <a href="$path/shiftSetting" target="myiframe">
+                                <span class="icon-7"></span>班次设置
+                            </a>
+                        #end
+                        #if($shiro.hasPermission("排班设置-岗位设置"))
+                            <a href="$path/postSetting" target="myiframe">
+                                <span class="icon-8"></span>岗位设置
+                            </a>
+                        #end
+                        #if($shiro.hasPermission("排班设置-流程设置"))
+                            <a href="$path/workflowSetting" target="myiframe">
+                                <span class="icon-8"></span>流程设置
+                            </a>
+                        #end
+                    </div>
+                #end
+            </div>
+            <div class="panel">
+                #if($shiro.hasPermission("统计报表"))
+                    <a href="#part4" data-toggle="collapse" data-parent="#sideMenu">统计报表</a>
+                    <div class="collapse slide-menu" id="part4">
+                        #if($shiro.hasPermission("统计报表-工时报表"))
+                            <a href="$path/hourReport" target="myiframe">
+                                <span class="icon-15"></span>工时报表
+                            </a>
+                        #end
+                        #if($shiro.hasPermission("统计报表-临时报表"))
+                            <a href="$path/temporaryReport" target="myiframe">
+                                <span class="icon-16"></span>临时报表
+                            </a>
+                        #end
+                    </div>
+                #end
+            </div>
+        </div>
+        <!-- 系统设置 end -->
+    </div>
+    <iframe id="myiframe" name="myiframe" src="$path/user"></iframe>
+</section>
+</div>
+<!--隐藏的页面元素 end-->
+<!-- 左侧菜单 end -->
+</body>
+</html>
