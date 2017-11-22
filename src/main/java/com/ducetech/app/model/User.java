@@ -38,6 +38,22 @@ public class User extends BaseModel implements Serializable {
 
 	private String roleNames;		//角色名字
 
+	private Date birthday;
+
+	private String idCode;
+
+	private Date onboardDate;
+
+	private int isMarried;
+
+	private int isPartyMember;
+
+	private String phoneNumber;
+
+	private String gender;
+
+	private String homeAddress;
+
     private String reportId;
 
     private Date reportAt;
