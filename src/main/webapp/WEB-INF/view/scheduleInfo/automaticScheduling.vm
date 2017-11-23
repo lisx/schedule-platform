@@ -207,21 +207,7 @@
         var first = actived[0];
         var last = actived[1];
         var type = $(first).attr("tdType");
-        if (type < 0) {
-            var fuid = $(first).attr("userId");
-            var luid = $(last).attr("userId");
-            var funame = $(first).text();
-            var luname = $(last).text();
-            $(first).attr("userId", luid);
-            $(last).attr("userId", fuid);
-            $(first).text(luname);
-            $(last).text(funame);
-            $(first).removeClass("td-active");
-            $(last).removeClass("td-active");
-            $("td[tLength]").each(function (n) {
-                calcWeeklyTime(n);
-            });
-        } else {
+        if (type >= 0) {
             var id1 = first.id;
             var id2 = last.id;
             var modelId = $("select").val();
@@ -244,12 +230,16 @@
                     $(first).css("background-color", lbgcolor);
                     $(last).css("background-color", fbgcolor);
                     $("#btnChange").hide();
+                    $("td[tLength]").each(function (n) {
+                        calcWeeklyTime(n);
+                    });
                 }
             });
         }
     });
 
     $(document).on("click", "[tdType=-1]", function (e) {
+        $("[tdType=-1]").removeClass("td-active");
         $(this).addClass("td-active");
         $("#select-user").css("top",e.pageY).css("left",e.pageX+100).show();
         $(".user-table td").css("color","green");
@@ -436,6 +426,24 @@
         });
     });
 
+    $(document).on("click","[name=btnRemoveLine]",function () {
+        var weekNumber=$(this).attr("weekNumber");
+        var modelId = $("select").val();
+        var line=$(this).closest("tr");
+        jQuery.ajax({
+            type: "get",
+            url: "$path/removeWeekTemplate?modelId="+modelId + "&weekNumber=" + weekNumber,
+            data: null,
+            dataType: "json",
+            error: function (e, c, a) {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                $(line).remove();
+            }
+        });
+    });
+
     $(document).ready(function () {
         $("#startAt").parent().datetimepicker({
             format: "YYYY-MM-DD",
@@ -488,6 +496,9 @@
                 time += parseInt($(works[i]).attr("duration"));
             }
             $(timeTd).text(time / 60);
+            if(time==0){
+                $(timeTd).html("<button class='btnDefault bgOrange autoBtn' name='btnRemoveLine' weekNumber="+n+">删除本行</button>")
+            }
         }
     }
 

@@ -42,4 +42,7 @@
     <delete id="deleteByModelId">
         DELETE FROM schedule_info_template WHERE model_id = #{modelId}
     </delete>
+    <delete id="deleteByModelAndWeek">
+        DELETE FROM schedule_info_template WHERE model_id = #{modelId} and week_number=#{weekNumber}
+    </delete>
 </mapper>

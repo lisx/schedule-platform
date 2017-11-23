@@ -14,4 +14,6 @@ public interface ScheduleInfoUserDAO {
     void deleteById(Long id);
 
     ScheduleInfoUser selectByModelAndUser(@Param("modelId")String modelId, @Param("userId")String userId);
+
+    void updateWeekNumber(ScheduleInfoUser u);
 }

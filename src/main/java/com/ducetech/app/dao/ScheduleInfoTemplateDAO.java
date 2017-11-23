@@ -16,4 +16,6 @@ public interface ScheduleInfoTemplateDAO {
     void deleteByModelId(String modelId);
 
     ScheduleInfoTemplate selectByModelIdAndWeek(@Param("modelId") String modelId,@Param("weekNumber")  int weekNumber, @Param("weekDay") int weekDay);
+
+    void deleteByModelAndWeek(@Param("modelId") String modelId,@Param("weekNumber")  int weekNumber);
 }

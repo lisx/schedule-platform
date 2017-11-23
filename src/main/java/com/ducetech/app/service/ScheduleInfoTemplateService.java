@@ -11,4 +11,6 @@ public interface ScheduleInfoTemplateService {
     int insertScheduleInfoTemplateList(String modelId,List<ScheduleInfoTemplate> scheduleInfoTemplateList, User user);
 
     Integer updateScheduleInfoTemplate(ScheduleInfoTemplate scheduleInfoTemplate);
+
+    void removeByModelAndWeek(String modelId, int weekNumber);
 }

@@ -958,6 +958,26 @@ public class ScheduleInfoController extends BaseController {
         return result;
     }
 
+    @RequestMapping(value = "/removeWeekTemplate", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Object removeWeekTemplate(String modelId, int weekNumber) {
+        long start = System.currentTimeMillis();
+        JSONObject result = new JSONObject();
+        try {
+            logger.debug("params: {} , {}", modelId,weekNumber);
+            templateService.removeByModelAndWeek(modelId,weekNumber);
+            result.put("result", "success");
+        } catch (Exception e) {
+            logger.error("error:", e);
+            result.put("error",e.getMessage());
+        }
+        logger.debug("running time: " + (System.currentTimeMillis() - start));
+        return result;
+    }
+
+
+
     @Autowired
     private ScheduleInfoUserService infoUserService;
 

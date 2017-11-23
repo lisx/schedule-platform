@@ -34,4 +34,12 @@
     <delete id="deleteById">
         DELETE FROM schedule_info_user WHERE id = #{id}
     </delete>
+
+    <update id="updateWeekNumber" parameterType="com.ducetech.app.model.ScheduleInfoUser">
+        update schedule_info_user
+        <set>
+            week_number = #{weekNumber},
+        </set>
+        where id = #{id}
+    </update>
 </mapper>
