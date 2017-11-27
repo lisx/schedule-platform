@@ -95,10 +95,7 @@ public class ShiftSettingController extends BaseController {
     @ResponseBody
     public OperationResult addShiftSettingForm(ShiftSettingVO shift, HttpServletRequest request) throws Exception {
         User userInfo = getLoginUser(request);
-        if(userInfo.getStationArea()==null){
-            throw new RuntimeException("没有所属站区的用户不能编辑班制");
-        }
-        
+
         ShiftModel model = shiftModelService.selectShiftModelByModelCodeId(null, shift.getModelId());
         shift.setStation(model.getStation());
         shift.setStationArea(model.getStationArea());
@@ -115,8 +112,12 @@ public class ShiftSettingController extends BaseController {
 
         shift.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
         shift.setCreatorId(userInfo.getUserId());
-        shift.setStation(userInfo.getStation());
-        shift.setStationArea(userInfo.getStationArea());
+        if(shift.getStationArea()==null){
+            shift.setStation(userInfo.getStation());
+        }
+        if(shift.getStationArea()==null){
+            shift.setStationArea(userInfo.getStationArea());
+        }
         shift.setIfUse(0);
         //将字符串转换为分钟
         shift.setStartAt(DateUtil.timeToMinu(shift.getStartAtStr()));

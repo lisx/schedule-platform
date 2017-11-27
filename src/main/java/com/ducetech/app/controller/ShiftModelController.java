@@ -65,13 +65,14 @@ public class ShiftModelController extends BaseController {
     @ResponseBody
     public OperationResult addShiftModel(ShiftModel model, String parentCode, HttpServletRequest request) throws Exception {
         User userInfo = getLoginUser(request);
-        if(userInfo.getStationArea()==null){
-            throw new RuntimeException("没有所属站区的用户不能编辑班制");
-        }
         model.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
         model.setCreatorId(userInfo.getUserId());
-        model.setStationArea(userInfo.getStationArea());
-        model.setStation(userInfo.getStation());
+        if(model.getStationArea()==null){
+            model.setStationArea(userInfo.getStationArea());
+        }
+        if(model.getStation()==null){
+            model.setStation(userInfo.getStation());
+        }
         model.setIfUse(0);
         if(parentCode==null) {
             model.setModelCode(shiftModelService.selectShiftModelByParentCode("000"));
