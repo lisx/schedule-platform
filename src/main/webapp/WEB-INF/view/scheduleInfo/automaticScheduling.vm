@@ -14,7 +14,7 @@
         }
 
         .td-active {
-            background-color: #eaeaea !important;
+            background-color: #fff !important;
         }
 
         .drag {

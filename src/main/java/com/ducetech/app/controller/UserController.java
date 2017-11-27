@@ -29,6 +29,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,8 +113,8 @@ public class UserController extends BaseController {
 								user.setCreatorId(u.getUserId());
 								user.setIsAdmin("0");
 								user.setIsDeleted(0);
-								user.setPassword(userService.genRandomNum(6));
-								user.setUserPass(user.getPassword());
+								user.setPassword("123456");
+								user.setUserPass("123456");
 								user.setStation(station);
 								user.setStationArea(stationArea);
 								user.setUserCode(userCode);
@@ -133,6 +137,49 @@ public class UserController extends BaseController {
 	public String logoutPage() {
 		SecurityUtils.getSubject().logout();
 		return "redirect:/";
+	}
+
+	@RequestMapping(value = "/printUserTemplate", method = RequestMethod.GET)
+	@ResponseBody
+	public void printUserTemplate(HttpServletRequest request, HttpServletResponse response) {
+		OutputStream os = null;
+		InputStream inputStream = null;
+		ByteArrayOutputStream baos = null;
+
+		try {
+			inputStream = UserController.class.getClassLoader().getResourceAsStream("./template/user.xls");
+			String fileName = "人员信息模板.xls";
+			response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+			response.setContentType("application/octet-stream; charset=utf-8");
+			os = response.getOutputStream();
+			baos = new ByteArrayOutputStream();
+			byte[] temp = new byte[1024];
+			int len = 0;
+			while ((len = (inputStream.read(temp))) != -1) {
+				baos.write(temp, 0, len);
+			}
+			baos.writeTo(os);
+			baos.flush();
+			response.flushBuffer();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != baos) {
+				try {
+					baos.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (null != inputStream) {
+				try {
+					inputStream.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+
+				}
+			}
+		}
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)

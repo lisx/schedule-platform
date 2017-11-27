@@ -36,7 +36,7 @@ public class ScheduleCalculator {
         while (true){
             try{
                 return calculate(shifts, workerCount, model);
-            }catch (IllegalStateException e){
+            }catch (Exception e){
                 workerCount++;
             }
         }
@@ -525,7 +525,8 @@ public class ScheduleCalculator {
     private static void adjustWorkingHours(List<Task> taskList, LinkedHashMap<Integer, PersonalDuty> prMap) {
         final List<PersonalDuty> list = new ArrayList<>(prMap.values());
         boolean loop = true, lazy = true;
-        while (true) {
+        List<Integer> distances=new ArrayList<>();
+        while (loop) {
             Collections.sort(list, new Comparator<PersonalDuty>() {
                 @Override
                 public int compare(PersonalDuty o1, PersonalDuty o2) {
@@ -535,6 +536,8 @@ public class ScheduleCalculator {
             PersonalDuty laziest = list.get(0);
             PersonalDuty busiest = list.get(list.size() - 1);
             int distance = busiest.total - laziest.total;
+            distances.add(distance);
+            checkDistances(distances,prMap.size());
             if (distance > THRESHOLD) {
                 logger.debug("total check --distance, distance: {}", distance);
                 if (lazy) {
@@ -561,6 +564,21 @@ public class ScheduleCalculator {
             } else {
                 return ;
             }
+        }
+    }
+
+    private static void checkDistances(List<Integer> distances,int c) {
+        if(distances.size()<c/2){
+            return ;
+        }
+        int count=0,cursor=distances.get(distances.size()-1);
+        for(int i=distances.size()-2;i>=0;i--){
+            if (distances.get(i)==cursor){
+                count++;
+            }
+        }
+        if (count>c/2){
+            throw new IllegalStateException("can not fix distances");
         }
     }
 

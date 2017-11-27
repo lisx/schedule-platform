@@ -10,6 +10,12 @@
     </style>
     #parse('common/path-css.vm')
     #parse('common/path-js.vm')
+    <script>
+        //导出个人模板
+        function printUserTemplate() {
+            location.href = "$path/printUserTemplate";
+        }
+    </script>
 </head>
 <body>
 <!-- 右侧内容 start -->
@@ -18,6 +24,7 @@
     <div class="float-left">
         <a class="btnDefault bgGreen" href="#addUser" data-toggle="modal" data-target="#addUser">新增人员</a>
         <a class="btnDefault" href="#export" data-toggle="modal" data-target="#export">导入</a>
+        <a class="btnDefault" href="javascript:void(0)" onclick="printUserTemplate()">模板</a>
     </div>
     <div class=" float-right">
         <div class="form_line">
