@@ -101,7 +101,10 @@
 
             function myPrint() {
                 console.log("打印方法开始:");
-                location.href = "$path/printXiZhiMenSchedule?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
+                location.href = "$path/printXiZhiMenSchedule?startAt=" + $("#startAt").val()
+                        + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val()
+                        + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" 
+                        + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
                 console.log("打印方法结束:");
             }
             function mySinglePrint() {

@@ -487,7 +487,7 @@ public class ScheduleInfoController extends BaseController {
      */
     @RequestMapping(value = "/printSingleXiZhiMenSchedule", method = RequestMethod.GET)
     public void printSingleXiZhiMenSchedule(String startAt, String endAt, String monthDate,
-                                            String queryData, String stationArea, String station, HttpServletResponse response, HttpServletRequest request) {
+                                            String queryData, String stationArea, String station,String modelId, HttpServletResponse response, HttpServletRequest request) {
         QueryDate queryDate = new QueryDate(startAt, endAt, monthDate).invoke();
         startAt = queryDate.getStartAt();
         endAt = queryDate.getEndAt();
