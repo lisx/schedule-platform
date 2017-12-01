@@ -80,7 +80,7 @@ public class ScheduleCalculator {
         if (relShiftIds.size() > 0) {
             adjustRelevance(taskList, prMap);
         }
-        adjustWorkingHours(taskList, prMap);
+        adjustWorkingHours(taskList, prMap,shifts);
         adjustCycling(taskList, prMap, shifts, relShiftIds);
         adjustDensity(taskList, prMap);
         printPersonalDuty(taskList, prMap);
@@ -522,10 +522,17 @@ public class ScheduleCalculator {
     }
 
 
-    private static void adjustWorkingHours(List<Task> taskList, LinkedHashMap<Integer, PersonalDuty> prMap) {
+    private static void adjustWorkingHours(List<Task> taskList, LinkedHashMap<Integer, PersonalDuty> prMap,List<ShiftSetting> settings) {
         final List<PersonalDuty> list = new ArrayList<>(prMap.values());
         boolean loop = true, lazy = true;
         List<Integer> distances=new ArrayList<>();
+        double dist=Integer.MAX_VALUE;
+        for (ShiftSetting s :
+                settings) {
+            double d=s.getTotalAt();
+            dist=Math.min(dist,d/60);
+        }
+        dist=Math.max(THRESHOLD,dist);
         while (loop) {
             Collections.sort(list, new Comparator<PersonalDuty>() {
                 @Override
@@ -538,7 +545,7 @@ public class ScheduleCalculator {
             int distance = busiest.total - laziest.total;
             distances.add(distance);
             checkDistances(distances,prMap.size());
-            if (distance > THRESHOLD) {
+            if (distance > dist) {
                 logger.debug("total check --distance, distance: {}", distance);
                 if (lazy) {
                     loop = adjustBusiestHours(busiest, list, taskList, prMap);
