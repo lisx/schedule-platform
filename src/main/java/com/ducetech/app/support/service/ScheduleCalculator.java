@@ -18,7 +18,7 @@ import java.util.*;
 public class ScheduleCalculator {
     public static final int WEEK_DAYS = 7;
     public static final int DAY_MINUTES = 24 * 60;
-    private static final double THRESHOLD = 6 * 60;
+    private static final int THRESHOLD = 6 * 60;
     private static Logger logger = LoggerFactory.getLogger(ScheduleCalculator.class);
 
 
@@ -526,11 +526,10 @@ public class ScheduleCalculator {
         final List<PersonalDuty> list = new ArrayList<>(prMap.values());
         boolean loop = true, lazy = true;
         List<Integer> distances=new ArrayList<>();
-        double dist=Integer.MAX_VALUE;
+        int dist=Integer.MAX_VALUE;
         for (ShiftSetting s :
                 settings) {
-            double d=s.getTotalAt();
-            dist=Math.min(dist,d/60);
+            dist=Math.min(dist,s.getTotalAt());
         }
         dist=Math.max(THRESHOLD,dist);
         while (loop) {
