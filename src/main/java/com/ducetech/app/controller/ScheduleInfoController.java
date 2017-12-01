@@ -117,9 +117,12 @@ public class ScheduleInfoController extends BaseController {
 
 
     @RequestMapping(value = "/automaticScheduling", method = RequestMethod.GET)
-    public String automaticScheduling(ModelMap model) {
-        List<Grouping> groupingList = groupingService.selectByParentCode("000", 9);
+    public String automaticScheduling(ModelMap model,HttpServletRequest request) {
+        User loginUser = getLoginUser(request);
+        Grouping grouping = groupingService.selectGroupingByGroupCode(loginUser.getStationArea());
+        List<Grouping> groupingList = groupingService.selectByParentCode(grouping.getGroupCode(), 9);
         model.put("groupingList", groupingList);
+        model.put("stationArea", grouping);
         return "/scheduleInfo/automaticScheduling";
     }
 
