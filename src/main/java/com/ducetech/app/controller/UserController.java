@@ -15,6 +15,7 @@ import com.ducetech.framework.model.BaseQuery;
 import com.ducetech.framework.model.PagerRS;
 import com.ducetech.framework.util.*;
 import com.ducetech.framework.web.view.OperationResult;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -81,16 +82,24 @@ public class UserController extends BaseController {
 							for (List<String> row : sheet) {
 								String userCode = ExtStringUtil.trim(row.get(0));
 								String userName = ExtStringUtil.trim(row.get(1));
-								String stationArea = ExtStringUtil.trim(row.get(2));
-								if (!ExtStringUtil.isBlank(stationArea)) {
-									Grouping grouping = groupingService.selectGroupingByGroupName(stationArea);
-									if (null != grouping) {
-										stationArea = grouping.getGroupCode();
-									} else {
-										stationArea = "";
-									}
-								}
-								String userJob = ExtStringUtil.trim(row.get(3));
+								String gender = ExtStringUtil.trim(row.get(2));
+								String birthday =ExtStringUtil.trim(row.get(3));
+								String stationArea = u.getStationArea();
+								String station = ExtStringUtil.trim(row.get(4));
+								String userJob = ExtStringUtil.trim(row.get(5));
+								String phone = ExtStringUtil.trim(row.get(6));
+								String addr = ExtStringUtil.trim(row.get(7));
+								String idCode = ExtStringUtil.trim(row.get(8));
+								String married = ExtStringUtil.trim(row.get(9));
+								String child = ExtStringUtil.trim(row.get(10));
+								String edu = ExtStringUtil.trim(row.get(11));
+								String certNo = ExtStringUtil.trim(row.get(12));
+								String certLevel = ExtStringUtil.trim(row.get(13));
+								String recruitDate = ExtStringUtil.trim(row.get(14));
+								String political = ExtStringUtil.trim(row.get(15));
+								String joinDate = ExtStringUtil.trim(row.get(16));
+								stationArea=checkStationArea(stationArea);
+								station=checkStationArea(station);
 								if (!ExtStringUtil.isBlank(userJob)) {
 									PostSetting postSetting = postSettingService.selectPostSettingByPostName(userJob);
 									if (null != postSetting) {
@@ -99,17 +108,21 @@ public class UserController extends BaseController {
 										userJob = "";
 									}
 								}
-								String station = ExtStringUtil.trim(row.get(4));
-								if (!ExtStringUtil.isBlank(station)) {
-									Grouping grouping = groupingService.selectGroupingByGroupName(station);
-									if (null != grouping) {
-										station = grouping.getGroupCode();
-									} else {
-										station = "";
-									}
-								}
 								User user = new User();
 								user.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+								user.setOnBoardDate(recruitDate);
+								user.setPhoneNumber(phone);
+								user.setHomeAddress(addr);
+								user.setBirthday(birthday);
+								user.setIdCode(idCode);
+								user.setIsMarried(married);
+								user.setHasChild(child);
+								user.setGender(gender);
+								user.setEduBackGround(edu);
+								user.setIsPartyMember(political);
+								user.setJoinDate(joinDate);
+								user.setCertLevel(certLevel);
+								user.setCertNo(certNo);
 								user.setCreatorId(u.getUserId());
 								user.setIsAdmin("0");
 								user.setIsDeleted(0);
@@ -133,6 +146,16 @@ public class UserController extends BaseController {
 		return OperationResult.buildFailureResult("文件处理失败", "fail");
 	}
 
+	private String checkStationArea(String stationArea) {
+		if (!ExtStringUtil.isBlank(stationArea)) {
+			Grouping grouping = groupingService.selectGroupingByGroupName(stationArea);
+			if (null != grouping) {
+				return grouping.getGroupCode();
+			}
+		}
+		return "";
+	}
+
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logoutPage() {
 		SecurityUtils.getSubject().logout();
@@ -147,8 +170,8 @@ public class UserController extends BaseController {
 		ByteArrayOutputStream baos = null;
 
 		try {
-			inputStream = UserController.class.getClassLoader().getResourceAsStream("./template/user.xls");
-			String fileName = "人员信息模板.xls";
+			inputStream = UserController.class.getClassLoader().getResourceAsStream("./template/user.xlsx");
+			String fileName = "人员信息模板.xlsx";
 			response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
 			response.setContentType("application/octet-stream; charset=utf-8");
 			os = response.getOutputStream();
@@ -237,9 +260,15 @@ public class UserController extends BaseController {
 	 */
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	public String person(HttpServletRequest request, Model model) {
+		User loginUser = getLoginUser(request);
 		Role role = new Role();
 		role.setIsDeleted("0");
-		List<Grouping> groups = groupingService.queryGroupsByLength(6);
+		List<Grouping> groups=null;
+		if (StringUtils.isBlank(loginUser.getStationArea())){
+			groups=new ArrayList<>();
+		}else {
+			groups = groupingService.selectByParentCode(loginUser.getStationArea(),9);
+		}
 		List<PostSetting> posts = postSettingService.queryAll();
 		List<Role> roles = roleService.getRoleByQuery(role);
 		model.addAttribute("roles", roles);

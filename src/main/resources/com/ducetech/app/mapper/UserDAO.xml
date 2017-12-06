@@ -17,7 +17,19 @@
     	<result column="created_at" property="createdAt"/>
     	<result column="is_deleted" property="isDeleted"/>
         <result column="is_admin" property="isAdmin"/>
-        <result column="group_name" property="groupName"/>
+        <result column="birth_day" property="birthday"/>
+        <result column="id_code" property="idCode"/>
+        <result column="on_board_date" property="onBoardDate"/>
+        <result column="is_married" property="isMarried"/>
+        <result column="has_child" property="hasChild"/>
+        <result column="edu_back_ground" property="eduBackGround"/>
+        <result column="is_party_member" property="isPartyMember"/>
+        <result column="join_date" property="joinDate"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="gender" property="gender"/>
+        <result column="home_address" property="homeAddress"/>
+        <result column="cert_no" property="certNo"/>
+        <result column="cert_level" property="certLevel"/>
 	</resultMap>
 	
 	<!-- 登录 -->
@@ -69,8 +81,8 @@
 	
 	<!-- 插入新用户 -->
 	<insert id="insertUser" useGeneratedKeys="true" keyProperty="userId">
-		insert into user (password,user_pass,user_code,user_name,station_area,station,creator_id,created_at,is_admin,secret_key,user_job,group_name)
-		values(#{password},#{userPass},#{userCode},#{userName},#{stationArea},#{station},#{creatorId},#{createdAt},#{isAdmin},#{secretKey}, #{userJob}, #{groupName})
+		insert into user (password,user_pass,user_code,user_name,station_area,station,creator_id,created_at,is_admin,secret_key,user_job,gender,phone_number,birth_day,id_code,on_board_date,is_married,has_child,edu_back_ground,is_party_member,join_date,home_address,cert_no,cert_level)
+		values(#{password},#{userPass},#{userCode},#{userName},#{stationArea},#{station},#{creatorId},#{createdAt},#{isAdmin},#{secretKey}, #{userJob},#{gender},#{phoneNumber},#{birthday},#{idCode},#{onBoardDate},#{isMarried},#{hasChild},#{eduBackGround},#{isPartyMember},#{joinDate},#{homeAddress},#{certNo},#{certLevel})
 	</insert>
     <update id="deleteUserById" parameterType="com.ducetech.app.model.User">
         update user
@@ -118,8 +130,44 @@
             <if test="isAdmin!=null and isAdmin!=''">
                 is_admin=#{isAdmin},
             </if>
-            <if test="groupName!=null and groupName!=''">
-                group_name=#{groupName},
+            <if test="gender!=null and gender!=''">
+				gender=#{gender},
+            </if>
+            <if test="phoneNumber!=null and phoneNumber!=''">
+				phone_number=#{phoneNumber},
+            </if>
+            <if test="birthday!=null and birthday!=''">
+				birth_day=#{birthday},
+            </if>
+            <if test="idCode!=null and idCode!=''">
+				id_code=#{idCode},
+            </if>
+            <if test="onBoardDate!=null and onBoardDate!=''">
+				on_board_date=#{onBoardDate},
+            </if>
+            <if test="hasChild!=null and hasChild!=''">
+				has_child=#{hasChild},
+            </if>
+            <if test="isMarried!=null and isMarried!=''">
+				is_married=#{isMarried},
+            </if>
+            <if test="eduBackGround!=null and eduBackGround!=''">
+				edu_back_ground=#{eduBackGround},
+            </if>
+            <if test="isPartyMember!=null and isPartyMember!=''">
+				is_party_member=#{isPartyMember},
+            </if>
+            <if test="joinDate!=null and joinDate!=''">
+				join_date=#{joinDate},
+            </if>
+            <if test="homeAddress!=null and homeAddress!=''">
+				home_address=#{homeAddress},
+            </if>
+            <if test="certNo!=null and certNo!=''">
+				cert_no=#{certNo},
+            </if>
+            <if test="certLevel!=null and certLevel!=''">
+				cert_level=#{certLevel},
             </if>
 		</set>
 		where user_id=#{userId}

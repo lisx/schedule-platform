@@ -27,21 +27,6 @@
         <a class="btnDefault" href="javascript:void(0)" onclick="printUserTemplate()">模板</a>
     </div>
     <div class=" float-right">
-        <div class="form_line">
-            <label>站区</label>
-            <select name="stationArea" id="stationAreaQuery">
-                <option value="">请选择</option>
-                #foreach($group in $!groups)
-                    <option value="$!group.groupCode">$!group.groupName</option>
-                #end
-            </select>
-        </div>
-        <div class="form_line">
-            <label>站点</label>
-            <select name="station" id="stationQuery">
-                <option value="">请选择</option>
-            </select>
-        </div>
         <div class="search-input">
             <span class="icon-5"></span>
             <input type="text" placeholder="姓名/员工编号/岗位" name="userSearch">
@@ -80,18 +65,12 @@
                         <input id="userName" name="userName" type="text">
                     </div>
                     <div class="form_line">
-                        <label class="require">站区</label>
-                        <select name="stationArea" id="stationArea" class=" reset-input">
+                        <label>站点</label>
+                        <select name="station" id="station" class=" reset-input">
                             <option value="">请选择</option>
                             #foreach($group in $!groups)
                                 <option value="$!group.groupCode">$!group.groupName</option>
                             #end
-                        </select>
-                    </div>
-                    <div class="form_line">
-                        <label>站点</label>
-                        <select name="station" id="station" class=" reset-input">
-                            <option value="">请选择</option>
                         </select>
                     </div>
                     <div class="form_line">
@@ -101,16 +80,6 @@
                             #foreach($post in $!posts)
                                 <option value="$!post.postCode">$!post.postName</option>
                             #end
-                        </select>
-                    </div>
-                    <div class="form_line" id="addDivGroupName">
-                        <label>分组</label>
-                        <select id="groupName" name="groupName">
-                            <option value="">请选择</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
                         </select>
                     </div>
                     <div class="form_line">
@@ -133,6 +102,83 @@
                                 <option value="$!role.roleId">$!role.roleName</option>
                             #end
                         </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">性别</label>
+                        <select id="gender" name="gender">
+                            <option value="">请选择</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">手机号</label>
+                        <input id="phoneNumber" name="phoneNumber" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">生日 例:1990-12-12</label>
+                        <input id="birthday" name="birthday" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">身份证</label>
+                        <input id="idCode" name="idCode" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">入职时间 例:1990-12-12</label>
+                        <input id="onBoardDate" name="onBoardDate" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">婚否</label>
+                        <select id="isMarried" name="isMarried">
+                            <option value="">请选择</option>
+                            <option value="已婚">已婚</option>
+                            <option value="未婚">未婚</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">生育</label>
+                        <select id="hasChild" name="hasChild">
+                            <option value="">请选择</option>
+                            <option value="已育">已育</option>
+                            <option value="未育">未育</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">学历</label>
+                        <select id="eduBackGround" name="eduBackGround">
+                            <option value="">请选择</option>
+                            <option value="高中以下">高中以下</option>
+                            <option value="大专">大专</option>
+                            <option value="本科">本科</option>
+                            <option value="硕士">硕士</option>
+                            <option value="博士以上">博士以上</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">政治面貌</label>
+                        <select id="isPartyMember" name="isPartyMember">
+                            <option value="">请选择</option>
+                            <option value="群众">群众</option>
+                            <option value="共青团员">共青团员</option>
+                            <option value="共产党员">共产党员</option>
+                            <option value="民主党派">民主党派</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>入党时间</label>
+                        <input id="joinDate" name="joinDate" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">住址</label>
+                        <input id="homeAddress" name="homeAddress" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label>证书编号</label>
+                        <input id="certNo" name="certNo" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label>证书类型</label>
+                        <input id="certLevel" name="certLevel" type="text">
                     </div>
                 </form>
             </div>
@@ -164,20 +210,15 @@
                         <input id="editUserName" name="userName" type="text">
                     </div>
                     <div class="form_line">
-                        <label class="require">站区</label>
-                        <select name="stationArea" id="editStationArea" class=" reset-input">
+                        <label>站点</label>
+                        <select name="station" id="editStation" class=" reset-input">
                             <option value="">请选择</option>
                             #foreach($group in $!groups)
                                 <option value="$!group.groupCode">$!group.groupName</option>
                             #end
                         </select>
                     </div>
-                    <div class="form_line">
-                        <label>站点</label>
-                        <select name="station" id="editStation" class=" reset-input">
-                            <option value="">请选择</option>
-                        </select>
-                    </div>
+
                     <div class="form_line">
                         <label class="require">岗位</label>
                         <select id="editUserJob" name="userJob">
@@ -185,16 +226,6 @@
                             #foreach($post in $!posts)
                                 <option value="$!post.postCode">$!post.postName</option>
                             #end
-                        </select>
-                    </div>
-                    <div class="form_line">
-                        <label>分组</label>
-                        <select id="editGroupName" name="groupName">
-                            <option value="">请选择</option>
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                                <option value="D">D</option>
                         </select>
                     </div>
                     <div class="form_line">
@@ -218,7 +249,83 @@
                             #end
                         </select>
                     </div>
-
+                    <div class="form_line">
+                        <label class="require">性别</label>
+                        <select id="editGender" name="gender">
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">手机号</label>
+                        <input id="editPhoneNumber" name="phoneNumber" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">生日 例:1990-12-12</label>
+                        <input id="editBirthday" name="birthday" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">身份证</label>
+                        <input id="editIdCode" name="idCode" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">入职时间 例:1990-12-12</label>
+                        <input id="editOnBoardDate" name="onBoardDate" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">婚否</label>
+                        <select id="editIsMarried" name="isMarried">
+                            <option value="">请选择</option>
+                            <option value="已婚">已婚</option>
+                            <option value="未婚">未婚</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">生育</label>
+                        <select id="editHasChild" name="hasChild">
+                            <option value="">请选择</option>
+                            <option value="已育">已育</option>
+                            <option value="未育">未育</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">学历</label>
+                        <select id="editEduBackGround" name="eduBackGround">
+                            <option value="">请选择</option>
+                            <option value="高中以下">高中以下</option>
+                            <option value="大专">大专</option>
+                            <option value="本科">本科</option>
+                            <option value="硕士">硕士</option>
+                            <option value="博士以上">博士以上</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label class="require">政治面貌</label>
+                        <select id="editIsPartyMember" name="isPartyMember">
+                            <option value="">请选择</option>
+                            <option value="群众">群众</option>
+                            <option value="共青团员">共青团员</option>
+                            <option value="共产党员">共产党员</option>
+                            <option value="民主党派">民主党派</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>入党时间</label>
+                        <input id="editJoinDate" name="joinDate" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label class="require">住址</label>
+                        <input id="editHomeAddress" name="homeAddress" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label>证书编号</label>
+                        <input id="editCertNo" name="certNo" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label>证书类型</label>
+                        <input id="editCertLevel" name="certLevel" type="text">
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -257,48 +364,6 @@
 <script>
     $(function () {
         tableInit();
-        $("#stationArea").change(function() {
-            var _oneId = this.value;
-            var two_obj = $('#station');
-            var _html = "<option value=''>请选择</option>";
-            $.getJSON('$path/group/querySubNodes', {oneCode:_oneId}, function(data) {
-                if (data) {
-                    for (var i=0;i<data.length;i++) {
-                        var obj = data[i];
-                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
-                    }
-                }
-                two_obj.html(_html);
-            });
-        }).change();
-        $("#editStationArea").change(function() {
-            var _oneId = this.value;
-            var two_obj = $('#editStation');
-            var _html = "<option value=''>请选择</option>";
-            $.getJSON('$path/group/querySubNodes', {oneCode:_oneId}, function(data) {
-                if (data) {
-                    for (var i=0;i<data.length;i++) {
-                        var obj = data[i];
-                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
-                    }
-                }
-                two_obj.html(_html);
-            });
-        }).change();
-        $("#stationAreaQuery").change(function() {
-            var _oneId = this.value;
-            var two_obj = $('#stationQuery');
-            var _html = "<option value=''>请选择</option>";
-            $.getJSON('$path/group/querySubNodes', {oneCode:_oneId}, function(data) {
-                if (data) {
-                    for (var i=0;i<data.length;i++) {
-                        var obj = data[i];
-                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
-                    }
-                }
-                two_obj.html(_html);
-            });
-        }).change();
         //导入
         $("#export .export").click(function(){
         	$(this).prev().click();
@@ -317,14 +382,12 @@
             postData: {
                 search : JSON.stringify($('#userForm').serializeObject())
             },
-            colNames:['编号', '姓名', '岗位',  '站区','站点','分组','管理员'  ,"操作"],
+            colNames:['编号', '姓名', '岗位','站点','管理员'  ,"操作"],
             colModel:[
                 {name:'userCode', width:'15%'},
                 {name:'userName', width:'15%'},
                 {name:'userJob', width:'15%'},
-                {name:'stationArea', width:'15%'},
                 {name:'station', width:'15%'},
-                {name:'groupName', width:'15%'},
                 {name:'isAdmin', width:'10%',formatter:function(cellvalue,options,rowObject){
                     return rowObject.isAdmin == 1 ? '是' : '否';
                 }},
@@ -366,37 +429,24 @@
                 $("#editUserName").val(data.userName);
                 $("#editUserCode").val(data.userCode);
                 $("#editUserJob").val(data.userJob);
-                $("#editStationArea").val(data.stationArea);
-                reloadStation(data.stationArea);
                 $("#editStation").val(data.station);
                 $("#editPassword").val(data.userPass);
                 $("#editRoleIds").val(data.roleIds);
+                $("#editGender").val(data.gender);
+                $("#editPhoneNumber").val(data.phoneNumber);
+                $("#editBirthday").val(data.birthday);
+                $("#editIdCode").val(data.idCode);
+                $("#editOnBoardDate").val(data.onBoardDate);
+                $("#editIsMarried").val(data.isMarried);
+                $("#editHasChild").val(data.hasChild);
+                $("#editEduBackGround").val(data.eduBackGround);
+                $("#editIsPartyMember").val(data.isPartyMember);
+                $("#editJoinDate").val(data.joinDate);
+                $("#editHomeAddress").val(data.homeAddress);
+                $("#editCertNo").val(data.certNo);
+                $("#editCertLevel").val(data.certLevel);
                 $("#editUser").modal('show');
                 $("#mask",parent.document).show();
-            }
-        });
-    }
-
-    function reloadStation(oneId) {
-        var two_obj = $('#editStation');
-        var _html = "<option value=''>请选择</option>";
-        jQuery.ajax({
-            async: false,
-            type: "get",
-            url: "$path/group/querySubNodes",
-            data: {oneCode:oneId},
-            dataType: "json",
-            error: function (xmlHttpReq, status) {
-                Alert("fail","网络错误");
-            },
-            success: function (data) {
-                if (data) {
-                    for (var i=0;i<data.length;i++) {
-                        var obj = data[i];
-                        _html = _html+"<option value='"+obj.groupCode+"'>"+obj.groupName+"</option>";
-                    }
-                }
-                two_obj.html(_html);
             }
         });
     }

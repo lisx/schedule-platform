@@ -1,5 +1,6 @@
 package com.ducetech.app.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ducetech.app.model.*;
@@ -157,7 +158,7 @@ public class ScheduleInfoController extends BaseController {
                     for(ShiftModel m:list){
                         JSONObject o=new JSONObject();
                         o.put("modelId",m.getModelId());
-                        o.put("modelName",p.getPostName()+"("+p.getUserCount()+"人)——"+m.getModelName());
+                        o.put("modelName",m.getModelName());
                         shiftList.add(o);
                     }
                 }
@@ -908,11 +909,24 @@ public class ScheduleInfoController extends BaseController {
             User loginUser = getLoginUser(request);
             int weeks = templateService.insertScheduleInfoTemplateList(model.getModelId(), data, loginUser);
 
+            Map<String,ShiftSetting> shiftMap=new HashMap<>();
+
+            for (ShiftSetting s :
+                    shiftList) {
+                shiftMap.put(s.getShiftId(),s);
+            }
+
+            for (ScheduleInfoTemplate t:data
+                    ) {
+                weeks=Math.max(weeks,t.getWeekNumber());
+            }
 
             result.put("data", JSONObject.toJSON(data));
             result.put("users", userIds);
             result.put("weeks", weeks);
             result.put("codes", workFlowMap);
+            result.put("shifts", shiftMap);
+            result.put("shiftIds",new ArrayList<>(shiftMap.keySet()));
         } catch (Exception e) {
             logger.error("error:", e);
             result.put("error",e.getMessage());
@@ -943,15 +957,22 @@ public class ScheduleInfoController extends BaseController {
             List<ScheduleInfoTemplate> data = templateService.selectScheduleInfoTemplateByModelId(modelId);
             Map<String, List<String>> workFlowMap = shiftService.getWorkFlowMap(shiftList);
             List<ScheduleInfoUser> scheduleInfoUsers = infoUserService.selectByModelId(modelId);
+            Map<String,ShiftSetting> shiftMap=new HashMap<>();
+            for (ShiftSetting s :
+                    shiftList) {
+                shiftMap.put(s.getShiftId(),s);
+            }
             int weeks=0;
             for (ScheduleInfoTemplate t:data
-                 ) {
+                    ) {
                 weeks=Math.max(weeks,t.getWeekNumber());
             }
-            result.put("data", JSONObject.toJSON(data));
+            result.put("data", JSON.toJSON(data));
             result.put("users", userIds);
             result.put("codes", workFlowMap);
             result.put("weeks", weeks);
+            result.put("shifts", shiftMap);
+            result.put("shiftIds",new ArrayList<>(shiftMap.keySet()));
             result.put("owners", scheduleInfoUsers);
         } catch (Exception e) {
             logger.error("error:", e);

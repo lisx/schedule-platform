@@ -30,23 +30,27 @@ public class User extends BaseModel implements Serializable {
 
 	private String station;	        //站点
 
-    private String groupName;	        //综控员分组
-
 	private List<Role> roles; 		// 用户拥有的角色列表
 	
 	private String roleIds;			//角色IDS
 
 	private String roleNames;		//角色名字
 
-	private Date birthday;
+	private String birthday;
 
 	private String idCode;
 
-	private Date onboardDate;
+	private String onBoardDate;
 
-	private int isMarried;
+	private String isMarried;
 
-	private int isPartyMember;
+	private String hasChild;
+
+	private String eduBackGround;
+
+	private String isPartyMember;
+
+	private String joinDate;
 
 	private String phoneNumber;
 
@@ -54,9 +58,9 @@ public class User extends BaseModel implements Serializable {
 
 	private String homeAddress;
 
-    private String reportId;
+    private String certNo;
 
-    private Date reportAt;
+    private String certLevel;
 
 	private String creatorId;		//创建人ID
 
