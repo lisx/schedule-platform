@@ -10,6 +10,7 @@
     </style>
     #parse('common/path-css.vm')
     #parse('common/path-js.vm')
+
     <script>
         //导出个人模板
         function printUserTemplate() {
@@ -26,21 +27,35 @@
         <a class="btnDefault" href="#export" data-toggle="modal" data-target="#export">导入</a>
         <a class="btnDefault" href="javascript:void(0)" onclick="printUserTemplate()">模板</a>
     </div>
-    <div class=" float-right">
-        <div class="search-input">
-            <span class="icon-5"></span>
-            <input type="text" placeholder="姓名/员工编号/岗位" name="userSearch">
-            <input type="hidden" name="userCode">
-            <input type="hidden" name="userName">
-            <input type="hidden" name="userJob">
-        </div>
-        <a class="btnDefault bgBlue"  onclick="getTableData()" href="javascript:void(0);">查询</a>
-    </div>
 </div>
 <!-- 右侧内容 end -->
 <!-- 表格 start -->
-<div class="wrapper">
+<div class="wrapper" style="overflow: scroll;">
     <table class="table" id="userTable">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>电话</th>
+                <th>生日</th>
+                <th>岗位</th>
+                <th>站点</th>
+                <th>管理员</th>
+                <th>操作</th>
+                <th>身份证</th>
+                <th>入职时间</th>
+                <th>婚姻状况</th>
+                <th>有无子女</th>
+                <th>学历</th>
+                <th>政治面貌</th>
+                <th>入党时间</th>
+                <th>住址</th>
+                <th>证书编号</th>
+                <th>证书类别</th>
+            </tr>
+        </thead>
+        <tbody id="userDataTable"></tbody>
     </table>
     <div id="pager"></div>
 </div>
@@ -373,44 +388,43 @@
         })
     });
     function tableInit(){
-        $("#userTable").jqGrid({
-            url:"$path/users",
-            datatype:"json",
-            mtype:"get",
-            height:'auto',
-            autowidth:true,
-            postData: {
-                search : JSON.stringify($('#userForm').serializeObject())
+        jQuery.ajax({
+            type: "get",
+            url: "$path/users" ,
+            data: null,
+            dataType: "json",
+            error: function (xmlHttpReq, status) {
+                Alert("fail","网络错误");
             },
-            colNames:['编号', '姓名', '岗位','站点','管理员'  ,"操作"],
-            colModel:[
-                {name:'userCode', width:'15%'},
-                {name:'userName', width:'15%'},
-                {name:'userJob', width:'15%'},
-                {name:'station', width:'15%'},
-                {name:'isAdmin', width:'10%',formatter:function(cellvalue,options,rowObject){
-                    return rowObject.isAdmin == 1 ? '是' : '否';
-                }},
-                {name:'operation', width:'10%',formatter:function(cellvalue,options,rowObject){
-                    var	str='';
-                        str = '<a href="javascript:;"' + (rowObject.isDeleted == 0 ? 'onclick="editUser('+ rowObject.userId +')" class="edit"' : 'class="edit disabled"') +'>编辑</a>';
-                        str += '<a class="stop" href="javascript:;" onclick="userDel('+ rowObject.userId+')">删除</a>';
-                    return str;
-                }},
-            ],
-            viewrecords: true,//是否在浏览导航栏显示记录总数
-            rowNum:10,//每页显示记录数
-            pager:$('#pager'),
-            jsonReader:{
-                page: "page",
-                total: "pages",
-                records: "count",
-                root: "results",
-                repeatitems: false,
-                id: "userId"
+            success: function (data) {
+                var html="";
+                if ($('#userTable').hasClass('dataTable')) {
+                    var dttable = $('#userTable').dataTable();
+                    dttable.fnClearTable(); //清空一下table
+                    dttable.fnDestroy(); //还原初始化了的datatable
+                }
+                $('#userTable').DataTable( {
+                    "aaData" : data,
+                    "oLanguage": {
+                        "sLengthMenu": "每页显示 _MENU_ 条",
+                        "sZeroRecords": "没有任何数据",
+                        "sInfo": "从 _START_ 到 _END_ 共 _TOTAL_ 条",
+                        "sInfoEmpty": "从 0 到 0 共 0 条",
+                        "sInfoFiltered": "( 从 _MAX_ 数据中过滤)"
+                    },
+                    "aoColumnDefs": [
+                        {  "bVisible": false, "aTargets": [ 9 ] },
+                        {  "bVisible": false, "aTargets": [ 10 ] },
+                        {  "bVisible": false, "aTargets": [ 11 ] },
+                        {  "bVisible": false, "aTargets": [ 12 ] },
+                        {  "bVisible": false, "aTargets": [ 13 ] },
+                        {  "bVisible": false, "aTargets": [ 14 ] },
+                        {  "bVisible": false, "aTargets": [ 15 ] },
+                        {  "bVisible": false, "aTargets": [ 16 ] }
+                    ] 
+                });
             }
         });
-        jQuery("#userTable").jqGrid('navGrid','#pager',{edit:false,add:false,del:false});
     }
 
     function editUser(userId){
@@ -470,7 +484,7 @@
 	            setTimeout(function(){
 	                $("#editUser").modal('hide');
 	            },500)
-	            $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                tableInit();
             }
         })
     }
@@ -486,20 +500,9 @@
             },
             success: function (result) {
                 Alert(result.data, result.message);
-                getTableData();
+                tableInit();
             }
         });
-    }
-    function getTableData() {
-        var search=$("input[name=userSearch").val();
-        $("input[name=userCode").val(search);
-        $("input[name=userName").val(search);
-        $("input[name=userJob").val(search);
-        $("#userTable").jqGrid('setGridParam',{
-            postData: {
-                search : JSON.stringify($('#userForm').serializeObject())
-            }
-        }).trigger('reloadGrid');
     }
     function selectAdmin(isAdmin){
         if(isAdmin==1){
@@ -529,7 +532,7 @@
                 setTimeout(function(){
                     $("#addUser").modal("hide");
                 },500)
-                $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                tableInit();
             }
         });
     }
@@ -572,7 +575,7 @@
                     setTimeout(function(){
                         $("#export").modal("hide");
                     },500);
-                    $(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+                    tableInit();
                 }
             });
         }
