@@ -450,18 +450,15 @@ public class PoiUtil {
                             while (cells.hasNext()) {
                                 Cell cell = cells.next();
                                 //读取当前单元格的值
-                                String cellStr = "";
-                                if (null == cell) {
-                                    continue;
+                                try {
+                                    String cellStr = cell.getStringCellValue();
+                                    if (cellStr==null){
+                                        cellStr = "";
+                                    }
+                                    rowList.add(cellStr);
+                                }catch (Exception e){
+                                    rowList.add("");
                                 }
-                                if (cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-                                    cellStr = ((Double) cell.getNumericCellValue()).toString();
-                                    BigDecimal b = new BigDecimal(cellStr);
-                                    cellStr = b.toPlainString();
-                                } else if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING) {
-                                    cellStr = cell.getStringCellValue();
-                                }
-                                rowList.add(cellStr);
                             }
                         }
                         sheetList.add(rowList);

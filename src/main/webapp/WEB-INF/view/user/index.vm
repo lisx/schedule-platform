@@ -7,6 +7,11 @@
         b {
             color: #ff0000;
         }
+        #column-boxes td{
+            width: 100px;
+            padding: 0 5px;
+            text-align: center;
+        }
     </style>
     #parse('common/path-css.vm')
     #parse('common/path-js.vm')
@@ -27,6 +32,52 @@
         <a class="btnDefault" href="#export" data-toggle="modal" data-target="#export">导入</a>
         <a class="btnDefault" href="javascript:void(0)" onclick="printUserTemplate()">模板</a>
     </div>
+    <table id="column-boxes">
+        <tr>
+            <td>身份证</td>
+            <td>入职时间</td>
+            <td>婚姻状况</td>
+            <td>有无子女</td>
+            <td>学历</td>
+            <td>政治面貌</td>
+            <td>入党时间</td>
+            <td>住址</td>
+            <td>证书编号</td>
+            <td> 证书类别</td>
+        </tr>
+        <tr>
+            <td>
+                    <input type="checkbox" value="9"/>
+            </td>
+            <td>
+                    <input type="checkbox" value="10" />
+            </td>
+            <td>
+                    <input type="checkbox" value="11" />
+            </td>
+            <td>
+                    <input type="checkbox" value="12" />
+            </td>
+            <td>
+                    <input type="checkbox" value="13" />
+            </td>
+            <td>
+                    <input type="checkbox" value="14" />
+            </td>
+            <td>
+                    <input type="checkbox" value="15" />
+            </td>
+            <td>
+                    <input type="checkbox" value="16" />
+            </td>
+            <td>
+                    <input type="checkbox" value="17" />
+            </td>
+            <td>
+                    <input type="checkbox" value="18" />
+            </td>
+        </tr>
+    </table>
 </div>
 <!-- 右侧内容 end -->
 <!-- 表格 start -->
@@ -80,7 +131,7 @@
                         <input id="userName" name="userName" type="text">
                     </div>
                     <div class="form_line">
-                        <label>站点</label>
+                        <label>站区/站点</label>
                         <select name="station" id="station" class=" reset-input">
                             <option value="">请选择</option>
                             #foreach($group in $!groups)
@@ -225,7 +276,7 @@
                         <input id="editUserName" name="userName" type="text">
                     </div>
                     <div class="form_line">
-                        <label>站点</label>
+                        <label>站区/站点</label>
                         <select name="station" id="editStation" class=" reset-input">
                             <option value="">请选择</option>
                             #foreach($group in $!groups)
@@ -420,8 +471,10 @@
                         {  "bVisible": false, "aTargets": [ 13 ] },
                         {  "bVisible": false, "aTargets": [ 14 ] },
                         {  "bVisible": false, "aTargets": [ 15 ] },
-                        {  "bVisible": false, "aTargets": [ 16 ] }
-                    ] 
+                        {  "bVisible": false, "aTargets": [ 16 ] },
+                        {  "bVisible": false, "aTargets": [ 17 ] },
+                        {  "bVisible": false, "aTargets": [ 18 ] }
+                    ]
                 });
             }
         });
@@ -444,6 +497,7 @@
                 $("#editUserCode").val(data.userCode);
                 $("#editUserJob").val(data.userJob);
                 $("#editStation").val(data.station);
+                $("#editStationArea").val(data.stationArea);
                 $("#editPassword").val(data.userPass);
                 $("#editRoleIds").val(data.roleIds);
                 $("#editGender").val(data.gender);
@@ -488,6 +542,12 @@
             }
         })
     }
+
+    $(document).on("click", "input[type=checkbox]", function () {
+        var val = $(this).val();
+        var col = $('#userTable').DataTable().column(val);
+        col.visible(!col.visible());
+    });
 
     function userDel(userId){
         jQuery.ajax({

@@ -12,8 +12,6 @@ import com.ducetech.app.service.RoleService;
 import com.ducetech.app.service.UserService;
 import com.ducetech.framework.controller.BaseController;
 import com.ducetech.framework.exception.ServiceException;
-import com.ducetech.framework.model.BaseQuery;
-import com.ducetech.framework.model.PagerRS;
 import com.ducetech.framework.util.*;
 import com.ducetech.framework.web.view.OperationResult;
 import org.apache.commons.lang3.StringUtils;
@@ -85,22 +83,26 @@ public class UserController extends BaseController {
                                 String userCode = ExtStringUtil.trim(row.get(0));
                                 String userName = ExtStringUtil.trim(row.get(1));
                                 String gender = ExtStringUtil.trim(row.get(2));
-                                String birthday = ExtStringUtil.trim(row.get(3));
                                 String stationArea = u.getStationArea();
-                                String station = ExtStringUtil.trim(row.get(4));
-                                String userJob = ExtStringUtil.trim(row.get(5));
-                                String phone = ExtStringUtil.trim(row.get(6));
-                                String addr = ExtStringUtil.trim(row.get(7));
-                                String idCode = ExtStringUtil.trim(row.get(8));
-                                String married = ExtStringUtil.trim(row.get(9));
-                                String child = ExtStringUtil.trim(row.get(10));
-                                String edu = ExtStringUtil.trim(row.get(11));
-                                String certNo = ExtStringUtil.trim(row.get(12));
-                                String certLevel = ExtStringUtil.trim(row.get(13));
-                                String recruitDate = ExtStringUtil.trim(row.get(14));
-                                String political = ExtStringUtil.trim(row.get(15));
-                                String joinDate = ExtStringUtil.trim(row.get(16));
-                                stationArea = checkStationArea(stationArea);
+                                String station = ExtStringUtil.trim(row.get(3));
+                                if(!station.startsWith(stationArea)){
+                                    continue;
+                                }
+                                String userJob = ExtStringUtil.trim(row.get(4));
+                                String phone = ExtStringUtil.trim(row.get(5));
+                                String addr = ExtStringUtil.trim(row.get(6));
+                                String idCode = ExtStringUtil.trim(row.get(7));
+                                String married = ExtStringUtil.trim(row.get(8));
+                                String child = ExtStringUtil.trim(row.get(9));
+                                String edu = ExtStringUtil.trim(row.get(10));
+                                String certNo = ExtStringUtil.trim(row.get(11));
+                                String certLevel = ExtStringUtil.trim(row.get(12));
+                                String recruitDate = ExtStringUtil.trim(row.get(13));
+                                String political = ExtStringUtil.trim(row.get(14));
+                                String joinDate = ExtStringUtil.trim(row.get(15));
+                                if(isEmptyUser(userCode,userName,gender,station,phone)){
+                                    continue;
+                                }
                                 station = checkStationArea(station);
                                 if (!ExtStringUtil.isBlank(userJob)) {
                                     PostSetting postSetting = postSettingService.selectPostSettingByPostName(userJob);
@@ -115,7 +117,7 @@ public class UserController extends BaseController {
                                 user.setOnBoardDate(recruitDate);
                                 user.setPhoneNumber(phone);
                                 user.setHomeAddress(addr);
-                                user.setBirthday(birthday);
+                                user.setBirthday(getBirthday(idCode));
                                 user.setIdCode(idCode);
                                 user.setIsMarried(married);
                                 user.setHasChild(child);
@@ -146,6 +148,21 @@ public class UserController extends BaseController {
             throw new ServiceException("Upload file error", e);
         }
         return OperationResult.buildFailureResult("文件处理失败", "fail");
+    }
+
+    private boolean isEmptyUser(String userCode, String userName, String gender, String station, String phone) {
+        if(StringUtils.isBlank(userCode+userName+gender+station+phone)){
+            return true;
+        }
+        return false;
+    }
+
+    private String getBirthday(String idCode) {
+        if(StringUtils.isBlank(idCode)||idCode.length()!=18){
+            return "";
+        }
+        String birth=idCode.substring(6,14);
+        return birth.substring(0,4)+"-"+birth.substring(4,6)+"-"+birth.substring(6);
     }
 
     private String checkStationArea(String stationArea) {
@@ -266,7 +283,10 @@ public class UserController extends BaseController {
         Role role = new Role();
         role.setIsDeleted("0");
         List<Grouping> groups = null;
-        if (StringUtils.isBlank(loginUser.getStationArea())) {
+
+        if(StringUtils.isBlank(loginUser.getStationArea())&&!loginUser.getIsAdmin().equals("0")){
+            groups = groupingService.queryGroupsByLength(6);
+        }else if (StringUtils.isBlank(loginUser.getStationArea())) {
             groups = new ArrayList<>();
         } else {
             groups = groupingService.selectByParentCode(loginUser.getStationArea(), 9);
@@ -299,8 +319,10 @@ public class UserController extends BaseController {
             a.add(u.getGender());
             a.add(u.getPhoneNumber());
             a.add(u.getBirthday());
-            a.add(u.getUserJob());
-            a.add(u.getStation());
+            PostSetting p = postSettingService.selectPostSettingByPostCode(u.getUserJob());
+            a.add(p==null?"":p.getPostName());
+            Grouping g=groupingService.selectGroupingByGroupCode(u.getStation());
+            a.add(g==null?"":g.getGroupName());
             a.add(u.getIsAdmin());
             String action = "<a href='javascript:;'" + (u.getIsDeleted() == 0 ? "onclick='editUser(" + u.getUserId() + ")' class='edit'" : "class='edit disabled'")
                     + ">编辑</a><a class='stop' href='javascript:;' onclick='userDel(" + u.getUserId() + ")'>删除</a>";
@@ -337,6 +359,7 @@ public class UserController extends BaseController {
             user.setPassword(userService.genRandomNum(6));
         }
         user.setUserPass(user.getPassword());
+        setStationArea(userInfo,user);
         user.setIsDeleted(0);
         user.setCreatorId(userInfo.getUserId());
         user.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
@@ -368,15 +391,36 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/users", method = RequestMethod.PUT)
     @ResponseBody
     public OperationResult update(User user, HttpServletRequest request) throws Exception {
+        User userInfo = getLoginUser(request);
         User _user = userService.getUserByUserId(user.getUserId());
         if (!ExtStringUtil.isBlank(user.getPassword())) {
             user.setUserPass(user.getPassword());
             user.setPassword(Digests.md5Hash(user.getPassword(), _user.getSecretKey()));
         }
+        setStationArea(userInfo,user);
         userService.updateUser(user);
         return OperationResult.buildSuccessResult("更新成功", "success");
     }
 
+    private void setStationArea(User loginUser,User custom){
+        if(StringUtils.isNotBlank(custom.getStation())&&custom.getStation().length()==6){
+            custom.setStationArea(custom.getStation());
+            custom.setStation(null);
+            return ;
+        }
+        if(StringUtils.isNotBlank(loginUser.getStationArea())){
+            custom.setStationArea(loginUser.getStationArea());
+        }else {
+            if (StringUtils.isBlank(custom.getStation())){
+                throw new RuntimeException("没有分配站区");
+            }
+            Grouping grouping = groupingService.selectGroupingByGroupCode(custom.getStation().substring(0, 6));
+            if(grouping==null){
+                throw new RuntimeException("没有分配站区");
+            }
+            custom.setStationArea(grouping.getGroupCode());
+        }
+    }
     /**
      * 删除
      *
