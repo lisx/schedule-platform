@@ -85,11 +85,14 @@ public class UserController extends BaseController {
                                 String gender = ExtStringUtil.trim(row.get(2));
                                 String stationArea = u.getStationArea();
                                 String station = ExtStringUtil.trim(row.get(3));
+                                String phone = ExtStringUtil.trim(row.get(5));
+                                if(isEmptyUser(userCode,userName,gender,station,phone)){
+                                    continue;
+                                }
                                 if(!station.startsWith(stationArea)){
                                     continue;
                                 }
                                 String userJob = ExtStringUtil.trim(row.get(4));
-                                String phone = ExtStringUtil.trim(row.get(5));
                                 String addr = ExtStringUtil.trim(row.get(6));
                                 String idCode = ExtStringUtil.trim(row.get(7));
                                 String married = ExtStringUtil.trim(row.get(8));
@@ -100,9 +103,6 @@ public class UserController extends BaseController {
                                 String recruitDate = ExtStringUtil.trim(row.get(13));
                                 String political = ExtStringUtil.trim(row.get(14));
                                 String joinDate = ExtStringUtil.trim(row.get(15));
-                                if(isEmptyUser(userCode,userName,gender,station,phone)){
-                                    continue;
-                                }
                                 station = checkStationArea(station);
                                 if (!ExtStringUtil.isBlank(userJob)) {
                                     PostSetting postSetting = postSettingService.selectPostSettingByPostName(userJob);
