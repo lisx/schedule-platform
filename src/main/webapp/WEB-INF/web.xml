@@ -24,15 +24,6 @@
   <listener>
     <listener-class>com.ducetech.framework.web.listener.AuthLogonHistRefreshListener</listener-class>
   </listener>
-  <!-- jcaptcha验证码图片生成URL -->
-  <servlet>
-    <servlet-name>jcaptcha</servlet-name>
-    <servlet-class>com.ducetech.framework.web.captcha.ImageCaptchaServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>jcaptcha</servlet-name>
-    <url-pattern>/pub/jcaptcha.servlet</url-pattern>
-  </servlet-mapping>
   <filter>
     <filter-name>shiroFilter</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>

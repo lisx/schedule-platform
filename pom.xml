@@ -411,18 +411,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.octo.captcha</groupId>
-            <artifactId>jcaptcha</artifactId>
-            <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>servlet-api</artifactId>
-                    <groupId>javax.servlet</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.2</version>
