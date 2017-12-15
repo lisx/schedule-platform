@@ -33,9 +33,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.security.acl.Group;
+import java.util.*;
 
 
 @Controller
@@ -312,6 +311,18 @@ public class UserController extends BaseController {
     public Object personData(HttpServletRequest request) throws Exception {
         User loginUser = getLoginUser(request);
         List<User> rs = userService.getUsersByStationArea(loginUser.getStationArea());
+        List<PostSetting> allPostSettings = postSettingService.getAllPostSettings();
+        Map<String,PostSetting> postMap=new HashMap<>();
+        for (PostSetting p :
+                allPostSettings) {
+            postMap.put(p.getPostCode(),p);
+        }
+        List<Grouping> allGroupings = groupingService.getAllGroupings();
+        Map<String,Grouping> groupMap=new HashMap<>();
+        for (Grouping g :
+                allGroupings) {
+            groupMap.put(g.getGroupCode(),g);
+        }
         JSONArray array = new JSONArray();
         for (User u :
                 rs) {
@@ -321,9 +332,9 @@ public class UserController extends BaseController {
             a.add(u.getGender());
             a.add(u.getPhoneNumber());
             a.add(u.getBirthday());
-            PostSetting p = postSettingService.selectPostSettingByPostCode(u.getUserJob());
+            PostSetting p = postMap.get(u.getUserJob());
             a.add(p==null?"":p.getPostName());
-            Grouping g=groupingService.selectGroupingByGroupCode(u.getStation());
+            Grouping g=groupMap.get(u.getStation());
             a.add(g==null?"":g.getGroupName());
             a.add(u.getIsAdmin());
             String action = "<a href='javascript:;'" + (u.getIsDeleted() == 0 ? "onclick='editUser(" + u.getUserId() + ")' class='edit'" : "class='edit disabled'")

@@ -31,9 +31,9 @@ public class WorkflowContentController extends BaseController {
     @ResponseBody
     public Object workflowContentAdd(HttpServletRequest request, WorkflowContent workflowContent) throws Exception {
         User u = getLoginUser(request);
-        if (!workflowContentService.checkTime(workflowContent.getEndTime(), workflowContent.getRowsNum(),
+        if (workflowContentService.checkTime(workflowContent.getEndTime(), workflowContent.getRowsNum(),
                 workflowContent.getWorkflowId()) ||
-                !workflowContentService.checkTime(workflowContent.getStartTime(),workflowContent.getRowsNum(),
+                workflowContentService.checkTime(workflowContent.getStartTime(),workflowContent.getRowsNum(),
                         workflowContent.getWorkflowId())) {
             JSONObject result = new JSONObject();
             result.put("code", "-1");

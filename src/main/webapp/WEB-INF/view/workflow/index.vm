@@ -70,12 +70,12 @@
             <td color-value="29ad7d" style="background-color: #29ad7d"></td>
         </tr>
         <tr>
-            <td color-value="3755f7" style="background-color: #7755f7"></td>
-            <td color-value="9bc755" style="background-color: #3bc755"></td>
-            <td color-value="868149" style="background-color: #d68149"></td>
-            <td color-value="54a744" style="background-color: #c4a744"></td>
-            <td color-value="07bf41" style="background-color: #c7bf41"></td>
-            <td color-value="d7bc39" style="background-color: #67bc39"></td>
+            <td color-value="3755f7" style="background-color: #3755f7"></td>
+            <td color-value="9bc755" style="background-color: #9bc755"></td>
+            <td color-value="868149" style="background-color: #868149"></td>
+            <td color-value="54a744" style="background-color: #54a744"></td>
+            <td color-value="07bf41" style="background-color: #07bf41"></td>
+            <td color-value="d7bc39" style="background-color: #d7bc39"></td>
         </tr>
         <tr>
             <td color-value="7755f7" style="background-color: #7755f7"></td>
@@ -259,10 +259,6 @@
             },
             success: function (result) {
                 if (result) {
-                    if(result.code==-1){
-                        Alert('fail', result.error);
-                        return ;
-                    }
                     var html = $("#shiftTemplate").html();
                     for (var i = 0; i < result.length; i++) {
                         var shift = result[i];
@@ -370,6 +366,11 @@
                 Alert('fail', "网络错误");
             },
             success: function (result) {
+                if(result.code==-1){
+                    Alert('fail', result.error);
+                    loadWorkFlow();
+                    return ;
+                }
                 var td=$(text).closest("td");
                 $("[name=contentInput]").remove();
                 $(td).attr("contentId",result.contentId);
