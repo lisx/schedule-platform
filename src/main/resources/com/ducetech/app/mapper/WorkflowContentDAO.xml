@@ -36,13 +36,13 @@
             end_time=#{endTime},
             content=#{content},
             content_color=#{contentColor},
-            <if test="rowsNum != null">
+            <if test="startLocation != null">
                 start_location=#{startLocation},
             </if>
-            <if test="colsNum != null">
+            <if test="endLocation != null">
                 end_location=#{endLocation},
             </if>
-            <if test="contentLen != null">
+            <if test="rowsNum != null">
                 rows_num=#{rowsNum}
             </if>
             <if test="updatorId != null">
@@ -58,7 +58,13 @@
 
     <select id="selectWorkflowContentById" parameterType="java.lang.Integer"
             resultMap="workflowContentMap">
-        select * from workflow_content where is_deleted = 0 and contentId = #{workflowContentId}
+        select * from workflow_content where is_deleted = 0 and content_id = #{workflowContentId}
+    </select>
+
+    <select id="selectCovered"
+            resultType="java.lang.Integer">
+        select count(*) from workflow_content where is_deleted = 0 and workflow_id = #{workflowId}
+        and rows_num = #{row} and start_time &lt; #{time} and end_time &gt; #{time}
     </select>
 
     <select id="selectWorkflowContents" parameterType="com.ducetech.app.model.WorkflowContent"

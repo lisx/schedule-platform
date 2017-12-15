@@ -38,4 +38,9 @@ public class WorkflowContentServiceImpl implements WorkflowContentService {
     public List<WorkflowContent> selectWorkflowContents(WorkflowContent workflowContent) {
         return workflowContentDAO.selectWorkflowContents(workflowContent);
     }
+
+    @Override
+    public boolean checkTime(int time,int row,Integer id) {
+        return workflowContentDAO.selectCovered(time,row,id)>0;
+    }
 }

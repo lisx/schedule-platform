@@ -1,5 +1,6 @@
 package com.ducetech.app.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ducetech.app.model.User;
 import com.ducetech.app.model.WorkflowContent;
 import com.ducetech.app.service.WorkflowContentService;
@@ -30,6 +31,15 @@ public class WorkflowContentController extends BaseController {
     @ResponseBody
     public Object workflowContentAdd(HttpServletRequest request, WorkflowContent workflowContent) throws Exception {
         User u = getLoginUser(request);
+        if (!workflowContentService.checkTime(workflowContent.getEndTime(), workflowContent.getRowsNum(),
+                workflowContent.getWorkflowId()) ||
+                !workflowContentService.checkTime(workflowContent.getStartTime(),workflowContent.getRowsNum(),
+                        workflowContent.getWorkflowId())) {
+            JSONObject result = new JSONObject();
+            result.put("code", "-1");
+            result.put("error", "有时间冲突");
+            return result;
+        }
         workflowContent.setCreatorId(Integer.parseInt(u.getUserId()));
         workflowContent.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
         workflowContentService.insertWorkflowContent(workflowContent);

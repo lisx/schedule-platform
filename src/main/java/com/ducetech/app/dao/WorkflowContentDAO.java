@@ -19,4 +19,6 @@ public interface WorkflowContentDAO {
     Integer deleteWorkflowContentByWorkflowId(Integer workflowId);
 
     List<WorkflowContent> selectWorkflowContentsByWorkflowId(@Param("workflowId") Integer workflowId);
+
+    Integer selectCovered(@Param("time")int time,@Param("row")int row,@Param("workflowId")Integer workflowId);
 }

@@ -250,6 +250,10 @@
             },
             success: function (result) {
                 if (result) {
+                    if(result.code==-1){
+                        Alert('fail', result.error);
+                        return ;
+                    }
                     var html = $("#shiftTemplate").html();
                     for (var i = 0; i < result.length; i++) {
                         var shift = result[i];

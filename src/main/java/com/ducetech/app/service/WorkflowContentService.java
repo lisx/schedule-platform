@@ -14,4 +14,6 @@ public interface WorkflowContentService {
     WorkflowContent selectWorkflowContentById(Integer workflowContentId);
 
     List<WorkflowContent> selectWorkflowContents(WorkflowContent workflowContent);
+
+    boolean checkTime(int time,int row,Integer workflowId );
 }
