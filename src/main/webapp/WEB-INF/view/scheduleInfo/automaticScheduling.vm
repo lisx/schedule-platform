@@ -590,7 +590,7 @@
 
 </script>
 <div class="menu">
-    <p class="menu-head">$stationArea.groupName</p>
+    <p class="menu-head" style="font-size: 13px">$stationArea.groupName</p>
     <ul class="nav nav-tabs">
         #foreach($grouping in $groupingList)
             <li><a href="#" data-groupId="$grouping.groupId" data-toggle="tab">$grouping.groupName</a></li>

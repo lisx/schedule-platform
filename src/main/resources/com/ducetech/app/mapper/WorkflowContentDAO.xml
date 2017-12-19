@@ -20,7 +20,7 @@
         <result column="content_color" property="contentColor"/>
     </resultMap>
 
-    <insert id="insertWorkflowContent" parameterType="com.ducetech.app.model.WorkflowContent">
+    <insert id="insertWorkflowContent" useGeneratedKeys="true" keyProperty="contentId" parameterType="com.ducetech.app.model.WorkflowContent">
         insert into workflow_content (content_id,start_time,end_time,content,creator_id,updator_id,is_deleted,created_at,updated_at,workflow_id,start_location,end_location,rows_num,content_color)
         values (null,#{startTime},#{endTime},#{content},#{creatorId},#{updatorId},#{isDeleted},#{createdAt},#{updatedAt},#{workflowId},#{startLocation},#{endLocation},#{rowsNum},#{contentColor})
     </insert>
