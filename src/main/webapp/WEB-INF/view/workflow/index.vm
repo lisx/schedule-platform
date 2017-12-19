@@ -391,8 +391,8 @@
     });
 
     function showColorPanel(event) {
-        $(".colorPanel").css("left", (event.clientX+100)+"px");
-        $(".colorPanel").css("top", event.clientY);
+        $(".colorPanel").css("left", (event.pageX+100)+"px");
+        $(".colorPanel").css("top", event.pageY);
         $("#contentInput").text("");
         $(".colorPanel").show();
     }
