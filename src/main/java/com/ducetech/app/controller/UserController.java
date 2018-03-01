@@ -14,6 +14,7 @@ import com.ducetech.framework.controller.BaseController;
 import com.ducetech.framework.exception.ServiceException;
 import com.ducetech.framework.util.*;
 import com.ducetech.framework.web.view.OperationResult;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -460,5 +461,58 @@ public class UserController extends BaseController {
             userList.addAll(userService.getPrepareUser(user));
         }
         return userList;
+    }
+
+    public static void main(String [] z){
+        List<String> homework=new ArrayList<>(500);
+        for(int i=0;i<150;i++){
+            int a= RandomUtils.nextInt(0,11);
+            int c=RandomUtils.nextInt(0,11);
+            StringBuilder sb=new StringBuilder();
+            sb.append(a);
+            sb.append("+");
+            sb.append(c);
+            sb.append("=");
+            homework.add(sb.toString());
+        }
+        for(int i=0;i<150;i++){
+            int a= RandomUtils.nextInt(0,21);
+            int c=RandomUtils.nextInt(0,a+1);
+            StringBuilder sb=new StringBuilder();
+            sb.append(a);
+            sb.append("-");
+            sb.append(c);
+            sb.append("=");
+            homework.add(sb.toString());
+        }
+        for(int i=0;i<200;i++){
+            int a= RandomUtils.nextInt(0,21);
+            boolean b=RandomUtils.nextInt(0,2)==0;
+            int c=b?RandomUtils.nextInt(0,21):RandomUtils.nextInt(0,a+1);
+            StringBuilder sb=new StringBuilder();
+            sb.append(a);
+            sb.append(b?"+":"-");
+            sb.append(c);
+            sb.append("=");
+            homework.add(sb.toString());
+        }
+        for(int i=0;i<100;i++){
+            int a= RandomUtils.nextInt(0,51);
+            boolean b=RandomUtils.nextInt(0,2)==0;
+            int c=b?RandomUtils.nextInt(0,50):RandomUtils.nextInt(0,a+1);
+            StringBuilder sb=new StringBuilder();
+            sb.append(a);
+            sb.append(b?"+":"-");
+            sb.append(c);
+            sb.append("=");
+            homework.add(sb.toString());
+        }
+        for(int i=0;i<homework.size();i++){
+            System.out.print(homework.get(i));
+            System.out.print("\t\t\t");
+            if(i%5==4){
+                System.out.println();
+            }
+        }
     }
 }
