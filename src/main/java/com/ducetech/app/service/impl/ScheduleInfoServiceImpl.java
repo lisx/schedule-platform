@@ -166,7 +166,9 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
                     info.setStation(model.getStation());
                     info.setPostName(postName);
                     info.setUserId(userId);
-                    info.setUserName(user.getUserName());
+                    if(null!=user) {
+                        info.setUserName(user.getUserName());
+                    }
                     info.setCreatedAt(dayFormat.format(date));
                     info.setCreatorId(loginUser.getUserId());
                     batch.add(info);
