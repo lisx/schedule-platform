@@ -119,11 +119,14 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
         String [] userIdArr=userIds.split(",");
         List<ScheduleInfoTemplate> templates = templateDAO.selectScheduleInfoTemplateByModelId(modelId);
         Map<Integer,Map<Integer,ScheduleInfoTemplate>> weekly=new HashMap<>();
-        for (int i=0;i<userIdArr.length;i++){
-            weekly.put(i,new HashMap<Integer, ScheduleInfoTemplate>());
-        }
+//        for (int i=0;i<userIdArr.length;i++){
+//            weekly.put(i,new HashMap<Integer, ScheduleInfoTemplate>());
+//        }
         for (ScheduleInfoTemplate t :
                 templates) {
+            if(!weekly.containsKey(t.getWeekNumber())){
+                weekly.put(t.getWeekNumber(),new HashMap<Integer, ScheduleInfoTemplate>());
+            }
             weekly.get(t.getWeekNumber()).put(t.getWeekDay(),t);
         }
 
