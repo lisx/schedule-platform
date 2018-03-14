@@ -10,6 +10,7 @@ import java.util.Map;
  * Created by lisx on 2017/4/27.
  */
 public class ScheduleInfoData{
+    public String scheduleId;
     //用户
     public String userId;
     //分组

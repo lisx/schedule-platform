@@ -65,6 +65,7 @@
             and station=#{station}
         </if>
         and schedule_date between #{startAt} and #{endAt}
+        order by schedule_info_id asc
     </select>
 	<select id="getRelevanceInfo" resultMap="scheduleInfoMap">
 		select *

@@ -105,8 +105,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
         Map<String,ShiftSetting> shiftMap=new HashMap<>();
         Map<String,List<Workflow>> workFlowMap=new HashMap<>();
         Map<String,Integer> countMap=new HashMap<>();
-        for (ShiftSetting s :
-                settings) {
+        for (ShiftSetting s : settings) {
             shiftMap.put(s.getShiftId(),s);
             List<Workflow> workflows = workflowDAO.selectWorkflowsByShiftId(s.getShiftId());
             workFlowMap.put(s.getShiftId(),workflows);
@@ -122,8 +121,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
 //        for (int i=0;i<userIdArr.length;i++){
 //            weekly.put(i,new HashMap<Integer, ScheduleInfoTemplate>());
 //        }
-        for (ScheduleInfoTemplate t :
-                templates) {
+        for (ScheduleInfoTemplate t :templates) {
             if(!weekly.containsKey(t.getWeekNumber())){
                 weekly.put(t.getWeekNumber(),new HashMap<Integer, ScheduleInfoTemplate>());
             }

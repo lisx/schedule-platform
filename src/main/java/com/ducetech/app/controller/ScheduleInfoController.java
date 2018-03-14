@@ -116,7 +116,12 @@ public class ScheduleInfoController extends BaseController {
         return map;
     }
 
-
+    /**
+     * 新增排班
+     * @param model
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/automaticScheduling", method = RequestMethod.GET)
     public String automaticScheduling(ModelMap model,HttpServletRequest request) {
         User loginUser = getLoginUser(request);
@@ -603,7 +608,7 @@ public class ScheduleInfoController extends BaseController {
             public int compare(Object o1, Object o2) {
                 ScheduleInfoData stu1 = (ScheduleInfoData) o1;
                 ScheduleInfoData stu2 = (ScheduleInfoData) o2;
-                return stu2.userId.compareTo(stu1.userId);
+                return stu1.scheduleId.compareTo(stu2.scheduleId);
             }
         });
         return dataList;
@@ -633,6 +638,7 @@ public class ScheduleInfoController extends BaseController {
             int sum = 0;
             for (ScheduleInfo info : list) {
                 sum += scheduleLogService.selectScheduleLogSum(info.getScheduleInfoId());
+                sd.scheduleId=info.getScheduleInfoId();
             }
             sd.actualHours = sum / 60;
             dataList.add(sd);
@@ -884,6 +890,13 @@ public class ScheduleInfoController extends BaseController {
     @Autowired
     private ScheduleInfoTemplateService templateService;
 
+    /**
+     * 生成模版
+     * @param zwyId
+     * @param stationId
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/autoScheduling", method = RequestMethod.GET)
     public
     @ResponseBody
