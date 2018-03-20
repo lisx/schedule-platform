@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ducetech.app.model.ScheduleInfo;
 import com.ducetech.app.model.User;
 import com.ducetech.app.model.WorkflowContent;
@@ -36,7 +37,7 @@ public interface ScheduleInfoService {
 
     void changeData(String modelId, String id1, String id2);
 
-    void saveSchedule(String modelId,String groupName,String postName, String userIds, String startAt, User loginUser) throws ParseException;
+    void saveSchedule(String modelId, JSONObject weeks, String groupName, String postName, String userIds, String startAt, User loginUser) throws ParseException;
 
     void changeScheduleInfo(String id1, String id2, User loginUser);
 

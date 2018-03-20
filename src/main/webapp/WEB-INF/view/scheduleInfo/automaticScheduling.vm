@@ -71,11 +71,27 @@
     });
 
     $(document).on("click", "#btnSave", function () {
-        var empty = $("td[tdType=-1]:empty");
-        if (empty.length > 0) {
-            Alert('fail', "还有岗位未排班");
-            return;
+        var milasUrl={};//新建对象，用来存储所有数据
+        var subMilasUrlArr={};//存储每一行数据
+        var tableData={};
+        $(".scheduleForm tbody tr").each(function(trindex,tritem){//遍历每一行
+            tableData[trindex]=new Array();
+            $(tritem).find("td").each(function(tdindex,tditem){
+                tableData[trindex][tdindex]=$(tditem).text();//遍历每一个数据，并存入
+                subMilasUrlArr[trindex]=tableData[trindex];//将每一行的数据存入
+            });
+
+        });
+        for(var key in subMilasUrlArr)
+        {
+            milasUrl[key]=subMilasUrlArr[key];//将每一行存入对象
         }
+        console.log(JSON.stringify(milasUrl))
+        var empty = $("td[tdType=-1]:empty");
+//        if (empty.length > 0) {
+//            Alert('fail', "还有岗位未排班");
+//            return;
+//        }
         var modelId = $("select").val();
         var stationId = $(".menu .active a").attr("data-groupId");
         var userIds = "";
@@ -83,10 +99,12 @@
             userIds += $(this).attr("userId");
             userIds += ",";
         });
+        var data="weeks="+JSON.stringify(milasUrl);
         var startAt = $("#startAt").val();
         jQuery.ajax({
-            type: "get",
+            type: "POST",
             url: "$path/saveScheduling?modelId=" + modelId + "&userIds=" + userIds + "&stationId=" + stationId + "&startAt=" + startAt,
+            data:data,
             dataType: "json",
             error: function (e) {
                 Alert('fail', "网络错误");

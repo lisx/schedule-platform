@@ -21,7 +21,8 @@
 		select * from schedule_info_template where model_id = #{modelId} order by order_index asc;
 	</select>
     <select id="selectByModelIdAndWeek" resultMap="scheduleInfoTemplateMap">
-		select * from schedule_info_template where model_id = #{modelId} and week_number = #{weekNumber} and week_day=#{weekDay};
+		select * from schedule_info_template where model_id = #{modelId} and week_number = #{weekNumber} and week_day=#{weekDay}
+        order by week_number,week_day asc;
 	</select>
 
     <insert id="insertScheduleInfoTemplate" parameterType="com.ducetech.app.model.ScheduleInfoTemplate">

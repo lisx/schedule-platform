@@ -112,6 +112,14 @@ public class ScheduleInfoController extends BaseController {
                     map.put(key, list);
             }
             list.add(item);
+//            Collections.sort(list, new Comparator() {
+//                @Override
+//                public int compare(Object o1, Object o2) {
+//                    ScheduleInfo stu1 = (ScheduleInfo) o1;
+//                    ScheduleInfo stu2 = (ScheduleInfo) o2;
+//                    return stu2.getShiftCode().compareTo(stu1.getShiftCode());
+//                }
+//            });
         }
         return map;
     }
@@ -1083,18 +1091,29 @@ public class ScheduleInfoController extends BaseController {
         return result;
     }
 
-
-    @RequestMapping(value = "/saveScheduling", method = RequestMethod.GET)
+    /**
+     * 保存排班
+     * @param modelId
+     * @param stationId
+     * @param userIds
+     * @param startAt
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/saveScheduling", method = RequestMethod.POST)
     public
     @ResponseBody
-    Object shiftApproval(String modelId, String stationId, String userIds, String startAt, HttpServletRequest request) {
+    Object shiftApproval(String modelId,String weeks, String stationId, String userIds, String startAt, HttpServletRequest request) {
         long start = System.currentTimeMillis();
+        String [][]week = new String[0][];
+        JSONObject object=JSON.parseObject(weeks);
+        System.out.print(weeks.toString());
         try {
             User loginUser = getLoginUser(request);
             Grouping grouping = groupingService.selectGroupingByGroupId(stationId);
             ShiftModel shiftModel = shiftModelService.selectShiftModelByModelCodeId(null, modelId);
             PostSetting post = postSettingService.getPostSettingByPostId(shiftModel.getPostId());
-            scheduleInfoService.saveSchedule(modelId, grouping.getGroupName(),post.getPostName(), userIds, startAt, loginUser);
+            scheduleInfoService.saveSchedule(modelId,object, grouping.getGroupName(),post.getPostName(), userIds, startAt, loginUser);
         } catch (Exception e) {
             logger.error("error:", e);
             return "error";

@@ -1,11 +1,11 @@
 package com.ducetech.app.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ducetech.app.dao.*;
 import com.ducetech.app.model.*;
 import com.ducetech.app.model.vo.ChangeShiftVO;
 import com.ducetech.app.service.ScheduleInfoService;
-import com.ducetech.app.support.domain.CalculateResult;
-import com.ducetech.app.support.domain.Task;
 import com.ducetech.framework.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,7 +99,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
 
     @Override
     @Transactional
-    public void saveSchedule(String modelId,String groupName,String postName, String userIds, String startAt, User loginUser) throws ParseException {
+    public void saveSchedule(String modelId, JSONObject weeks, String groupName, String postName, String userIds, String startAt, User loginUser) throws ParseException {
         DateFormat dayFormat=new SimpleDateFormat("yyyyMMdd");
         List<ShiftSetting> settings = shiftSettingDAO.selectShiftSettingByModelId(modelId);
         Map<String,ShiftSetting> shiftMap=new HashMap<>();
@@ -118,9 +118,6 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
         String [] userIdArr=userIds.split(",");
         List<ScheduleInfoTemplate> templates = templateDAO.selectScheduleInfoTemplateByModelId(modelId);
         Map<Integer,Map<Integer,ScheduleInfoTemplate>> weekly=new HashMap<>();
-//        for (int i=0;i<userIdArr.length;i++){
-//            weekly.put(i,new HashMap<Integer, ScheduleInfoTemplate>());
-//        }
         for (ScheduleInfoTemplate t :templates) {
             if(!weekly.containsKey(t.getWeekNumber())){
                 weekly.put(t.getWeekNumber(),new HashMap<Integer, ScheduleInfoTemplate>());
@@ -137,6 +134,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
             for (int j=0;j<userIdArr.length;j++){
                 int index=(j+i)%userIdArr.length;
                 Map<Integer, ScheduleInfoTemplate> temp = weekly.get(index);
+                JSONArray list=weeks.getJSONArray(String.valueOf(index));
                 for (int w=0;w<7;w++) {
                     ScheduleInfoTemplate t = temp.get(w);
                     Date date=DateUtil.nDaysAfter(j*7+w,start);
@@ -144,7 +142,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
                     info.setGroupName(groupName);
                     info.setModelId(modelId);
                     if (t!=null){
-                        ShiftSetting shift = shiftMap.get(t.getShiftId());
+                        ShiftSetting shift = shiftSettingDAO.editShiftSetting(t.getShiftId());
                         int count=countMap.get(t.getShiftId());
                         List<Workflow> workflows = workFlowMap.get(t.getShiftId());
                         if (workflows.size()>0){
@@ -152,6 +150,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
                             countMap.put(t.getShiftId(),count);
                             info.setSerialNumber(shift.getShiftCode()+workflow.getSerialNumber());
                         }
+                        info.setSerialNumber(list.getString(w+1));
                         info.setShiftId(t.getShiftId());
                         info.setShiftName(t.getShiftName());
                         info.setTotalAt(t.getShiftMinutes());
