@@ -955,9 +955,22 @@
     }
 
     function queryBtn() {
-        Alert('success', "数据加载中请稍候")
+
         $("#btnChange").hide();
         //初始化排班表
+        var station=$("#stationQuery").val();
+        console.log(station);
+        if(station==''){
+            Alert("fail", "需选择站点");
+            return;
+        }
+        var stationArea=$("#stationAreaQuery").val();
+        console.log(stationArea);
+        if(stationArea==''){
+            Alert("fail", "需选择站区");
+            return;
+        }
+        Alert('success', "数据加载中请稍候")
         jQuery.ajax({
             type: "get",
             url: "$path/scheduleFormData?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val(),
