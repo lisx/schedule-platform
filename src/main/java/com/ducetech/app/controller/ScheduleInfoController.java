@@ -117,7 +117,7 @@ public class ScheduleInfoController extends BaseController {
 //                public int compare(Object o1, Object o2) {
 //                    ScheduleInfo stu1 = (ScheduleInfo) o1;
 //                    ScheduleInfo stu2 = (ScheduleInfo) o2;
-//                    return stu2.getShiftCode().compareTo(stu1.getShiftCode());
+//                    return stu1.getCreatedAt().compareTo(stu2.getCreatedAt());
 //                }
 //            });
         }
@@ -208,10 +208,16 @@ public class ScheduleInfoController extends BaseController {
         HSSFRow row;
         HSSFCellStyle style = PoiUtil.getDefaultHssfCellStyle(wb);
         Map<String, List<ScheduleInfo>> map = null;
+        Map<String, List<ScheduleInfo>> temp = null;
         if (scheduleType.equals("0")) {
-            map = groupByProperty(sis, "userId", String.class);
+            temp = groupByProperty(sis, "userId", String.class);
         } else {
-            map = groupByProperty(sis, "groupName", String.class);
+            temp = groupByProperty(sis, "groupName", String.class);
+        }
+        List<ScheduleInfo> sort=scheduleInfoService.selectScheduleInfoSort(startAt, endAt, queryData, queryData, queryData, station, stationArea);
+        for(ScheduleInfo info:sort){
+            List<ScheduleInfo> infoTemp=temp.get(info.getUserId());
+            map.put(info.getUserId(),infoTemp);
         }
         HSSFCell cell;
         HSSFCellStyle greenStyle = wb.createCellStyle();
@@ -371,15 +377,19 @@ public class ScheduleInfoController extends BaseController {
 
         HSSFRow row;
         HSSFCellStyle style = PoiUtil.getDefaultHssfCellStyle(wb);
-        Map<String, List<ScheduleInfo>> map = null;
+        Map<String, List<ScheduleInfo>> map = new LinkedHashMap();
+        Map<String, List<ScheduleInfo>> temp = null;
         if (scheduleType.equals("0")) {
-            map = groupByProperty(sis, "userId", String.class);
+            temp = groupByProperty(sis, "userId", String.class);
         } else {
-            map = groupByProperty(sis, "groupName", String.class);
+            temp = groupByProperty(sis, "groupName", String.class);
         }
-
+        List<ScheduleInfo> sort=scheduleInfoService.selectScheduleInfoSort(startAt, endAt, queryData, queryData, queryData, station, stationArea);
+        for(ScheduleInfo info:sort){
+            List<ScheduleInfo> infoTemp=temp.get(info.getUserId());
+            map.put(info.getUserId(),infoTemp);
+        }
         HSSFCell cell;
-
         int rownum;
         String postName = null;
         List<ShiftSetting> shiftList = null;

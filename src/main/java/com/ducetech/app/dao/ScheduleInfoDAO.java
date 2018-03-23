@@ -19,6 +19,8 @@ public interface ScheduleInfoDAO {
 	*/
     int selectScheduleInfoSumDay(@Param("startAt") String startAt,@Param("endAt") String endAt,@Param("userId")String userId);
     int selectScheduleInfoSum(@Param("startAt") String startAt,@Param("endAt") String endAt,@Param("userId")String userId);
+
+    List<ScheduleInfo> selectScheduleInfoSort(@Param("startAt") String startAt,@Param("endAt") String endAt,@Param("userName") String userName,@Param("userCode") String userCode,@Param("postName") String userJob,@Param("station") String station,@Param("stationArea") String stationArea);
 	List<ScheduleInfo> selectScheduleInfo(@Param("startAt") String startAt,@Param("endAt") String endAt,@Param("userName") String userName,@Param("userCode") String userCode,@Param("postName") String userJob,@Param("station") String station,@Param("stationArea") String stationArea);
     List<ScheduleInfo> selectScheduleInfoByUser(@Param("startAt") String startAt,@Param("endAt") String endAt,@Param("userId")String userId);
     List<ScheduleInfo> selectFutureScheduleInfoByUser(@Param("startAt") Date startAt,@Param("userId")String userId);

@@ -67,6 +67,23 @@
         and schedule_date between #{startAt} and #{endAt}
         order by schedule_info_id asc
     </select>
+    <!--查询指定日期区间中的所有数据-->
+    <select id="selectScheduleInfoSort" parameterType="String" resultMap="scheduleInfoMap">
+        select * from schedule_info
+        where if_use=0
+        <if test="userCode!=null and userCode!='' and userCode!='{}'||userName!=null and userName!='' and userName!='{}'|| postName!=null and postName!='' and postName!='{}'">
+            AND (user_code=#{userCode} or user_name like '%' #{userName} '%' or post_Name=#{postName})
+        </if>
+        <if test="stationArea!=null and stationArea!='' and stationArea!='undefined'">
+            and station_area like CONCAT(#{stationArea},'%')
+        </if>
+        <if test="station!=null and station!='' and station!='undefined'">
+            and station=#{station}
+        </if>
+        and schedule_date between #{startAt} and #{endAt}
+        GROUP BY user_id
+        order by schedule_info_id asc
+    </select>
 	<select id="getRelevanceInfo" resultMap="scheduleInfoMap">
 		select *
         from schedule_info e
