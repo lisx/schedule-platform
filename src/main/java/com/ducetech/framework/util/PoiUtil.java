@@ -559,7 +559,7 @@ public class PoiUtil {
             for (int i = 0; i < list.size(); i++) {
                 cell = row.createCell(i + 3);
                 if (list.get(i).getShiftCode() != null) {
-                    cell.setCellValue(list.get(i).getSerialNumber() + list.get(i).getShiftCode());
+                    cell.setCellValue(list.get(i).getSerialNumber());// + list.get(i).getShiftCode()
 
                 } else {
                     cell.setCellValue(list.get(i).getShiftName());
