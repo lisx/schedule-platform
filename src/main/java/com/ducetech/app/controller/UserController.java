@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -34,7 +35,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.security.acl.Group;
 import java.util.*;
 
 
@@ -71,16 +71,23 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/user/createImpFile", method = RequestMethod.POST)
     @ResponseBody
-    public OperationResult createImpFile(HttpServletRequest request, @RequestParam("fileUpload") CommonsMultipartFile fileUpload) {
+    @Transactional
+    public OperationResult createImpFile(HttpServletRequest request, @RequestParam("fileUpload") CommonsMultipartFile fileUpload) throws UserException {
         User u = getLoginUser(request);
+        StringBuffer sb=new StringBuffer();
         try {
             if (fileUpload != null && !fileUpload.isEmpty()) {
                 List<List<List<String>>> data = PoiUtil.readExcelToList(fileUpload, 1);
                 if (null != data && !data.isEmpty()) {
                     for (List<List<String>> sheet : data) {
                         if (null != sheet && !sheet.isEmpty()) {
-                            for (List<String> row : sheet) {
+//                            for (List<String> row : sheet) {
+                            for(int i=0;i<sheet.size();i++){
+                                List<String> row=sheet.get(i);
                                 String userCode = ExtStringUtil.trim(row.get(0));
+                                if(!StringUtils.isBlank(userCode)||userCode.length()!=8){
+                                    sb.append("第"+(i+2)+"行员工卡号错误;");
+                                }
                                 String userName = ExtStringUtil.trim(row.get(1));
                                 String gender = ExtStringUtil.trim(row.get(2));
                                 String stationArea = u.getStationArea();
@@ -89,23 +96,37 @@ public class UserController extends BaseController {
                                     station = checkStationArea(station);
                                 }
                                 String phone = ExtStringUtil.trim(row.get(5));
-                                if(isEmptyUser(userCode,userName,gender,station,phone)){
-                                    continue;
-                                }
-                                if(station!=null&&!station.startsWith(stationArea)){
-                                    continue;
-                                }
+//                                if(isEmptyUser(userCode,userName,gender,station,phone)){
+//                                    continue;
+//                                }
+//                                if(station!=null&&!station.startsWith(stationArea)){
+//                                    continue;
+//                                }
                                 String userJob = ExtStringUtil.trim(row.get(4));
                                 String addr = ExtStringUtil.trim(row.get(6));
                                 String idCode = ExtStringUtil.trim(row.get(7));
+                                if(idCode.length()!=18){
+                                    int index=sb.toString().lastIndexOf("第");
+                                    int rowIndex=sb.toString().lastIndexOf("行");
+                                    String numstr=sb.toString().substring(index+1,rowIndex);
+                                    int num=Integer.parseInt(numstr);
+                                    if(num==(i+2)){
+                                        sb.append("身份证号码错误;");
+                                    }else {
+                                        sb.append("第" + (i + 2) + "行身份证号码错误;");
+                                    }
+                                }
                                 String married = ExtStringUtil.trim(row.get(8));
                                 String child = ExtStringUtil.trim(row.get(9));
                                 String edu = ExtStringUtil.trim(row.get(10));
-                                String certNo = ExtStringUtil.trim(row.get(11));
-                                String certLevel = ExtStringUtil.trim(row.get(12));
-                                String recruitDate = ExtStringUtil.trim(row.get(13));
-                                String political = ExtStringUtil.trim(row.get(14));
-                                String joinDate = ExtStringUtil.trim(row.get(15));
+                                String xfzNo = ExtStringUtil.trim(row.get(11));
+                                String certNo = ExtStringUtil.trim(row.get(12));
+                                String certLevel = ExtStringUtil.trim(row.get(13));
+                                String zwyNo = ExtStringUtil.trim(row.get(14));
+                                String zwyLevel = ExtStringUtil.trim(row.get(15));
+                                String recruitDate = ExtStringUtil.trim(row.get(16));
+                                String political = ExtStringUtil.trim(row.get(17));
+                                String joinDate = ExtStringUtil.trim(row.get(18));
                                 if (!ExtStringUtil.isBlank(userJob)) {
                                     PostSetting postSetting = postSettingService.selectPostSettingByPostName(userJob);
                                     if (null != postSetting) {
@@ -114,42 +135,48 @@ public class UserController extends BaseController {
                                         userJob = "";
                                     }
                                 }
-                                User user = new User();
-                                user.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-                                user.setOnBoardDate(recruitDate);
-                                user.setPhoneNumber(phone);
-                                user.setHomeAddress(addr);
-                                user.setBirthday(getBirthday(idCode));
-                                user.setIdCode(idCode);
-                                user.setIsMarried(married);
-                                user.setHasChild(child);
-                                user.setGender(gender);
-                                user.setEduBackGround(edu);
-                                user.setIsPartyMember(political);
-                                user.setJoinDate(joinDate);
-                                user.setCertLevel(certLevel);
-                                user.setCertNo(certNo);
-                                user.setCreatorId(u.getUserId());
-                                user.setIsAdmin("0");
-                                user.setIsDeleted(0);
-                                user.setPassword("123456");
-                                user.setUserPass("123456");
-                                user.setStation(station);
-                                user.setStationArea(stationArea);
-                                user.setUserCode(userCode);
-                                user.setUserJob(userJob);
-                                user.setUserName(userName);
-                                userService.addUser(user);
+                                if(StringUtils.isBlank(sb.toString())) {
+                                    User user = new User();
+                                    user.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+                                    user.setOnBoardDate(recruitDate);
+                                    user.setPhoneNumber(phone);
+                                    user.setHomeAddress(addr);
+                                    user.setBirthday(getBirthday(idCode));
+                                    user.setIdCode(idCode);
+                                    user.setIsMarried(married);
+                                    user.setHasChild(child);
+                                    user.setGender(gender);
+                                    user.setEduBackGround(edu);
+                                    user.setIsPartyMember(political);
+                                    user.setJoinDate(joinDate);
+                                    user.setCertLevel(certLevel);
+                                    user.setCertNo(certNo);
+                                    user.setXfzNo(xfzNo);
+                                    user.setZwyNo(zwyNo);
+                                    user.setZwyLevel(zwyLevel);
+                                    user.setCreatorId(u.getUserId());
+                                    user.setIsAdmin("0");
+                                    user.setIsDeleted(0);
+                                    user.setPassword("123456");
+                                    user.setUserPass("123456");
+                                    user.setStation(station);
+                                    user.setStationArea(stationArea);
+                                    user.setUserCode(userCode);
+                                    user.setUserJob(userJob);
+                                    user.setUserName(userName);
+                                    userService.addUser(user);
+                                }
                             }
                         }
                     }
                 }
+                if(StringUtils.isBlank(sb.toString()))
                 return OperationResult.buildFailureResult("文件处理成功", "success");
             }
         } catch (Exception e) {
             throw new ServiceException("Upload file error", e);
         }
-        return OperationResult.buildFailureResult("文件处理失败", "fail");
+        return OperationResult.buildFailureResult(sb.toString()+"请修改后重新导入.", "fail");
     }
 
     private boolean isEmptyUser(String userCode, String userName, String gender, String station, String phone) {
