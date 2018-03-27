@@ -6,6 +6,7 @@ import com.ducetech.framework.controller.BaseController;
 import com.ducetech.framework.schedule.service.SystemSechduleService;
 import com.ducetech.framework.util.DateUtil;
 import com.ducetech.framework.web.view.OperationResult;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.util.SystemOutLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,8 @@ public class ScheduleLogController extends BaseController {
     private ShiftModelService shiftModelService;
     @Autowired
     private ShiftSettingService shiftService;
+    @Autowired
+    private UserService userService;
     /**
      * 获取单个排班所以编辑记录
      * @param scheduleInfoId
@@ -110,6 +113,8 @@ public class ScheduleLogController extends BaseController {
         ScheduleInfo scheduleInfo = scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         log.setScheduleInfoId(scheduleInfo.getScheduleInfoId());
         log.setUserName(scheduleInfo.getUserName());
+        User user=userService.getUserByUserId(log.getDetailType());
+        log.setLogType(log.getUserName()+log.getLogType()+user.getUserName());
         scheduleLogService.insertScheduleLog(log);
         scheduleInfo.setIfLeave(6);
         scheduleInfo.setLeaveType(log.getLogType());
@@ -118,12 +123,12 @@ public class ScheduleLogController extends BaseController {
         scheduleInfoService.updateScheduleInfo(scheduleInfo);
         String startAt = log.getStartAt();
         String endAt = log.getEndAt();
-
-        int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
-
-        log.setTimeAt(-gh);
+        if(!StringUtils.isBlank(startAt)||!StringUtils.isBlank(endAt)) {
+            int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
+            log.setTimeAt(-gh);
+        }
         scheduleLogService.updateScheduleLog(log);
-        return OperationResult.buildSuccessResult("假期编辑成功", "success");
+        return OperationResult.buildSuccessResult("替班编辑成功", "success");
     }
 
 
