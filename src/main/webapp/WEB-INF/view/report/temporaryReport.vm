@@ -77,8 +77,11 @@ function queryBtn(){
                 tbody+='</tr>';
             }
             target.find("tbody").html(tbody);
-            var ctx1 = document.getElementById("temporaryReport");
-            var myChart1 = new Chart(ctx1, {
+
+            var canvas = document.getElementById("temporaryReport");
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0,0,1600,400);
+            var myChart1 = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels : labels,
@@ -118,7 +121,6 @@ function queryBtn(){
 }
 $(document).on("click",".showBtn",function(){
     var userId=$(this).attr("data-id");
-    console.log("++++++"+userId);
     jQuery.ajax({
         type: "get",
         url: "$path/getScheduleLogByUserId?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() +"&userId="+userId,
@@ -234,10 +236,10 @@ $(document).on("click","#monthBtn",function(){
     <div class="chart">
         <ul class="legend">
             <li>
-                <span class="color-bar planHour"></span>结余总工时
+                <span class="color-bar bgGreen"></span>结余总工时
             </li>
         </ul>
-        <canvas id="temporaryReport" width="1200" height="400"></canvas>
+        <canvas id="temporaryReport" width="1600" height="400"></canvas>
     </div>
 
     <table class="table scheduleForm">
@@ -254,46 +256,7 @@ $(document).on("click","#monthBtn",function(){
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>121221</td>
-                <td>高阳</td>
-                <td>站区长</td>
-                <td>西直门站区</td>
-                <td>西直门</td>
-                <td>150</td>
-                <td>160</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td>121221</td>
-                <td>叶涛涛</td>
-                <td>站区助理</td>
-                <td>西直门站区</td>
-                <td>西直门</td>
-                <td>150</td>
-                <td>160</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td>121221</td>
-                <td>陈云</td>
-                <td>值班站长</td>
-                <td>西直门站区</td>
-                <td>西直门</td>
-                <td>150</td>
-                <td>160</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td>121221</td>
-                <td>李双喜</td>
-                <td>站务员</td>
-                <td>西直门站区</td>
-                <td>西直门</td>
-                <td>150</td>
-                <td>160</td>
-                <td>0</td>
-            </tr>
+            
         </tbody>
     </table>
 </div>

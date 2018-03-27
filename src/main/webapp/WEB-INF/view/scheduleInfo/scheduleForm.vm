@@ -131,10 +131,13 @@
 <div class="wrapper">
     <div class="heading">
         <ul class="float-right">
-            <a class="btnDefault bgGreen" href="javascript:;" id="btnToggle" >显示颜色</a>
-            <li><span class="bgYellow"></span>换班/加班</li>
-            <li><span class="bgGreen"></span>替班/请假</li>
-            <li><span class="bgRed"></span>结余</li>
+            <li><a class="btnDefault bgGreen" href="javascript:;" id="btnToggle" >显示颜色</a></li>
+            <li><span class="yellow"></span>假期</li>
+            <li><span class="pink"></span>班次变更</li>
+            <li><span class="blue"></span>临时安排</li>
+            <li><span class="deepRed"></span>矿工缺勤</li>
+            <li><span class="green"></span>补班加班</li>
+            <li><span class="deepGreen"></span>替班</li>
         </ul>
     </div>
     <div id="print">
@@ -240,22 +243,12 @@
 <div class="userInfo">
     <table>
         <tr>
-            <th>姓名</th>
-            <th>性别</th>
             <th>电话</th>
-            <th>生日</th>
-            <th>岗位</th>
-            <th>站点</th>
-            <th>管理员</th>
+            <th>地址</th>
         </tr>
-        <tr>
-            <td>赵海超</td>
-            <td>男</td>
-            <td>13521745742</td>
-            <td>1996-08-10</td>
-            <td>站务员</td>
-            <td>西直门站</td>
-            <td>0</td>
+        <tr class="userInfoTarget">
+            <td>--</td>
+            <td>--</td>
         </tr>
     </table>
 </div>
@@ -1105,6 +1098,31 @@
         });
         $(this).text("切换颜色")
     });
+
+    //数遍悬浮人员名字上，显示人员信息
+    $(document).on('mouseover', '.scheduleForm tbody tr .userName', function(){
+        var left = $(this).offset().left + $(this).width();
+        var top = $(this).offset().top;
+        var userId = $(this).attr('tdtype');
+        $.ajax({
+            type: 'get',
+            url: '$path/users/'+userId,
+            dataType: 'json',
+            success: function(data){
+                var str = '';
+                if(data){
+                    str += '<td>'+ data.phoneNumber +'</td>';
+                    str += '<td>'+ data.homeAddress +'</td>';
+                }
+                $('.userInfoTarget').html(str);
+            }
+
+        })
+
+        $('.userInfo').css({"left":left+'px',"top":top+"px"}).show();
+    }).on('mouseout', '.scheduleForm tbody tr .userName',function(){
+        $('.userInfo').hide();
+    })
 </script>
 </body>
 </html>

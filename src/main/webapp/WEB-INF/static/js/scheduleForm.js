@@ -18,15 +18,6 @@ $(function(){
         return fmt;
     }
 	var scheduleInfoId='';
-    //数遍悬浮人员名字上，显示人员信息
-    $(document).on('mouseover', '.scheduleForm tbody tr .userName', function(){
-        var left = $(this).offset().left + $(this).width();
-        var top = $(this).offset().top;
-
-        $('.userInfo').css({"left":left+'px',"top":top+"px"}).show();
-    }).on('mouseout', '.scheduleForm tbody tr .userName',function(){
-        $('.userInfo').hide();
-    })
 	//绿色、黄色区域鼠标悬浮显示备注
     $(document).on("mouseover",".scheduleForm .bgGreen,.scheduleForm .bgYellow",function(){
     	scheduleInfoId = $(this).attr("data-scheduleinfoid");

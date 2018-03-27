@@ -52,6 +52,7 @@
         }
     </style>
 </head>
+<div class="mask"></div>
 <body>
 <script>
 
@@ -134,7 +135,7 @@
             } else {
                 var a = actived[0];
                 $(this).addClass("td-active");
-                $("#btnChange").css("top", e.pageY).css("left", e.pageX).show();
+                $("#btnChange").css({"top":(e.pageY+20)+'px',"left":(e.pageX+30)+'px'}).show().find('a').show();
             }
         }
     });
@@ -401,6 +402,7 @@
     var globalShiftIds=[]
 
     $(document).on("click", "#btnLoad", function () {
+        $('.mask').show();
         var modelId = $("select").val();
         var stationId = $(".menu .active a").attr("data-groupId");
         jQuery.ajax({
@@ -457,6 +459,7 @@
                 $("th[thead]").each(function(n) {
                     calcDailySchedule(n);
                 });
+                $('.mask').hide();
             }
         });
     });
@@ -618,28 +621,32 @@
 <div class="content">
     <div class="content-header" style="overflow:visible;display: inline-block">
 
-        <div class="form-container clear" id="autoForm">
-
-
+        <div class="form-container">
+            <div id="autoForm"></div>
+            <div class="form_line" id="timepick" style="display: none">
+                <span class="title">选择开始日期</span>
+                <span class='input-group datetimepicker'>
+                    <input type='text' name="startAt" id="startAt" class="form-control"/>
+                    <em class="input-group-addon">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </em>
+                </span>
+                
+            </div>
+            <div class="form_line">
+                <a class="btnDefault bgOrange autoBtn" href="javascript:;" id="btnLoad" style="display:none">加载模板</a>
+                <a class="btnDefault bgBlue autoBtn" href="javascript:;" id="btnGenerate" style="display:none">建立模板</a>
+                <a class="btnDefault bgGreen autoBtn" href="javascript:;" id="btnSave" style="display:none">保存排班</a>
+            </div>
+            <div class="form_line">
+                <p class="noPlan" style="display: none;"><em>?</em>日平均<span id="dailyAverage" class="blue"></span>小时,
+                    周平均<span id="weeklyAverage" class="blue"></span>小时,
+                    30日平均<span id="monthlyAverage" class="blue"></span>小时,
+                    365日平均<span id="yearlyAverage" class="blue"></span>小时,
+                    最少人数<span id="minimiumWorkerCount" class="blue"></span>人</p>
+            </div>
+            <div class="clear"></div>
         </div>
-        <div id="timepick" style="display: none">
-            <span class="title">选择开始日期</span>
-            <span class='input-group datetimepicker'>
-                <input type='text' name="startAt" id="startAt" class="form-control"/>
-                <em class="input-group-addon">
-                    <i class="glyphicon glyphicon-calendar"></i>
-                </em>
-            </span>
-            <p class="noPlan" style="display: none;"><em>?</em>日平均<span id="dailyAverage" class="blue"></span>小时,
-                周平均<span id="weeklyAverage" class="blue"></span>小时,
-                30日平均<span id="monthlyAverage" class="blue"></span>小时,
-                365日平均<span id="yearlyAverage" class="blue"></span>小时,
-                最少人数<span id="minimiumWorkerCount" class="blue"></span>人</p>
-        </div>
-        <a class="btnDefault bgOrange autoBtn" href="javascript:;" id="btnLoad" style="display:none">加载模板</a>
-        <a class="btnDefault bgBlue autoBtn" href="javascript:;" id="btnGenerate" style="display:none">建立模板</a>
-        <a class="btnDefault bgGreen autoBtn" href="javascript:;" id="btnSave" style="display:none">保存排班</a>
-
     </div>
     <!-- 表格 start -->
     <div class="wrapper" style="padding-top:0;">
