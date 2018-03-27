@@ -322,7 +322,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorName(userInfo.getUserName());
         log.setTimeAt(log.getTimeAt()*60);
         log.setIfUse(0);
-
+        log.setLogType(log.getLogType()+"-"+log.getDetailType());
         scheduleLogService.insertScheduleLog(log);
         ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         s.setLogId(log.getScheduleLogId());
