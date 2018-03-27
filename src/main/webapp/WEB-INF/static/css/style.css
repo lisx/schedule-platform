@@ -799,6 +799,11 @@ select {
   color: #000;
   z-index: 1;
 }
+.schedule table td:hover{
+  opacity: 0.6; 
+  filter:alpha(Opacity=60);
+  -moz-opacity:0.6;
+}
 .schedule table td.bgYellow {
   background: #F5D328;
   z-index: 2;
@@ -1131,4 +1136,27 @@ select {
 .testResult .result span {
   font-size: 20px;
   color: #333;
+}
+table.dataTable tbody th, table.dataTable tbody td{
+  min-width: 100px !important;
+}
+/*排班表格-人员信息*/
+.userInfo{
+  width: 600px;
+  position: absolute;
+  display: none;
+  z-index: 3;
+}
+.userInfo table{
+  width: 100%;
+  background: #FFFBE9;
+  border:1px solid #FFDEB3;
+  border-collapse: collapse;
+}
+.userInfo table th,.userInfo table td{
+  border-collapse: separate;
+  padding: 5px;
+  font-size:12px;
+  border:1px solid #FFDEB3;
+  text-align: center;
 }

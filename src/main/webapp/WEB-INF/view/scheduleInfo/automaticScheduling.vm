@@ -637,7 +637,7 @@
                 最少人数<span id="minimiumWorkerCount" class="blue"></span>人</p>
         </div>
         <a class="btnDefault bgOrange autoBtn" href="javascript:;" id="btnLoad" style="display:none">加载模板</a>
-        <a class="btnDefault bgBlue autoBtn" href="javascript:;" id="btnGenerate" style="display:none">生成模板</a>
+        <a class="btnDefault bgBlue autoBtn" href="javascript:;" id="btnGenerate" style="display:none">建立模板</a>
         <a class="btnDefault bgGreen autoBtn" href="javascript:;" id="btnSave" style="display:none">保存排班</a>
 
     </div>

@@ -84,7 +84,7 @@ function queryBtn(){
                     labels : labels,
                     datasets : [
                         {
-                            backgroundColor : "#3A6BCE",
+                            backgroundColor : "#70BF41",
                             data : jy
                         }
                     ],
@@ -237,7 +237,7 @@ $(document).on("click","#monthBtn",function(){
                 <span class="color-bar planHour"></span>结余总工时
             </li>
         </ul>
-        <canvas id="temporaryReport" width="800" height="400"></canvas>
+        <canvas id="temporaryReport" width="1200" height="400"></canvas>
     </div>
 
     <table class="table scheduleForm">

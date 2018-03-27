@@ -18,11 +18,20 @@ $(function(){
         return fmt;
     }
 	var scheduleInfoId='';
+    //数遍悬浮人员名字上，显示人员信息
+    $(document).on('mouseover', '.scheduleForm tbody tr .userName', function(){
+        var left = $(this).offset().left + $(this).width();
+        var top = $(this).offset().top;
+
+        $('.userInfo').css({"left":left+'px',"top":top+"px"}).show();
+    }).on('mouseout', '.scheduleForm tbody tr .userName',function(){
+        $('.userInfo').hide();
+    })
 	//绿色、黄色区域鼠标悬浮显示备注
     $(document).on("mouseover",".scheduleForm .bgGreen,.scheduleForm .bgYellow",function(){
     	scheduleInfoId = $(this).attr("data-scheduleinfoid");
     	var left = $(this).offset().left;
-    	var top = $(this).offset().top+40;
+    	var top = $(this).offset().top+36;
         jQuery.ajax({
             type: "post",
             url: "getScheduleLogByInfo?scheduleInfoId="+scheduleInfoId,
@@ -66,6 +75,15 @@ $(function(){
         e.preventDefault();
     };
     $(document).on("mousedown",".scheduleForm td.rightMenu",function(e){
+        var scrollTop = $(window).scrollTop();
+        console.log(scrollTop)
+        var offsetTop = $(this).offset().top;
+        var top = 0;
+        if(scrollTop+290>offsetTop){
+            top = offsetTop + 34;
+        }else{
+            top = offsetTop - 288;
+        }
     	$("#minDate").val($(this).attr("data-date"));
     	console.log($("#minDate").val()+"|||"+$(this).attr("data-date"));
     	$("#editHoliday .datetimepicker").eq(0).data("DateTimePicker").date($(this).attr("data-date"));
@@ -78,11 +96,12 @@ $(function(){
         var psStationArea = $(this).attr("data-stationArea");
         var psStation = $(this).attr("data-station");
         var left = $(this).offset().left;
-    	var top = $(this).offset().top+40;
+    	
         if(e.button == 2){
             if(index != 0 && index != 1 && index != L && index != L-1 && index != L-2){
                 $(this).find("#remarks").addClass("hidden");
                 $("#rightMenu").css({"left":left+'px',"top":top+"px"}).removeClass("hidden");
+                //$("#rightMenu").removeClass('hidden');
             }
             $("input[name='userId']").val(userId);
             $("input[name='scheduleInfoId']").val(scheduleInfoId);

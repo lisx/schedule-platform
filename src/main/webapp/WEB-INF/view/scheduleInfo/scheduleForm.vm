@@ -74,6 +74,12 @@
                 <option value="">请选择</option>
             </select>
         </div>
+        <div class="form_line">
+            <label>岗位</label>
+            <select name="">
+                <option value="">请选择</option>
+            </select>
+        </div>
         <div class="search-input">
             <span class="icon-5"></span>
             <input type="text" name="queryData" id="queryData" placeholder="姓名/编号">
@@ -226,8 +232,32 @@
     <a href="#provisionalDisposition" data-toggle="modal" data-target="#provisionalDisposition">临时安排</a>
     <a href="#minersAbsence" data-toggle="modal" data-target="#minersAbsence">旷工缺勤</a>
     <a href="#overtimeWork" data-toggle="modal" data-target="#overtimeWork">补班加班</a>
-##    <a href="#prepareShift" onclick="initPrepareShift()" data-toggle="modal" data-target="#prepareShift">备班</a>
+    <!-- <a href="#prepareShift" onclick="initPrepareShift()" data-toggle="modal" data-target="#prepareShift">备班</a> -->
     <a href="#replaceShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#replaceShift">替班</a>
+    <a href="javascript:;">撤销</a>
+</div>
+<!--  人员信息 -->
+<div class="userInfo">
+    <table>
+        <tr>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>电话</th>
+            <th>生日</th>
+            <th>岗位</th>
+            <th>站点</th>
+            <th>管理员</th>
+        </tr>
+        <tr>
+            <td>赵海超</td>
+            <td>男</td>
+            <td>13521745742</td>
+            <td>1996-08-10</td>
+            <td>站务员</td>
+            <td>西直门站</td>
+            <td>0</td>
+        </tr>
+    </table>
 </div>
 <!-- 备班 -->
 ##<div class="modal" id="prepareShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
@@ -1018,7 +1048,7 @@
                 //遍历排班表数据
                 var tbody = '';
                 for (var i = 0; i < data.length; i++) {
-                    tbody += '<tr><td tdType="' + data[i].userId + '">' + data[i].userName + '</td>';
+                    tbody += '<tr><td class="userName" tdType="' + data[i].userId + '">' + data[i].userName + '</td>';
                     tbody += '<td>' + data[i].postName + '</td>';
                     var jhgs = 0;
                     for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
