@@ -352,22 +352,13 @@ public class UserController extends BaseController {
             groupMap.put(g.getGroupCode(),g);
         }
         JSONArray array = new JSONArray();
-        for (User u :
-                rs) {
+        for (User u : rs) {
             JSONArray a = new JSONArray();
-            a.add(u.getUserCode());
-            a.add(u.getUserName());
-            a.add(u.getGender());
-            a.add(u.getPhoneNumber());
-            a.add(u.getBirthday());
-            PostSetting p = postMap.get(u.getUserJob());
-            a.add(p==null?"":p.getPostName());
-            Grouping g=groupMap.get(u.getStation());
-            a.add(g==null?"":g.getGroupName());
-            a.add(u.getIsAdmin());
             String action = "<a href='javascript:;'" + (u.getIsDeleted() == 0 ? "onclick='editUser(" + u.getUserId() + ")' class='edit'" : "class='edit disabled'")
                     + ">编辑</a><a class='stop' href='javascript:;' onclick='userDel(" + u.getUserId() + ")'>删除</a>";
             a.add(action);
+            a.add(u.getUserCode());
+            a.add(u.getUserName());
 
             a.add(u.getIdCode());
             a.add(u.getOnBoardDate());
@@ -379,6 +370,16 @@ public class UserController extends BaseController {
             a.add(u.getHomeAddress());
             a.add(u.getCertNo());
             a.add(u.getCertLevel());
+
+            a.add(u.getGender());
+            a.add(u.getPhoneNumber());
+            a.add(u.getBirthday());
+            PostSetting p = postMap.get(u.getUserJob());
+            a.add(p==null?"":p.getPostName());
+            Grouping g=groupMap.get(u.getStation());
+            a.add(g==null?"":g.getGroupName());
+            a.add(u.getIsAdmin());
+
             array.add(a);
         }
         return array;
