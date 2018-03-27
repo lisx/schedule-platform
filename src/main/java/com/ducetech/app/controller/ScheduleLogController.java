@@ -6,6 +6,7 @@ import com.ducetech.framework.controller.BaseController;
 import com.ducetech.framework.schedule.service.SystemSechduleService;
 import com.ducetech.framework.util.DateUtil;
 import com.ducetech.framework.web.view.OperationResult;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.util.SystemOutLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,8 @@ public class ScheduleLogController extends BaseController {
     private ShiftModelService shiftModelService;
     @Autowired
     private ShiftSettingService shiftService;
+    @Autowired
+    private UserService userService;
     /**
      * 获取单个排班所以编辑记录
      * @param scheduleInfoId
@@ -64,6 +67,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorId(userInfo.getUserId());
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
+        log.setLogType(log.getLogType()+"-"+log.getDetailType());
         List<ScheduleInfo> sis=scheduleInfoService.selectScheduleInfoByUser(log.getStartAt(),log.getEndAt(),log.getUserId());
         if(null!=sis&&sis.size()>0) {
             log.setScheduleInfoId(sis.get(0).getScheduleInfoId());
@@ -76,11 +80,18 @@ public class ScheduleLogController extends BaseController {
             s.setLeaveType(log.getLogType());
             s.setScheduleDesc(log.getRemark());
             s.setLogId(log.getScheduleLogId());
-            if(null!=s.getTotalAt())
-                gh+=s.getTotalAt();
+            if(null!=s.getTotalAt()) {
+                gh += s.getTotalAt();
+            }
+            List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
+            for(ScheduleLog slog:list){
+                slog.setIfUse(1);
+                scheduleLogService.updateScheduleLog(slog);
+            }
             scheduleInfoService.updateScheduleInfo(s);
         }
         log.setTimeAt(-gh);
+
         scheduleLogService.updateScheduleLog(log);
         return OperationResult.buildSuccessResult("假期编辑成功", "success");
     }
@@ -102,6 +113,8 @@ public class ScheduleLogController extends BaseController {
         ScheduleInfo scheduleInfo = scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         log.setScheduleInfoId(scheduleInfo.getScheduleInfoId());
         log.setUserName(scheduleInfo.getUserName());
+        User user=userService.getUserByUserId(log.getDetailType());
+        log.setLogType(log.getUserName()+log.getLogType()+user.getUserName());
         scheduleLogService.insertScheduleLog(log);
         scheduleInfo.setIfLeave(6);
         scheduleInfo.setLeaveType(log.getLogType());
@@ -110,12 +123,12 @@ public class ScheduleLogController extends BaseController {
         scheduleInfoService.updateScheduleInfo(scheduleInfo);
         String startAt = log.getStartAt();
         String endAt = log.getEndAt();
-
-        int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
-
-        log.setTimeAt(-gh);
+        if(!StringUtils.isBlank(startAt)||!StringUtils.isBlank(endAt)) {
+            int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
+            log.setTimeAt(-gh);
+        }
         scheduleLogService.updateScheduleLog(log);
-        return OperationResult.buildSuccessResult("假期编辑成功", "success");
+        return OperationResult.buildSuccessResult("替班编辑成功", "success");
     }
 
 
@@ -277,14 +290,19 @@ public class ScheduleLogController extends BaseController {
         List<ShiftSetting> ssList=shiftService.selectShiftSettingByModelId(sm.getModelId());
         for(ShiftSetting ss:ssList){
             if(ss.getShiftName().equals(log.getDetailType())){
-                log.setTimeAt(ss.getTotalAt());
+                log.setTimeAt(ss.getTotalAt()-s.getTotalAt());
             }
         }
-        log.setRemark(s.getShiftName()+"变更为"+log.getDetailType());
+        log.setLogType(s.getShiftName()+"变更为"+log.getDetailType());
         log.setUserName(s.getUserName());
         log.setStartAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
         log.setEndAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
         scheduleLogService.insertScheduleLog(log);
+        List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
+        for(ScheduleLog slog:list){
+            slog.setIfUse(1);
+            scheduleLogService.updateScheduleLog(slog);
+        }
         s.setIfLeave(2);
         s.setLogId(log.getScheduleLogId());
         s.setShiftName(log.getDetailType());
@@ -309,7 +327,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorName(userInfo.getUserName());
         log.setTimeAt(log.getTimeAt()*60);
         log.setIfUse(0);
-
+        log.setLogType(log.getLogType()+"-"+log.getDetailType());
         scheduleLogService.insertScheduleLog(log);
         ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         s.setLogId(log.getScheduleLogId());

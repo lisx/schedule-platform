@@ -1071,7 +1071,8 @@
                                 + data[i].userId + '" data-totalAt="' + data[i].scheduleInfoList[j].totalAt + '" data-shiftId='+data[i].scheduleInfoList[j].shiftId+' data-stationArea="'
                                 + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
                     }
-                    tbody += '<td>' + data[i].planHours + '</td><td>' + (data[i].actualHours + data[i].planHours) + '</td><td class="' + (data[i].actualHours > 0 ? "bgRed" : "") + '">' + data[i].actualHours + '</td>';
+
+                    tbody += '<td>' + data[i].planHours + '</td><td>' + (data[i].planHours+data[i].actualHours) + '</td><td class="' + (data[i].actualHours > 0 ? "bgRed" : "") + '">' + data[i].actualHours + '</td>';
                     tbody += '</tr>';
                 }
                 target.find("tbody").html(tbody);

@@ -46,6 +46,11 @@ public class ScheduleLogServiceImpl implements ScheduleLogService {
     }
 
     @Override
+    public List<ScheduleLog> getScheduleLogByInfoAndLogId(String scheduleInfoId, String scheduleLogId) {
+        return scheduleLogDAO.getScheduleLogByInfoAndLogId(scheduleInfoId,scheduleLogId);
+    }
+
+    @Override
     public ScheduleLog getScheduleLogById(String scheduleLogId) {
         return scheduleLogDAO.getScheduleLogById(scheduleLogId);
     }

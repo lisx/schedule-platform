@@ -524,28 +524,28 @@ public class PoiUtil {
         }
 
 
-        if (flag == shiftList.size()) {
-            cell = row.createCell(0);
-            cell.setCellValue("");
-            cell.setCellStyle(style);
-        } else {
-            ShiftSetting shiftSetting = shiftList.get(flag);
-            //班制
-            cell = row.createCell(0);
-            cell.setCellValue(shiftSetting.getShiftName() + "(" + shiftSetting.getShiftCode() + ")");
-            String color = shiftSetting.getShiftColor();   //此处得到的color为16进制的字符串
-            getCellStyle(wb, style, cell, colorMap, color);
+//        if (flag == shiftList.size()) {
+//            cell = row.createCell(0);
+//            cell.setCellValue("");
+//            cell.setCellStyle(style);
+//        } else {
+//            ShiftSetting shiftSetting = shiftList.get(flag);
+//            //班制
+//            cell = row.createCell(0);
+//            cell.setCellValue(shiftSetting.getShiftName() + "(" + shiftSetting.getShiftCode() + ")");
+//            String color = shiftSetting.getShiftColor();   //此处得到的color为16进制的字符串
+//            getCellStyle(wb, style, cell, colorMap, color);
+//
+//
+//            String startAt = DateUtil.minuToTime(shiftSetting.getStartAt());
+//            String endAt = DateUtil.minuToTime(shiftSetting.getEndAt());
+//            //工作时间
+//            cell = row.createCell(1);
+//            cell.setCellValue(startAt + "---" + endAt);
+//            cell.setCellStyle(style);
+//        }
 
-
-            String startAt = DateUtil.minuToTime(shiftSetting.getStartAt());
-            String endAt = DateUtil.minuToTime(shiftSetting.getEndAt());
-            //工作时间
-            cell = row.createCell(1);
-            cell.setCellValue(startAt + "---" + endAt);
-            cell.setCellStyle(style);
-        }
-
-        cell = row.createCell(2);
+        cell = row.createCell(0);
         cell.setCellValue(userName);
         cell.setCellStyle(style);
 
@@ -557,7 +557,7 @@ public class PoiUtil {
 
         if (null != list && list.size() > 0)
             for (int i = 0; i < list.size(); i++) {
-                cell = row.createCell(i + 3);
+                cell = row.createCell(i + 1);
                 if (list.get(i).getShiftCode() != null) {
                     cell.setCellValue(list.get(i).getSerialNumber());// + list.get(i).getShiftCode()
 
@@ -566,20 +566,20 @@ public class PoiUtil {
                 }
 
                 String color = list.get(i).getShiftColor();
-                getCellStyle(wb, style, cell, colorMap, color);
+//                getCellStyle(wb, style, cell, colorMap, color);
             }
-        cell = row.createCell(size + 3);
+        cell = row.createCell(size + 1);
         cell.setCellValue(planHours / 60);
         cell.setCellStyle(style);
-        cell = row.createCell(size + 4);
+        cell = row.createCell(size + 2);
         cell.setCellValue((planHours + actualHours) / 60);
         cell.setCellStyle(style);
-        cell = row.createCell(size + 5);
+        cell = row.createCell(size + 3);
         leave = actualHours / 60;
         cell.setCellValue(leave);
         cell.setCellStyle(style);
 
-        cell = row.createCell(size + 6);
+        cell = row.createCell(size + 4);
         cell.setCellValue("");
         cell.setCellStyle(style);
         return rownum;

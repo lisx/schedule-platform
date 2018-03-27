@@ -62,6 +62,10 @@ public class User extends BaseModel implements Serializable {
 
     private String certLevel;
 
+    private String xfzNo;
+    private String zwyNo;
+    private String zwyLevel;
+
 	private String creatorId;		//创建人ID
 
 	private String createdAt;		//创建时间

@@ -405,12 +405,12 @@ public class ScheduleInfoController extends BaseController {
                 int size = list.size();
                 if (size > 0)
                     shiftList = shiftService.selectShiftSettingByModelId(list.get(0).getModelId());
-                sheet.setColumnWidth(size + 6, 25 * 256);//设置第一列的宽度是31个字符宽度
-                sheet.setColumnWidth(1, 25 * 256);//设置第一列的宽度是31个字符宽度
+                sheet.setColumnWidth(size + 4, 25 * 256);//设置第一列的宽度是31个字符宽度
+//                sheet.setColumnWidth(1, 25 * 256);//设置第一列的宽度是31个字符宽度
 
-                RegionUtil.setBorderRight(1, new CellRangeAddress(0, 0, size + 3, size + 6), sheet, wb);
-                RegionUtil.setBorderTop(1, new CellRangeAddress(0, 0, size + 3, size + 6), sheet, wb);
-                sheet.addMergedRegion(new CellRangeAddress(0, 0, size + 3, size + 6));
+                RegionUtil.setBorderRight(1, new CellRangeAddress(0, 0, size + 1, size + 4), sheet, wb);
+                RegionUtil.setBorderTop(1, new CellRangeAddress(0, 0, size + 1, size + 4), sheet, wb);
+                sheet.addMergedRegion(new CellRangeAddress(0, 0, size + 1, size + 4));
                 RegionUtil.setBorderRight(1, new CellRangeAddress(0, 1, 1, 1), sheet, wb);
                 RegionUtil.setBorderRight(1, new CellRangeAddress(0, 1, 0, 0), sheet, wb);
                 RegionUtil.setBorderLeft(1, new CellRangeAddress(0, 1, 1, 1), sheet, wb);
@@ -418,46 +418,45 @@ public class ScheduleInfoController extends BaseController {
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
 
                 if (rownum == 0) {
+//                    cell = row.createCell(0);
+//                    cell.setCellValue("班制");
+//                    cell.setCellStyle(style);
+//                    cell = row.createCell(1);
+//                    cell.setCellValue("工作时间");
+//                    cell.setCellStyle(style);
                     cell = row.createCell(0);
-                    cell.setCellValue("班制");
-                    cell.setCellStyle(style);
-                    cell = row.createCell(1);
-                    cell.setCellValue("工作时间");
-                    cell.setCellStyle(style);
-                    cell = row.createCell(2);
                     cell.setCellValue("日期");
                     cell.setCellStyle(style);
                     for (int i = 0; i < size; i++) {
-                        cell = row.createCell(i + 3);
+                        cell = row.createCell(i + 1);
                         cell.setCellValue(DateUtil.formatDate(list.get(i).getScheduleDate(), DateUtil.XIZHIMENDATE));
                         cell.setCellStyle(style);
                     }
-                    cell = row.createCell(size + 3);
+                    cell = row.createCell(size + 1);
                     cell.setCellValue("共计" + size + "天");
                     cell.setCellStyle(style);
                 } else if (rownum == 1) {
-                    cell = row.createCell(1);
-                    cell.setCellValue(startAt + "---" + endAt);
-                    cell.setCellStyle(style);
-                    cell = row.createCell(2);
+//                    cell = row.createCell(1);
+//                    cell.setCellValue(startAt + "---" + endAt);
+//                    cell.setCellStyle(style);
+                    cell = row.createCell(0);
                     cell.setCellValue("姓名");
                     cell.setCellStyle(style);
                     for (int i = 0; i < size; i++) {
-                        cell = row.createCell(i + 3);
+                        cell = row.createCell(i + 1);
                         cell.setCellValue(list.get(i).getScheduleWeek());
                         cell.setCellStyle(style);
                     }
-                    cell = row.createCell(size + 3);
+                    cell = row.createCell(size + 1);
                     cell.setCellValue("计划工时");
                     cell.setCellStyle(style);
-                    cell = row.createCell(size + 4);
+                    cell = row.createCell(size + 2);
                     cell.setCellValue("实际工时");
                     cell.setCellStyle(style);
-                    cell = row.createCell(size + 5);
+                    cell = row.createCell(size + 3);
                     cell.setCellValue("结余");
                     cell.setCellStyle(style);
-
-                    cell = row.createCell(size + 6);
+                    cell = row.createCell(size + 4);
                     cell.setCellValue("员工工时确认签字");
                     cell.setCellStyle(style);
                 }
@@ -498,6 +497,7 @@ public class ScheduleInfoController extends BaseController {
                 num++;
             }
         }
+
         responsePrint(response, wb);
     }
 
