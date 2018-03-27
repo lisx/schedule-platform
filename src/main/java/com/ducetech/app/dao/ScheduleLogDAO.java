@@ -19,5 +19,6 @@ public interface ScheduleLogDAO {
     void insertScheduleLog(ScheduleLog log);
     void updateScheduleLog(ScheduleLog log);
     List<ScheduleLog> getScheduleLogByInfo(@Param("scheduleInfoId") String scheduleInfoId);
+    List<ScheduleLog> getScheduleLogByInfoAndLogId(@Param("scheduleInfoId") String scheduleInfoId,@Param("scheduleLogId") String scheduleLogId);
     ScheduleLog getScheduleLogById(@Param("scheduleLogId") String scheduleLogId);
 }

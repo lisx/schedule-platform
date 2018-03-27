@@ -41,6 +41,10 @@
         SELECT * FROM schedule_log
         WHERE schedule_info_id = #{scheduleInfoId}
     </select>
+    <select id="getScheduleLogByInfoAndLogId" parameterType="String" resultMap="scheduleLogMap">
+        SELECT * FROM schedule_log
+        WHERE schedule_info_id = #{scheduleInfoId} and schedule_log_id != #{scheduleLogId} and if_use=0
+    </select>
     <!-- 插入新人员分组 -->
     <insert id="insertScheduleLog" useGeneratedKeys="true" keyProperty="scheduleLogId">
         insert into schedule_log (schedule_info_id,user_id,log_type,detail_type,start_at,end_at,time_at,remark,if_use,creator_id,created_at,creator_name,user_name)

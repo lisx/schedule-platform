@@ -64,6 +64,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorId(userInfo.getUserId());
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
+        log.setLogType(log.getLogType()+"-"+log.getDetailType());
         List<ScheduleInfo> sis=scheduleInfoService.selectScheduleInfoByUser(log.getStartAt(),log.getEndAt(),log.getUserId());
         if(null!=sis&&sis.size()>0) {
             log.setScheduleInfoId(sis.get(0).getScheduleInfoId());
@@ -76,11 +77,18 @@ public class ScheduleLogController extends BaseController {
             s.setLeaveType(log.getLogType());
             s.setScheduleDesc(log.getRemark());
             s.setLogId(log.getScheduleLogId());
-            if(null!=s.getTotalAt())
-                gh+=s.getTotalAt();
+            if(null!=s.getTotalAt()) {
+                gh += s.getTotalAt();
+            }
+            List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
+            for(ScheduleLog slog:list){
+                slog.setIfUse(1);
+                scheduleLogService.updateScheduleLog(slog);
+            }
             scheduleInfoService.updateScheduleInfo(s);
         }
         log.setTimeAt(-gh);
+
         scheduleLogService.updateScheduleLog(log);
         return OperationResult.buildSuccessResult("假期编辑成功", "success");
     }
@@ -280,7 +288,8 @@ public class ScheduleLogController extends BaseController {
                 log.setTimeAt(ss.getTotalAt());
             }
         }
-        log.setRemark(s.getShiftName()+"变更为"+log.getDetailType());
+
+        log.setLogType(s.getShiftName()+"变更为"+log.getDetailType());
         log.setUserName(s.getUserName());
         log.setStartAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
         log.setEndAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));

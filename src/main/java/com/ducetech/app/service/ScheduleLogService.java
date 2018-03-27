@@ -21,5 +21,6 @@ public interface ScheduleLogService {
     void insertScheduleLog(ScheduleLog log);
     void updateScheduleLog(ScheduleLog log);
     List<ScheduleLog> getScheduleLogByInfo(String scheduleInfoId);
+    List<ScheduleLog> getScheduleLogByInfoAndLogId(String scheduleInfoId,String scheduleLogId);
     ScheduleLog getScheduleLogById(String scheduleLogId);
 }
