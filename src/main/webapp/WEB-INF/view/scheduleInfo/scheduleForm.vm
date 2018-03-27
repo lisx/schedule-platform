@@ -76,8 +76,9 @@
         </div>
         <div class="form_line">
             <label>岗位</label>
-            <select name="">
-                <option value="">请选择</option>
+            <select name="postName" id="postName">
+                <option value="站务员">站务员</option>
+                <option value="替班员">替班员</option>
             </select>
         </div>
         <div class="search-input">
@@ -990,6 +991,7 @@
         $("#btnChange").hide();
         //初始化排班表
         var station=$("#stationQuery").val();
+        var postName=$("#postName").val();
         console.log(station);
         if(station==''){
             Alert("fail", "需选择站点");
@@ -1004,7 +1006,7 @@
         Alert('success', "数据加载中请稍候")
         jQuery.ajax({
             type: "get",
-            url: "$path/scheduleFormData?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val(),
+            url: "$path/scheduleFormData?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val()+"&postName="+postName,
             data: null,
             dataType: "json",
             error: function (xmlHttpReq, status) {

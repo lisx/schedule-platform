@@ -612,12 +612,12 @@ public class ScheduleInfoController extends BaseController {
     @RequestMapping(value = "/scheduleFormData", method = RequestMethod.GET)
     @ResponseBody
     public List<ScheduleInfoData> scheduleFormData(String startAt, String endAt, String monthDate,
-                                                   String queryData, String scheduleType, String stationArea, String station, HttpServletRequest request) throws ParseException {
+                                                   String queryData,String postName, String scheduleType, String stationArea, String station, HttpServletRequest request) throws ParseException {
 
         QueryDate queryDate = new QueryDate(startAt, endAt, monthDate).invoke();
         startAt = queryDate.getStartAt();
         endAt = queryDate.getEndAt();
-        List<ScheduleInfo> sis = scheduleInfoService.selectScheduleInfo(startAt, endAt, queryData, queryData, queryData, station, stationArea);
+        List<ScheduleInfo> sis = scheduleInfoService.selectScheduleInfo(startAt, endAt, postName, queryData, postName, station, stationArea);
         List<ScheduleInfoData> dataList = new ArrayList<>();
         Map<String, List<ScheduleInfo>> map = groupByProperty(sis, "userId", String.class);
         groupData(startAt, endAt, scheduleType, dataList, map);
