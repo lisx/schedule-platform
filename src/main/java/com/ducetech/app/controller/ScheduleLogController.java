@@ -285,15 +285,19 @@ public class ScheduleLogController extends BaseController {
         List<ShiftSetting> ssList=shiftService.selectShiftSettingByModelId(sm.getModelId());
         for(ShiftSetting ss:ssList){
             if(ss.getShiftName().equals(log.getDetailType())){
-                log.setTimeAt(ss.getTotalAt());
+                log.setTimeAt(ss.getTotalAt()-s.getTotalAt());
             }
         }
-
         log.setLogType(s.getShiftName()+"变更为"+log.getDetailType());
         log.setUserName(s.getUserName());
         log.setStartAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
         log.setEndAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
         scheduleLogService.insertScheduleLog(log);
+        List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
+        for(ScheduleLog slog:list){
+            slog.setIfUse(1);
+            scheduleLogService.updateScheduleLog(slog);
+        }
         s.setIfLeave(2);
         s.setLogId(log.getScheduleLogId());
         s.setShiftName(log.getDetailType());
