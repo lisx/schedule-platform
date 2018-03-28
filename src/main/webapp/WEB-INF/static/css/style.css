@@ -95,11 +95,14 @@ select {
   min-height: 60px;
   clear: both;
   overflow: hidden;
-  padding: 10px 15px 0;
+  padding-top: 10px;
   border-bottom: 1px solid #e5e5e5;
+  width: 100%;
+  box-sizing: border-box;
 }
 .content-header .float-left {
   line-height: 32px;
+  margin-left: 10px;
 }
 .content-header .float-left .bgGreen {
   margin-left: 0;
@@ -119,6 +122,7 @@ select {
 }
 .content-header .float-right {
   margin-bottom: 10px;
+  margin-right: 10px;
 }
 .content-header .float-right * {
   float: left;
@@ -991,6 +995,25 @@ select {
   border-top: 1px solid #e5e5e5;
   color: #1a1a1a;
 }
+#rightMenu a:nth-of-type(1){
+  background: #F5D328;
+}
+#rightMenu a:nth-of-type(2){
+  background: #F5D328;
+}
+#rightMenu a:nth-of-type(3){
+  background: #F5D328;
+}
+#rightMenu a:nth-of-type(4){
+  background: #F5D328;
+}
+#rightMenu a:nth-of-type(5){
+  background: #F5D328;
+}
+#rightMenu a:nth-of-type(6){
+  background: #F5D328;
+}
+
 /* 班次设置添加部分样式 */
 .shiftInfo > ul {
   width: 520px;
@@ -1139,10 +1162,11 @@ select {
 }
 table.dataTable tbody th, table.dataTable tbody td{
   min-width: 100px !important;
+  white-space: nowrap;
 }
 /*排班表格-人员信息*/
 .userInfo{
-  width: 600px;
+  width: 500px;
   position: absolute;
   display: none;
   z-index: 3;
@@ -1156,7 +1180,26 @@ table.dataTable tbody th, table.dataTable tbody td{
 .userInfo table th,.userInfo table td{
   border-collapse: separate;
   padding: 5px;
-  font-size:12px;
   border:1px solid #FFDEB3;
-  text-align: center;
+}
+.wrapper .yellow{
+  background: #fffc00;
+}
+.wrapper .pink{
+  background: #ff9191;
+}
+.wrapper .blue{
+  background: blue;
+}
+.wrapper .deepRed{
+  background: #b10000;
+}
+.wrapper .green{
+  background: #00d537;
+}
+.wrapper .deepGreen{
+  background: #008121;
+}
+#autoForm .form_line{
+  margin-bottom: 0;
 }
