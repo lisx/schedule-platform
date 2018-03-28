@@ -188,27 +188,6 @@
                 </tr>
                 </thead>
                 <tbody>
-##                <tr>
-##                    <td class="dark">A</td>
-##                    <td>综控员</td>
-##                    <td>早</td>
-##                    <td>早</td>
-##                    <td>中</td>
-##                    <td>中</td>
-##                    <td>晚</td>
-##                    <td>早</td>
-##                    <td>休</td>
-##                    <td class="bgGreen">中</td>
-##                    <td class="bgYellow">早</td>
-##                    <td>晚</td>
-##                    <td>晚</td>
-##                    <td>晚</td>
-##                    <td>休</td>
-##                    <td>夜</td>
-##                    <td>65</td>
-##                    <td class="edit">67</td>
-##                    <td class="bgRed">2</td>
-##                </tr>
                 </tbody>
             </table>
         </div>
@@ -235,7 +214,6 @@
     <a href="#provisionalDisposition" data-toggle="modal" data-target="#provisionalDisposition">临时安排</a>
     <a href="#minersAbsence" data-toggle="modal" data-target="#minersAbsence">旷工缺勤</a>
     <a href="#overtimeWork" data-toggle="modal" data-target="#overtimeWork">补班加班</a>
-    <!-- <a href="#prepareShift" onclick="initPrepareShift()" data-toggle="modal" data-target="#prepareShift">备班</a> -->
     <a href="#replaceShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#replaceShift">替班</a>
     <a class="cancelHandle" href="javascript:;">撤销</a>
 </div>
@@ -252,109 +230,7 @@
         </tr>
     </table>
 </div>
-<!-- 备班 -->
-##<div class="modal" id="prepareShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-##    <div class="modal-dialog " role="document">
-##        <div class="modal-content">
-##            <div class="modal-header">
-##                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
-##                <h4 class="modal-title">备班</h4>
-##            </div>
-##            <div class="modal-body">
-##                <input id="minDate" type="hidden">
-##                <form class="form-container" id="editPrepareShift">
-##                    <div class="form_line">
-##                        <input name="userId" type="hidden">
-##                        <input name="scheduleInfoId" type="hidden">
-##                        <input name="logId" id="logId" type="hidden">
-##                        <input name="stationArea" id="psStationArea" type="hidden">
-##                        <input name="station" id="psStation"  type="hidden">
-##                        <input name="logType" type="hidden" value="备班">
-##                        <label>备班人员</label>
-##                        <select name="detailType" id="prepareUserSelect">
-##                        </select>
-##                    </div>
-##                    <div class="form_line">
-##                        <label>备班时间</label>
-##                        <div class='input-group datetimepicker'>
-##                            <input type='text' class="form-control" name="startAt"/>
-##                            <em class="input-group-addon">
-##                                <i class="glyphicon glyphicon-calendar"></i>
-##                            </em>
-##                        </div>
-##                        <span>至</span>
-##                        <div class='input-group datetimepicker'>
-##                            <input type='text' name="endAt" class="form-control"/>
-##                            <em class="input-group-addon">
-##                                <i class="glyphicon glyphicon-calendar"></i>
-##                            </em>
-##                        </div>
-##                    </div>
-##                    <div class="form_line">
-##                        <label>备注</label>
-##                        <textarea name="remark"></textarea>
-##                    </div>
-##                    <div class="clear"></div>
-##                </form>
-##            </div>
-##            <div class="modal-footer">
-##                <a class="btn btn-confirm" href="javascript:;" onclick="editPrepare()">备班</a>
-##                <a class="btn btn-red" href="javascript:;" onclick="editPrepareDel()">取消</a>
-##            </div>
-##        </div>
-##    </div>
-##</div>
-##<script>
-##    //初始化备班人员
-##    function initPrepareShift() {
-##        var psStationArea = $('#psStationArea').val();
-##        var psStation = $('#psStation').val();
-##        jQuery.ajax({
-##            async: false,
-##            type: "get",
-##            url: "$path/getPrepareUser?stationArea="+psStationArea+"&station="+psStation+"&userJob=000100",
-##            data: null,
-##            dataType: "json",
-##            error: function () {
-##                Alert('fail', "网络错误");
-##            },
-##            success: function (result) {
-##                var prepareUserSelect = $("#prepareUserSelect");
-##                var option;
-##                for(var i = 0; i < result.length; i++) {
-##                    option += '<option value="' + result[i].userId + '">工号:'+ result[i].userCode + " 姓名:" + result[i].userName +'</option>';
-##                }
-##                prepareUserSelect.html(option);
-##            }
-##        });
-##    }
-##
-##    //备班
-##    function editPrepare() {
-##        jQuery.ajax({
-##            async: false,
-##            type: "post",
-##            url: "$path/editHolidayForm?" + $("#editPrepareShift").serialize(),
-##            data: null,
-##            dataType: "json",
-##            error: function () {
-##                Alert('fail', "网络错误");
-##            },
-##            success: function (result) {
-##                Alert(result.data, result.message);
-##                $("#rightMenu").addClass("hidden");
-##                $("#prepareShift").modal('hide');
-##                queryBtn();
-##            }
-##        });
-##    }
-##
-##    //取消
-##    function editPrepareDel() {
-##        $("#rightMenu").addClass("hidden");
-##        $("#editHoliday").modal('hide');
-##    }
-##</script>
+
 
 <!-- 替班 -->
 <div class="modal" id="replaceShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
@@ -904,16 +780,6 @@
         })
 
         //初始化日期控件
-//        $("#prepareShift .datetimepicker").datetimepicker({
-//            format: "YYYY-M-D",
-//            date: new Date(),
-//            useCurrent: true
-//        });
-//        $("#prepareShift .datetimepicker").eq(0).find("input").blur(function () {
-//            $("#editHoliday .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
-//        })
-
-        //初始化日期控件
         $("#replaceShift .datetimepicker").datetimepicker({
             format: "HH:mm",
             useCurrent: false
@@ -1072,15 +938,6 @@
                             clz = '';
                             color = '';
                         }
-                        // if (ifLeave == 1 || ifLeave == 4 || ifLeave == 6) {
-                        //     color = "#70BF41";
-                        //     clz="bgGreen";
-                        // } else if (ifLeave == 2 || ifLeave == 3 || ifLeave == 5) {
-                        //     color = "#F5D328";
-                        //     clz="bgYellow";
-                        // } else {
-                        //     color = "";
-                        // }
                         tbody += '<td style="position: relative" tdType=shift serialNumber="' + data[i].scheduleInfoList[j].serialNumber + '" shiftName="' + data[i].scheduleInfoList[j].shiftName
                                 + '" colorStyle="'+color+'" class="' + rightMenu[j] +" "+clz+ '" data-logId="' + data[i].scheduleInfoList[j].logId
                                 + '" colorCode="#'+data[i].scheduleInfoList[j].shiftColor+'" data-scheduleInfoId="' + data[i].scheduleInfoList[j].scheduleInfoId + '" data-userId="'
@@ -1155,7 +1012,7 @@
     //撤销操作
     $('.cancelHandle').click(function(){
         var infoId = window.localStorage.getItem('infoId');
-
+        console.log("|||||"+infoId);
         $.ajax({
             type: 'delete',
             url: '$path/formRevoke?infoId='+infoId,

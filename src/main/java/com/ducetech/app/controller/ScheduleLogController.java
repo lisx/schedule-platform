@@ -147,7 +147,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorName(userInfo.getUserName());
         log.setTimeAt(log.getTimeAt()*60);
         log.setIfUse(0);
-        log.setLogType(log.getLogType()+"-"+log.getDetailType());
+        log.setLogType(log.getLogType()+"-"+log.getDetailType()+(log.getTimeAt()/60)+"小时");
         scheduleLogService.insertScheduleLog(log);
         ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         s.setLogId(log.getScheduleLogId());
@@ -174,6 +174,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorName(userInfo.getUserName());
         log.setTimeAt(-log.getTimeAt()*60);
         log.setIfUse(0);
+        log.setLogType(log.getLogType()+(log.getTimeAt()/60)+"小时");
         scheduleLogService.insertScheduleLog(log);
         ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         s.setLogId(log.getScheduleLogId());
@@ -200,6 +201,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorName(userInfo.getUserName());
         log.setTimeAt(log.getTimeAt()*60);
         log.setIfUse(0);
+        log.setLogType(log.getLogType()+(log.getTimeAt()/60)+"小时");
         scheduleLogService.insertScheduleLog(log);
         ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         s.setLogId(log.getScheduleLogId());
@@ -270,18 +272,18 @@ public class ScheduleLogController extends BaseController {
     /**
      * 撤销按钮
      * @param infoId
-     * @param request
      * @return
      * @throws ParseException
      */
     @RequestMapping(value = "/formRevoke", method = RequestMethod.DELETE)
     @ResponseBody
-    public OperationResult formRevoke(String  infoId, HttpServletRequest request) throws ParseException {
+    public OperationResult formRevoke(String  infoId) throws ParseException {
         List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfo(infoId);
         for(ScheduleLog slog:list){
             slog.setIfUse(1);
             scheduleLogService.updateScheduleLog(slog);
         }
+
         return OperationResult.buildSuccessResult("撤销安排成功", "success");
     }
     /**
