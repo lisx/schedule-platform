@@ -92,6 +92,126 @@ public class ScheduleLogController extends BaseController {
     }
 
     /**
+     * 班次变更
+     * @param log
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/shiftChangeForm", method = RequestMethod.POST)
+    @ResponseBody
+    public OperationResult shiftChangeForm(ScheduleLog log, HttpServletRequest request) {
+        User userInfo = getLoginUser(request);
+        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+        log.setCreatorId(userInfo.getUserId());
+        log.setCreatorName(userInfo.getUserName());
+        log.setIfUse(0);
+        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
+        ShiftModel sm=shiftModelService.selectShiftModelByModelCodeId("",s.getModelId());
+        List<ShiftSetting> ssList=shiftService.selectShiftSettingByModelId(sm.getModelId());
+        for(ShiftSetting ss:ssList){
+            if(ss.getShiftName().equals(log.getDetailType())){
+                log.setTimeAt(ss.getTotalAt()-s.getTotalAt());
+            }
+        }
+        log.setLogType(s.getShiftName()+"变更为"+log.getDetailType());
+        log.setUserName(s.getUserName());
+        log.setStartAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
+        log.setEndAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
+        scheduleLogService.insertScheduleLog(log);
+        List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
+        for(ScheduleLog slog:list){
+            slog.setIfUse(1);
+            scheduleLogService.updateScheduleLog(slog);
+        }
+        s.setIfLeave(2);
+        s.setLogId(log.getScheduleLogId());
+        s.setShiftName(log.getDetailType());
+        s.setLeaveType(log.getLogType());
+        s.setScheduleDesc(log.getRemark());
+        scheduleInfoService.updateScheduleInfo(s);
+        return OperationResult.buildSuccessResult("班次变更成功", "success");
+    }
+
+    /**
+     * 临时安排
+     * @param log
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/provisionalDispositionForm", method = RequestMethod.POST)
+    @ResponseBody
+    public OperationResult provisionalDispositionForm(ScheduleLog log, HttpServletRequest request) {
+        User userInfo = getLoginUser(request);
+        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+        log.setCreatorId(userInfo.getUserId());
+        log.setCreatorName(userInfo.getUserName());
+        log.setTimeAt(log.getTimeAt()*60);
+        log.setIfUse(0);
+        log.setLogType(log.getLogType()+"-"+log.getDetailType());
+        scheduleLogService.insertScheduleLog(log);
+        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
+        s.setLogId(log.getScheduleLogId());
+        s.setIfLeave(3);
+        scheduleInfoService.updateScheduleInfo(s);
+        log.setScheduleInfoId(s.getScheduleInfoId());
+        log.setUserName(s.getUserName());
+        scheduleLogService.updateScheduleLog(log);
+        return OperationResult.buildSuccessResult("临时安排成功", "success");
+    }
+
+    /**
+     * 旷工缺勤
+     * @param log
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/minersAbsenceForm", method = RequestMethod.POST)
+    @ResponseBody
+    public OperationResult minersAbsenceForm(ScheduleLog log,String logId, HttpServletRequest request) {
+        User userInfo = getLoginUser(request);
+        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+        log.setCreatorId(userInfo.getUserId());
+        log.setCreatorName(userInfo.getUserName());
+        log.setTimeAt(-log.getTimeAt()*60);
+        log.setIfUse(0);
+        scheduleLogService.insertScheduleLog(log);
+        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
+        s.setLogId(log.getScheduleLogId());
+        s.setIfLeave(4);
+        scheduleInfoService.updateScheduleInfo(s);
+        log.setScheduleInfoId(s.getScheduleInfoId());
+        log.setUserName(s.getUserName());
+        scheduleLogService.updateScheduleLog(log);
+        return OperationResult.buildSuccessResult("旷工缺勤成功", "success");
+    }
+
+    /**
+     * 补班加班
+     * @param log
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/overtimeWorkForm", method = RequestMethod.POST)
+    @ResponseBody
+    public OperationResult overtimeWorkForm(ScheduleLog log,String logId, HttpServletRequest request) {
+        User userInfo = getLoginUser(request);
+        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+        log.setCreatorId(userInfo.getUserId());
+        log.setCreatorName(userInfo.getUserName());
+        log.setTimeAt(log.getTimeAt()*60);
+        log.setIfUse(0);
+        scheduleLogService.insertScheduleLog(log);
+        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
+        s.setLogId(log.getScheduleLogId());
+        s.setIfLeave(5);
+        scheduleInfoService.updateScheduleInfo(s);
+        log.setUserName(s.getUserName());
+        log.setScheduleInfoId(s.getScheduleInfoId());
+        scheduleLogService.updateScheduleLog(log);
+        return OperationResult.buildSuccessResult("补班加班成功", "success");
+    }
+
+    /**
      * 替班
      * @param log
      * @param request
@@ -283,73 +403,7 @@ public class ScheduleLogController extends BaseController {
         }
     }
 
-    /**
-     * 班次变更
-     * @param log
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/shiftChangeForm", method = RequestMethod.POST)
-    @ResponseBody
-    public OperationResult shiftChangeForm(ScheduleLog log, HttpServletRequest request) {
-        User userInfo = getLoginUser(request);
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setIfUse(0);
-        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        ShiftModel sm=shiftModelService.selectShiftModelByModelCodeId("",s.getModelId());
-        List<ShiftSetting> ssList=shiftService.selectShiftSettingByModelId(sm.getModelId());
-        for(ShiftSetting ss:ssList){
-            if(ss.getShiftName().equals(log.getDetailType())){
-                log.setTimeAt(ss.getTotalAt()-s.getTotalAt());
-            }
-        }
-        log.setLogType(s.getShiftName()+"变更为"+log.getDetailType());
-        log.setUserName(s.getUserName());
-        log.setStartAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
-        log.setEndAt(DateUtil.formatDate(s.getScheduleDate(),"yyyy-MM-dd"));
-        scheduleLogService.insertScheduleLog(log);
-        List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
-        for(ScheduleLog slog:list){
-            slog.setIfUse(1);
-            scheduleLogService.updateScheduleLog(slog);
-        }
-        s.setIfLeave(2);
-        s.setLogId(log.getScheduleLogId());
-        s.setShiftName(log.getDetailType());
-        s.setLeaveType(log.getLogType());
-        s.setScheduleDesc(log.getRemark());
-        scheduleInfoService.updateScheduleInfo(s);
-        return OperationResult.buildSuccessResult("班次变更成功", "success");
-    }
 
-    /**
-     * 临时安排
-     * @param log
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/provisionalDispositionForm", method = RequestMethod.POST)
-    @ResponseBody
-    public OperationResult provisionalDispositionForm(ScheduleLog log, HttpServletRequest request) {
-        User userInfo = getLoginUser(request);
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setTimeAt(log.getTimeAt()*60);
-        log.setIfUse(0);
-        log.setLogType(log.getLogType()+"-"+log.getDetailType());
-        scheduleLogService.insertScheduleLog(log);
-        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        s.setLogId(log.getScheduleLogId());
-        s.setIfLeave(3);
-        scheduleInfoService.updateScheduleInfo(s);
-        log.setScheduleInfoId(s.getScheduleInfoId());
-        log.setUserName(s.getUserName());
-        scheduleLogService.updateScheduleLog(log);
-        return OperationResult.buildSuccessResult("临时安排成功", "success");
-    }
 
     /**
      * 撤销临时安排
@@ -377,31 +431,7 @@ public class ScheduleLogController extends BaseController {
         scheduleInfoService.updateScheduleInfo(s);
         return OperationResult.buildSuccessResult("临时安排成功", "success");
     }
-    /**
-     * 旷工缺勤
-     * @param log
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/minersAbsenceForm", method = RequestMethod.POST)
-    @ResponseBody
-    public OperationResult minersAbsenceForm(ScheduleLog log,String logId, HttpServletRequest request) {
-        User userInfo = getLoginUser(request);
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setTimeAt(-log.getTimeAt()*60);
-        log.setIfUse(0);
-        scheduleLogService.insertScheduleLog(log);
-        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        s.setLogId(log.getScheduleLogId());
-        s.setIfLeave(4);
-        scheduleInfoService.updateScheduleInfo(s);
-        log.setScheduleInfoId(s.getScheduleInfoId());
-        log.setUserName(s.getUserName());
-        scheduleLogService.updateScheduleLog(log);
-        return OperationResult.buildSuccessResult("旷工缺勤成功", "success");
-    }
+
     /**
      * 撤销旷工缺勤
      * @param log
@@ -428,31 +458,7 @@ public class ScheduleLogController extends BaseController {
         scheduleInfoService.updateScheduleInfo(s);
         return OperationResult.buildSuccessResult("撤销旷工缺勤成功", "success");
     }
-    /**
-     * 补班加班
-     * @param log
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/overtimeWorkForm", method = RequestMethod.POST)
-    @ResponseBody
-    public OperationResult overtimeWorkForm(ScheduleLog log,String logId, HttpServletRequest request) {
-        User userInfo = getLoginUser(request);
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setTimeAt(log.getTimeAt()*60);
-        log.setIfUse(0);
-        scheduleLogService.insertScheduleLog(log);
-        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        s.setLogId(log.getScheduleLogId());
-        s.setIfLeave(5);
-        scheduleInfoService.updateScheduleInfo(s);
-        log.setUserName(s.getUserName());
-        log.setScheduleInfoId(s.getScheduleInfoId());
-        scheduleLogService.updateScheduleLog(log);
-        return OperationResult.buildSuccessResult("补班加班成功", "success");
-    }
+
     /**
      * 撤销补班加班
      * @param log
