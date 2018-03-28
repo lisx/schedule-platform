@@ -52,7 +52,7 @@
         }
     </style>
 </head>
-<div class="mask"></div>
+<div class="mask"><img src="$path/static/img/loading.gif"></div>
 <body>
 <script>
 

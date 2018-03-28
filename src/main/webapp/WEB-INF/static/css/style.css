@@ -995,26 +995,6 @@ select {
   border-top: 1px solid #e5e5e5;
   color: #1a1a1a;
 }
-#rightMenu a:nth-of-type(1){
-  background: #F5D328;
-}
-#rightMenu a:nth-of-type(2){
-  background: #F5D328;
-}
-#rightMenu a:nth-of-type(3){
-  background: #F5D328;
-}
-#rightMenu a:nth-of-type(4){
-  background: #F5D328;
-}
-#rightMenu a:nth-of-type(5){
-  background: #F5D328;
-}
-#rightMenu a:nth-of-type(6){
-  background: #F5D328;
-}
-
-/* 班次设置添加部分样式 */
 .shiftInfo > ul {
   width: 520px;
   height: auto;
@@ -1189,7 +1169,7 @@ table.dataTable tbody th, table.dataTable tbody td{
   background: #ff9191;
 }
 .wrapper .blue{
-  background: blue;
+  background: #3A6BCE;
 }
 .wrapper .deepRed{
   background: #b10000;
@@ -1202,4 +1182,10 @@ table.dataTable tbody th, table.dataTable tbody td{
 }
 #autoForm .form_line{
   margin-bottom: 0;
+}
+.mask{
+  text-align: center;
+}
+.mask img{
+  margin-top: 100px;
 }

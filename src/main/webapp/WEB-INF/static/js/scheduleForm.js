@@ -66,8 +66,9 @@ $(function(){
         e.preventDefault();
     };
     $(document).on("mousedown",".scheduleForm td.rightMenu",function(e){
+        var userId = $(this).closest('tr').find('.userName').attr('tdtype');
+        window.localStorage.setItem('userId',userId);
         var scrollTop = $(window).scrollTop();
-        console.log(scrollTop)
         var offsetTop = $(this).offset().top;
         var top = 0;
         if(scrollTop+290>offsetTop){
@@ -76,7 +77,6 @@ $(function(){
             top = offsetTop - 288;
         }
     	$("#minDate").val($(this).attr("data-date"));
-    	console.log($("#minDate").val()+"|||"+$(this).attr("data-date"));
     	$("#editHoliday .datetimepicker").eq(0).data("DateTimePicker").date($(this).attr("data-date"));
         $("#editHoliday .datetimepicker").eq(1).data("DateTimePicker").date($(this).attr("data-date"));
         var index = $(this).index();

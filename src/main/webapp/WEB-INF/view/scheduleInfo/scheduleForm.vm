@@ -238,7 +238,7 @@
     <a href="#overtimeWork" data-toggle="modal" data-target="#overtimeWork">补班加班</a>
     <!-- <a href="#prepareShift" onclick="initPrepareShift()" data-toggle="modal" data-target="#prepareShift">备班</a> -->
     <a href="#replaceShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#replaceShift">替班</a>
-    <a href="javascript:;">撤销</a>
+    <a class="cancelHandle" href="javascript:;">撤销</a>
 </div>
 <!--  人员信息 -->
 <div class="userInfo">
@@ -1051,15 +1051,37 @@
                         var clz="";
                         var ifLeave = data[i].scheduleInfoList[j].ifLeave;
 
-                        if (ifLeave == 1 || ifLeave == 4 || ifLeave == 6) {
-                            color = "#70BF41";
-                            clz="bgGreen";
-                        } else if (ifLeave == 2 || ifLeave == 3 || ifLeave == 5) {
-                            color = "#F5D328";
-                            clz="bgYellow";
+                        if(ifLeave == 1){
+                            clz = 'yellow';
+                            color = '#fffc00';
+                        } else if (ifLeave == 2) {
+                            clz = 'pink';
+                            color = '#ff9191';
+                        } else if (ifLeave == 3) {
+                            clz = 'blue';
+                            color = '#3A6BCE';
+                        } else if (ifLeave == 4) {
+                            clz = 'deepRed';
+                            color = '#b10000';
+                        } else if (ifLeave == 5) {
+                            clz = 'green';
+                            color = '#00d537';
+                        } else if (ifLeave == 6) {
+                            clz = 'deepGreen';
+                            color = '#008121';
                         } else {
-                            color = "";
+                            clz = '';
+                            color = '';
                         }
+                        // if (ifLeave == 1 || ifLeave == 4 || ifLeave == 6) {
+                        //     color = "#70BF41";
+                        //     clz="bgGreen";
+                        // } else if (ifLeave == 2 || ifLeave == 3 || ifLeave == 5) {
+                        //     color = "#F5D328";
+                        //     clz="bgYellow";
+                        // } else {
+                        //     color = "";
+                        // }
                         tbody += '<td style="position: relative" tdType=shift serialNumber="' + data[i].scheduleInfoList[j].serialNumber + '" shiftName="' + data[i].scheduleInfoList[j].shiftName
                                 + '" colorStyle="'+color+'" class="' + rightMenu[j] +" "+clz+ '" data-logId="' + data[i].scheduleInfoList[j].logId
                                 + '" colorCode="#'+data[i].scheduleInfoList[j].shiftColor+'" data-scheduleInfoId="' + data[i].scheduleInfoList[j].scheduleInfoId + '" data-userId="'
@@ -1124,6 +1146,20 @@
         $('.userInfo').css({"left":left+'px',"top":top+"px"}).show();
     }).on('mouseout', '.scheduleForm tbody tr .userName',function(){
         $('.userInfo').hide();
+    })
+    //撤销操作
+    $('.cancelHandle').click(function(){
+        var userId = window.localStorage.getItem('userId');
+
+        $.ajax({
+            type: 'delete',
+            url: '$path/formRevoke?infoId='+userId,
+            dataType: 'json',
+            success: function(data){
+                Alert(data.type,data.message);
+            }
+
+        })
     })
 </script>
 </body>
