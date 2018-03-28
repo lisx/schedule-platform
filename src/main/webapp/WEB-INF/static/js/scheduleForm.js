@@ -66,7 +66,7 @@ $(function(){
         e.preventDefault();
     };
     $(document).on("mousedown",".scheduleForm td.rightMenu",function(e){
-        var userId = $(this).closest('tr').find('.userName').attr('tdtype');
+        var infoId = $(this).attr('data-scheduleinfoid');
         window.localStorage.setItem('userId',userId);
         var scrollTop = $(window).scrollTop();
         var offsetTop = $(this).offset().top;

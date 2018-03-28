@@ -87,11 +87,11 @@
                         labels : labels,
                         datasets : [
                             {
-                                backgroundColor : "#3A6BCE",
+                                backgroundColor : "#fffc00",
                                 data : planHours,
                             },
                             {
-                                backgroundColor : "#39B44A",
+                                backgroundColor : "#00d537",
                                 data : actualhours
                             }
                         ],
@@ -114,7 +114,7 @@
                                 ticks: {
                                     autoSkip: false,
                                     beginAtZero: true,
-                                    fixedStepSize: 45
+                                    fixedStepSize: 10
                                 },
                             }],
                         }
@@ -197,10 +197,10 @@
     <div class="chart">
         <ul class="legend">
             <li>
-                <span class="color-bar realHour"></span>实际工时
+                <span class="color-bar green"></span>实际工时
             </li>
             <li>
-                <span class="color-bar planHour"></span>计划工时
+                <span class="color-bar yellow"></span>计划工时
             </li>
         </ul>
         <canvas id="myChart" width="1600" height="400"></canvas>

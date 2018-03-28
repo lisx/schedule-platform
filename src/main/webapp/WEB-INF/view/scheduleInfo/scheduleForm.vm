@@ -1154,11 +1154,11 @@
     })
     //撤销操作
     $('.cancelHandle').click(function(){
-        var userId = window.localStorage.getItem('userId');
+        var infoId = window.localStorage.getItem('infoId');
 
         $.ajax({
             type: 'delete',
-            url: '$path/formRevoke?infoId='+userId,
+            url: '$path/formRevoke?infoId='+infoId,
             dataType: 'json',
             success: function(data){
                 Alert(data.type,data.message);

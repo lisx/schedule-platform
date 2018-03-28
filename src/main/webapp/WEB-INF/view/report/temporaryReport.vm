@@ -5,6 +5,12 @@
     <title>临时安排报表</title>
     #parse('common/path-css.vm')
     #parse('common/path-js.vm')
+    <style>
+    #temporaryReport{
+        width: 1600px;
+        height: 400px;
+    }
+    </style>
 </head>
 <body>
 <div class="mask"><img src="$path/static/img/loading.gif"></div>
@@ -79,45 +85,85 @@ function queryBtn(){
                 tbody+='</tr>';
             }
             target.find("tbody").html(tbody);
-
-            var canvas = document.getElementById("temporaryReport");
-            var ctx = canvas.getContext("2d");
-            ctx.clearRect(0,0,1600,400);
-            var myChart1 = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels : labels,
-                    datasets : [
-                        {
-                            backgroundColor : "#70BF41",
-                            data : jy
+            var itemColor = function(data){
+                // var color = '';
+                // if(data.)
+                console.log(data)
+                return '#70BF41';
+            }
+            
+            var myChart = echarts.init(document.getElementById('temporaryReport'));
+            //根据数据判断柱状图的颜色
+            var ItemStyle = {
+                normal: {
+                    color: function(params) {
+                        var colorList;
+                        if (params.data >= 0) {
+                            colorList = 'green';
+                        } else {
+                            colorList = 'yellow';
                         }
-                    ],
-                },
-                options: {
-                    responsive: false,
-                    legend: {
-                        display: false,
+                        return colorList;
                     },
-                    scales: {
-                        xAxes: [{
-                            gridLines: {
-                                display: true,
-                            },
-                            type: "category",
-                            categoryPercentage: 0.5,
-                            barPercentage: 1.00,
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                autoSkip: false,
-                                beginAtZero: true,
-                                fixedStepSize: 45
-                            },
-                        }],
-                    }
                 }
-            });
+            };
+            //指定图表的配置项和数据
+            var option = {
+                xAxis: {
+                    data: labels,
+                },
+                yAxis: {
+                },
+                series: [{
+                    type: 'bar',
+                    data: jy,
+                    itemStyle: ItemStyle
+                }],
+                grid: {
+                    left: 30
+                }
+            };
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+            // itemColor = '#ff6600'
+            // var canvas = document.getElementById("temporaryReport");
+            // var ctx = canvas.getContext("2d");
+            // ctx.clearRect(0,0,1600,400);
+            // var myChart1 = new Chart(ctx, {
+            //     type: 'bar',
+            //     data: {
+            //         labels : labels,
+            //         datasets : [
+            //             {
+            //                 backgroundColor : itemColor,//,"#70BF41",
+            //                 data : jy
+            //             }
+            //         ],
+            //     },
+            //     options: {
+            //         responsive: false,
+            //         legend: {
+            //             display: false,
+            //         },
+            //         scales: {
+            //             xAxes: [{
+            //                 gridLines: {
+            //                     display: true,
+            //                 },
+            //                 type: "category",
+            //                 categoryPercentage: 0.6,
+            //                 barPercentage: 1.00,
+            //             }],
+            //             yAxes: [{
+            //                 ticks: {
+            //                     autoSkip: false,
+            //                     beginAtZero: true,
+            //                     fixedStepSize: 10
+            //                 },
+            //             }],
+            //         }
+            //     }
+            // });
             $('.mask').hide();
         }
     });
@@ -237,12 +283,7 @@ $(document).on("click","#monthBtn",function(){
 <div class="wrapper">
     <p class="heading"></p>
     <div class="chart">
-        <ul class="legend">
-            <li>
-                <span class="color-bar bgGreen"></span>结余总工时
-            </li>
-        </ul>
-        <canvas id="temporaryReport" width="1600" height="400"></canvas>
+        <div id="temporaryReport" width="1600" height="400"></div>
     </div>
 
     <table class="table scheduleForm">
