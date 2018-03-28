@@ -19,7 +19,7 @@ $(function(){
     }
 	var scheduleInfoId='';
 	//绿色、黄色区域鼠标悬浮显示备注
-    $(document).on("mouseover",".scheduleForm .bgGreen,.scheduleForm .bgYellow",function(){
+    $(document).on("mouseover",".scheduleForm .bgGreen,.scheduleForm .color",function(){
     	scheduleInfoId = $(this).attr("data-scheduleinfoid");
     	var left = $(this).offset().left;
     	var top = $(this).offset().top+36;

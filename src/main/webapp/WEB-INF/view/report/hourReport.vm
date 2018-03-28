@@ -7,6 +7,7 @@
     #parse('common/path-js.vm')
 </head>
 <body>
+<div class="mask"><img src="$path/static/img/loading.gif"></div>
 <script>
     $(function(){
         var val = new Date();
@@ -43,7 +44,8 @@
         }
     })
     function queryBtn(){
-        Alert('success',"数据加载中请稍候")
+        //Alert('success',"数据加载中请稍候")
+        $('.mask').show();
         var canvas = document.getElementById("myChart");
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0,0,1600,400);
@@ -118,6 +120,7 @@
                         }
                     }
                 });
+                $('.mask').hide();
             }
         });
     }

@@ -7,7 +7,6 @@
     #parse('common/path-js.vm')
     <script src="$path/static/js/scheduleForm.js" type="text/javascript"></script>
     <style>
-
         .status{
             left:0;
             top:0;
@@ -1052,22 +1051,22 @@
                         var ifLeave = data[i].scheduleInfoList[j].ifLeave;
 
                         if(ifLeave == 1){
-                            clz = 'yellow';
+                            clz = 'yellow color';
                             color = '#fffc00';
                         } else if (ifLeave == 2) {
-                            clz = 'pink';
+                            clz = 'pink color';
                             color = '#ff9191';
                         } else if (ifLeave == 3) {
-                            clz = 'blue';
+                            clz = 'blue color';
                             color = '#3A6BCE';
                         } else if (ifLeave == 4) {
-                            clz = 'deepRed';
+                            clz = 'deepRed color';
                             color = '#b10000';
                         } else if (ifLeave == 5) {
-                            clz = 'green';
+                            clz = 'green color';
                             color = '#00d537';
                         } else if (ifLeave == 6) {
-                            clz = 'deepGreen';
+                            clz = 'deepGreen color';
                             color = '#008121';
                         } else {
                             clz = '';
@@ -1093,7 +1092,7 @@
                     if(data[i].actualHours > 0){
                         balance = 'green';
                     } else if (data[i].actualHours < 0) {
-                        balance = 'pink';
+                        balance = 'deepRed';
                     }
                     tbody += '<td>' + data[i].planHours + '</td><td>' + (data[i].planHours+data[i].actualHours) + '</td><td class="' + balance + '">' + data[i].actualHours + '</td>';
                     tbody += '</tr>';
