@@ -7,15 +7,10 @@ import com.ducetech.framework.schedule.service.SystemSechduleService;
 import com.ducetech.framework.util.DateUtil;
 import com.ducetech.framework.web.view.OperationResult;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.util.SystemOutLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -152,6 +147,23 @@ public class ScheduleLogController extends BaseController {
         return 0;
     }
 
+    /**
+     * 撤销按钮
+     * @param infoId
+     * @param request
+     * @return
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/formRevoke", method = RequestMethod.DELETE)
+    @ResponseBody
+    public OperationResult formRevoke(String  infoId, HttpServletRequest request) throws ParseException {
+        List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfo(infoId);
+        for(ScheduleLog slog:list){
+            slog.setIfUse(1);
+            scheduleLogService.updateScheduleLog(slog);
+        }
+        return OperationResult.buildSuccessResult("撤销安排成功", "success");
+    }
     /**
      * 撤销假期
      * @param log
