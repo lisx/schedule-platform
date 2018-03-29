@@ -406,15 +406,13 @@ public class ScheduleInfoController extends BaseController {
                 if (size > 0)
                     shiftList = shiftService.selectShiftSettingByModelId(list.get(0).getModelId());
                 sheet.setColumnWidth(size + 4, 25 * 256);//设置第一列的宽度是31个字符宽度
-//                sheet.setColumnWidth(1, 25 * 256);//设置第一列的宽度是31个字符宽度
-
                 RegionUtil.setBorderRight(1, new CellRangeAddress(0, 0, size + 1, size + 4), sheet, wb);
                 RegionUtil.setBorderTop(1, new CellRangeAddress(0, 0, size + 1, size + 4), sheet, wb);
                 sheet.addMergedRegion(new CellRangeAddress(0, 0, size + 1, size + 4));
                 RegionUtil.setBorderRight(1, new CellRangeAddress(0, 1, 1, 1), sheet, wb);
                 RegionUtil.setBorderRight(1, new CellRangeAddress(0, 1, 0, 0), sheet, wb);
                 RegionUtil.setBorderLeft(1, new CellRangeAddress(0, 1, 1, 1), sheet, wb);
-                sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
+                //sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
 
                 if (rownum == 0) {
