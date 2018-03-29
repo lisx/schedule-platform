@@ -58,7 +58,7 @@ $(function(){
             	}
             }
         })
-    }).on("mouseout",".scheduleForm .bgGreen,.scheduleForm .bgYellow",function(){
+    }).on("mouseout",".scheduleForm .bgGreen,.scheduleForm .color",function(){
     	$("#remarks").addClass("hidden");
     })
     //右击展示菜单
@@ -67,7 +67,7 @@ $(function(){
     };
     $(document).on("mousedown",".scheduleForm td.rightMenu",function(e){
         var infoId = $(this).attr('data-scheduleinfoid');
-        window.localStorage.setItem('userId',userId);
+        window.localStorage.setItem('infoId',infoId);
         var scrollTop = $(window).scrollTop();
         var offsetTop = $(this).offset().top;
         var top = 0;
