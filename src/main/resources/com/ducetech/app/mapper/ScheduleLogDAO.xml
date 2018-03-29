@@ -39,7 +39,7 @@
 
     <select id="getScheduleLogByInfo" parameterType="String" resultMap="scheduleLogMap">
         SELECT * FROM schedule_log
-        WHERE schedule_info_id = #{scheduleInfoId}
+        WHERE schedule_info_id = #{scheduleInfoId} and if_use=0
     </select>
     <select id="getScheduleLogByInfoAndLogId" parameterType="String" resultMap="scheduleLogMap">
         SELECT * FROM schedule_log

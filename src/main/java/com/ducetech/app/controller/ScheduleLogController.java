@@ -105,6 +105,7 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorId(userInfo.getUserId());
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
+        log.setRemark(log.getRemark()==null?"":log.getRemark());
         ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         ShiftModel sm=shiftModelService.selectShiftModelByModelCodeId("",s.getModelId());
         List<ShiftSetting> ssList=shiftService.selectShiftSettingByModelId(sm.getModelId());
@@ -283,6 +284,12 @@ public class ScheduleLogController extends BaseController {
             slog.setIfUse(1);
             scheduleLogService.updateScheduleLog(slog);
         }
+        ScheduleInfo s=scheduleInfoService.selectScheduleInfoById(infoId);
+        s.setIfLeave(0);
+        s.setLogId("");
+        s.setLeaveType("");
+        s.setScheduleDesc("");
+        scheduleInfoService.updateScheduleInfo(s);
 
         return OperationResult.buildSuccessResult("撤销安排成功", "success");
     }
