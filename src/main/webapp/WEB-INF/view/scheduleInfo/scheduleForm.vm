@@ -445,7 +445,7 @@
             <div class="modal-footer">
                 <a class="btn btn-confirm" href="javascript:;" onclick="editHoliday()">假期上报</a>
                 <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
-                <a class="btn btn-red" href="javascript:;" onclick="editHolidayDel()">撤销假期</a>
+                <!-- <a class="btn btn-red" href="javascript:;" onclick="editHolidayDel()">撤销假期</a> -->
             </div>
         </div>
     </div>
@@ -681,7 +681,7 @@
             <div class="modal-footer">
                 <a class="btn btn-confirm" href="javascript:;" onclick="minersAbsenceForm()">确定</a>
                 <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
-                <a class="btn btn-red" href="javascript:;" onclick="minersAbsenceFormRevoke()">撤销缺勤</a>
+                <!-- <a class="btn btn-red" href="javascript:;" onclick="minersAbsenceFormRevoke()">撤销缺勤</a> -->
             </div>
         </div>
     </div>
@@ -1019,6 +1019,7 @@
             dataType: 'json',
             success: function(data){
                 Alert(data.type,data.message);
+                queryBtn();
             }
 
         })
