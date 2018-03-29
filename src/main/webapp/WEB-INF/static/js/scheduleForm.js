@@ -129,7 +129,7 @@ $(function(){
     	        console.log(data)
     	        var select='';
     	        for(var i=0;i<data.length;i++){
-    	            select += '<option value="'+data[i].shiftName+'">'+ data[i].shiftName + '班</option>';
+    	            select += '<option value="'+data[i].shiftName+'">'+ data[i].shiftName + '</option>';
     	        }
     	        //赋值给#shiftChange框里的select
     	        $("#shiftChange form select").html(select);
