@@ -761,7 +761,6 @@
             <div class="modal-footer">
                 <a class="btn btn-confirm" href="javascript:;" onclick="overtimeWork()">确定</a>
                 <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
-                <a class="btn btn-red" href="javascript:;" onclick="overtimeWorkRevoke()">取消加班</a>
             </div>
         </div>
     </div>
