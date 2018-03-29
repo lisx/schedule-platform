@@ -194,6 +194,7 @@
     </div>
 </div>
 <!-- 表格 end -->
+<div class="mask"><img src="$path/static/img/loading.gif"></div>
 <!-- 备注信息 -->
 <div id="remarks" class="hidden">
     <p class="head">旷工</p>
@@ -847,6 +848,7 @@
 
     function queryBtn() {
         $("#btnChange").hide();
+        $('.mask').show();
         //初始化排班表
         var station=$("#stationQuery").val();
         var postName=$("#postName").val();
@@ -861,7 +863,7 @@
             Alert("fail", "需选择站区");
             return;
         }
-        Alert('success', "数据加载中请稍候")
+        //Alert('success', "数据加载中请稍候")
         jQuery.ajax({
             type: "get",
             url: "$path/scheduleFormData?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val()+"&postName="+postName,
@@ -966,6 +968,7 @@
                     }
                     $(this).html(html);
                 });
+                $('.mask').hide();
             }
         });
     }
