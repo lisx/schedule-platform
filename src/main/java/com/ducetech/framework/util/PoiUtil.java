@@ -560,12 +560,13 @@ public class PoiUtil {
                 cell = row.createCell(i + 1);
                 if (list.get(i).getShiftCode() != null) {
                     cell.setCellValue(list.get(i).getSerialNumber());// + list.get(i).getShiftCode()
-
+                    cell.setCellStyle(style);
                 } else {
                     cell.setCellValue(list.get(i).getShiftName());
+                    cell.setCellStyle(style);
                 }
 
-                String color = list.get(i).getShiftColor();
+//                String color = list.get(i).getShiftColor();
 //                getCellStyle(wb, style, cell, colorMap, color);
             }
         cell = row.createCell(size + 1);
