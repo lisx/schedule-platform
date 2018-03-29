@@ -179,6 +179,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
                     info.setUserId(userId);
                     if(null!=user) {
                         info.setUserName(user.getUserName());
+                        info.setUserCode(user.getUserCode());
                     }
                     info.setCreatedAt(dayFormat.format(date));
                     info.setCreatorId(loginUser.getUserId());
