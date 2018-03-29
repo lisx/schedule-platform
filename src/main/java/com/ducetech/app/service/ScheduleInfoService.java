@@ -23,6 +23,7 @@ public interface ScheduleInfoService {
 	*/
     int selectScheduleInfoSumDay(String startAt, String endAt,String userId);
     int selectScheduleInfoSum(String startAt,String endAt,String userId);
+    List<ScheduleInfo> selectScheduleInfoNotInfoId(String logId);
     List<ScheduleInfo> selectScheduleInfoSort(String startAt,String endAt,String userName,String userCode,String postName,String station,String stationArea);
 	List<ScheduleInfo> selectScheduleInfo(String startAt,String endAt,String userName,String userCode,String postName,String station,String stationArea);
     List<ScheduleInfo> selectScheduleInfoByUser(String startAt,String endAt,String userId);

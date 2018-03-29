@@ -48,6 +48,11 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
     }
 
     @Override
+    public List<ScheduleInfo> selectScheduleInfoNotInfoId(String logId) {
+        return scheduleDAO.selectScheduleInfoNotInfoId(logId);
+    }
+
+    @Override
     public List<ScheduleInfo> selectScheduleInfoSort(String startAt, String endAt, String userName, String userCode, String postName, String station, String stationArea) {
         return scheduleDAO.selectScheduleInfoSort(startAt, endAt, userName, userCode, postName, station, stationArea);
     }

@@ -51,6 +51,10 @@
         WHERE if_use=0 AND user_id=#{userId} AND schedule_date BETWEEN #{startAt} AND #{endAt}
         AND shift_name=#{shiftName}
     </select>
+    <select id="selectScheduleInfoNotInfoId" parameterType="String" resultMap="scheduleInfoMap">
+        select * from schedule_info
+        where if_use=0 and log_id=#{logId}
+    </select>
     <!--查询指定日期区间中的所有数据-->
     <select id="selectScheduleInfo" parameterType="String" resultMap="scheduleInfoMap">
         select * from schedule_info

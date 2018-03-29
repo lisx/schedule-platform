@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -37,6 +35,7 @@ public class ScheduleLogController extends BaseController {
     private ShiftSettingService shiftService;
     @Autowired
     private UserService userService;
+
     /**
      * 获取单个排班所以编辑记录
      * @param scheduleInfoId
@@ -48,6 +47,7 @@ public class ScheduleLogController extends BaseController {
         List<ScheduleLog> logs=scheduleLogService.getScheduleLogByInfo(scheduleInfoId);
         return logs;
     }
+
     /**
      * 假期编辑
      * @param log
@@ -249,27 +249,6 @@ public class ScheduleLogController extends BaseController {
         return OperationResult.buildSuccessResult("替班编辑成功", "success");
     }
 
-
-    public static int compare_date(String DATE1, String DATE2) {
-        DateFormat df = new SimpleDateFormat("yyyy-M-dd");
-        try {
-            Date dt1 = df.parse(DATE1);
-            Date dt2 = df.parse(DATE2);
-            if (dt1.getTime() > dt2.getTime()) {
-                return 1;
-            } else if (dt1.getTime() < dt2.getTime()) {
-                return -1;
-            } else if(dt1.getTime() == dt2.getTime()){
-                return 2;
-            }else{
-                return 0;
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return 0;
-    }
-
     /**
      * 撤销按钮
      * @param infoId
@@ -283,215 +262,15 @@ public class ScheduleLogController extends BaseController {
         for(ScheduleLog slog:list){
             slog.setIfUse(1);
             scheduleLogService.updateScheduleLog(slog);
+            List<ScheduleInfo> sis=scheduleInfoService.selectScheduleInfoNotInfoId(slog.getScheduleLogId());
+            for(ScheduleInfo info:sis) {
+                info.setIfLeave(0);
+                info.setLogId("");
+                info.setLeaveType("");
+                info.setScheduleDesc("");
+                scheduleInfoService.updateScheduleInfo(info);
+            }
         }
-        ScheduleInfo s=scheduleInfoService.selectScheduleInfoById(infoId);
-        s.setIfLeave(0);
-        s.setLogId("");
-        s.setLeaveType("");
-        s.setScheduleDesc("");
-        scheduleInfoService.updateScheduleInfo(s);
-
         return OperationResult.buildSuccessResult("撤销安排成功", "success");
-    }
-    /**
-     * 撤销假期
-     * @param log
-     * @param logId
-     * @param request
-     * @return
-     * @throws ParseException
-     */
-    @RequestMapping(value = "/editHolidayFormRevoke", method = RequestMethod.DELETE)
-    @ResponseBody
-    public OperationResult editHolidayFormRevoke(ScheduleLog log,String logId, HttpServletRequest request) throws ParseException {
-        User userInfo = getLoginUser(request);
-        ScheduleLog temp=scheduleLogService.getScheduleLogById(logId);
-        log.setScheduleInfoId(temp.getScheduleInfoId());
-        temp.setIfUse(1);
-        scheduleLogService.updateScheduleLog(temp);
-        DateFormat df = new SimpleDateFormat("yyyy-M-dd");
-        int start=compare_date(log.getStartAt(), temp.getStartAt());
-        int end=compare_date(log.getEndAt(), temp.getEndAt());
-        int sum;
-        Date date;
-        Calendar calendar = new GregorianCalendar();
-        log.setLogType("撤销"+log.getLogType());
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setIfUse(0);
-        log.setUserName(temp.getUserName());
-        scheduleLogService.insertScheduleLog(log);
-        if(start==1&&end==-1){
-            String delend=temp.getEndAt();
-            date=df.parse(log.getStartAt());
-            calendar.setTime(date);
-            calendar.add(calendar.DATE,-1);//把日期往后增加一天.整数往后推,负数往前移动
-            date=calendar.getTime();   //这个时间就是日期往后推一天的结果
-            String endAt=DateUtil.formatDate(date, "yyyy-M-dd");
-            temp.setEndAt(endAt);
-            sum=scheduleInfoService.selectScheduleInfoSum(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            temp.setTimeAt(-sum);
-            temp.setIfUse(0);
-            scheduleLogService.insertScheduleLog(temp);
-            List<ScheduleInfo> slist=scheduleInfoService.selectScheduleInfoByUser(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            setLogId(temp, slist);
-            temp.setEndAt(delend);
-            date=df.parse(log.getEndAt());
-            calendar.setTime(date);
-            calendar.add(calendar.DATE,1);
-            date=calendar.getTime();   //这个时间就是日期往后推一天的结果
-            String startAt=DateUtil.formatDate(date, "yyyy-M-dd");
-            temp.setStartAt(startAt);
-            temp.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-            temp.setCreatorId(userInfo.getUserId());
-            temp.setCreatorName(userInfo.getUserName());
-            temp.setIfUse(0);
-            sum=scheduleInfoService.selectScheduleInfoSum(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            temp.setTimeAt(-sum);
-            slist=scheduleInfoService.selectScheduleInfoByUser(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            if(slist!=null&&slist.size()>0){
-                temp.setScheduleInfoId(slist.get(0).getScheduleInfoId());
-            }
-
-            scheduleLogService.insertScheduleLog(temp);
-            if(slist!=null&&slist.size()>0)
-            for(ScheduleInfo info:slist){
-                info.setLogId(temp.getScheduleLogId());
-                scheduleInfoService.updateScheduleInfo(info);
-            }
-        }else if(start==-1&&end==1){
-            log.setStartAt(temp.getStartAt());
-            log.setEndAt(temp.getEndAt());
-        }else if(start==2&&end==-1){
-            date=df.parse(log.getEndAt());
-            calendar.setTime(date);
-            calendar.add(calendar.DATE,1);
-            date=calendar.getTime();   //这个时间就是日期往后推一天的结果
-            String startEnd=DateUtil.formatDate(date, "yyyy-M-dd");
-            temp.setStartAt(startEnd);
-            List<ScheduleInfo> slist=scheduleInfoService.selectScheduleInfoByUser(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            setLogId(temp, slist);
-            temp.setIfUse(0);
-            sum=scheduleInfoService.selectScheduleInfoSum(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            temp.setTimeAt(-sum);
-            scheduleLogService.insertScheduleLog(temp);
-        }else if(start==1&&end==2){
-            date=df.parse(log.getEndAt());
-            calendar.setTime(date);
-            calendar.add(calendar.DATE,-1);
-            date=calendar.getTime();   //这个时间就是日期往后推一天的结果
-            String startEnd=DateUtil.formatDate(date, "yyyy-M-dd");
-            temp.setEndAt(startEnd);
-            temp.setIfUse(0);
-            sum=scheduleInfoService.selectScheduleInfoSum(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            temp.setTimeAt(-sum);
-            scheduleLogService.insertScheduleLog(temp);
-            List<ScheduleInfo> slist=scheduleInfoService.selectScheduleInfoByUser(temp.getStartAt(),temp.getEndAt(),temp.getUserId());
-            setLogId(temp, slist);
-        }
-
-        List<ScheduleInfo> sis=scheduleInfoService.selectScheduleInfoByUser(log.getStartAt(),log.getEndAt(),log.getUserId());
-        for(ScheduleInfo s:sis){
-            s.setIfLeave(0);
-            s.setLogId("");
-            s.setLeaveType("");
-            s.setScheduleDesc("");
-            scheduleInfoService.updateScheduleInfo(s);
-        }
-        return OperationResult.buildSuccessResult("假期编辑成功", "success");
-    }
-
-    private void setLogId(ScheduleLog temp, List<ScheduleInfo> slist) {
-        if(slist!=null&&slist.size()>0){
-            temp.setScheduleInfoId(slist.get(0).getScheduleInfoId());
-            for(ScheduleInfo info:slist){
-                info.setLogId(temp.getScheduleLogId());
-                scheduleInfoService.updateScheduleInfo(info);
-            }
-        }
-    }
-
-
-
-    /**
-     * 撤销临时安排
-     * @param log
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/provisionalDispositionFormRevoke", method = RequestMethod.DELETE)
-    @ResponseBody
-    public OperationResult provisionalDispositionFormRevoke(ScheduleLog log,String logId, HttpServletRequest request) {
-        ScheduleLog temp=scheduleLogService.getScheduleLogById(logId);
-        log.setScheduleInfoId(temp.getScheduleInfoId());
-        temp.setIfUse(1);
-        scheduleLogService.updateScheduleLog(temp);
-        User userInfo = getLoginUser(request);
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setIfUse(0);
-        log.setLogType("撤销"+log.getLogType());
-        log.setUserName(temp.getUserName());
-        scheduleLogService.insertScheduleLog(log);
-        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        s.setLogId(log.getScheduleLogId());
-        scheduleInfoService.updateScheduleInfo(s);
-        return OperationResult.buildSuccessResult("临时安排成功", "success");
-    }
-
-    /**
-     * 撤销旷工缺勤
-     * @param log
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/minersAbsenceFormRevoke", method = RequestMethod.DELETE)
-    @ResponseBody
-    public OperationResult minersAbsenceFormRevoke(ScheduleLog log,String logId, HttpServletRequest request) {
-        ScheduleLog temp=scheduleLogService.getScheduleLogById(logId);
-        log.setScheduleInfoId(temp.getScheduleInfoId());
-        temp.setIfUse(1);
-        scheduleLogService.updateScheduleLog(temp);
-        User userInfo = getLoginUser(request);
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setIfUse(0);
-        log.setLogType("撤销"+log.getLogType());
-        log.setUserName(temp.getUserName());
-        scheduleLogService.insertScheduleLog(log);
-        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        s.setLogId(log.getScheduleLogId());
-        scheduleInfoService.updateScheduleInfo(s);
-        return OperationResult.buildSuccessResult("撤销旷工缺勤成功", "success");
-    }
-
-    /**
-     * 撤销补班加班
-     * @param log
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/overtimeWorkFormRevoke", method = RequestMethod.DELETE)
-    @ResponseBody
-    public OperationResult overtimeWorkFormRevoke(ScheduleLog log,String logId, HttpServletRequest request) {
-        ScheduleLog temp=scheduleLogService.getScheduleLogById(logId);
-        log.setScheduleInfoId(temp.getScheduleInfoId());
-        temp.setIfUse(1);
-        scheduleLogService.updateScheduleLog(temp);
-        User userInfo = getLoginUser(request);
-        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
-        log.setCreatorId(userInfo.getUserId());
-        log.setCreatorName(userInfo.getUserName());
-        log.setIfUse(0);
-        log.setLogType("撤销"+log.getLogType());
-        log.setUserName(temp.getUserName());
-        scheduleLogService.insertScheduleLog(log);
-        ScheduleInfo s =scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        s.setLogId(log.getScheduleLogId());
-        scheduleInfoService.updateScheduleInfo(s);
-        return OperationResult.buildSuccessResult("撤销补班加班成功", "success");
     }
 }
