@@ -259,11 +259,26 @@ public class ScheduleLogController extends BaseController {
     @ResponseBody
     public OperationResult formRevoke(String  infoId) throws ParseException {
         List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfo(infoId);
-        for(ScheduleLog slog:list){
-            slog.setIfUse(1);
-            scheduleLogService.updateScheduleLog(slog);
-            List<ScheduleInfo> sis=scheduleInfoService.selectScheduleInfoNotInfoId(slog.getScheduleLogId());
-            for(ScheduleInfo info:sis) {
+        if(list!=null&&list.size()>0) {
+            for (ScheduleLog slog : list) {
+                slog.setIfUse(1);
+                scheduleLogService.updateScheduleLog(slog);
+                List<ScheduleInfo> sis = scheduleInfoService.selectScheduleInfoNotInfoId(slog.getScheduleLogId());
+                for (ScheduleInfo info : sis) {
+                    info.setIfLeave(0);
+                    info.setLogId("");
+                    info.setLeaveType("");
+                    info.setScheduleDesc("");
+                    scheduleInfoService.updateScheduleInfo(info);
+                }
+            }
+        }else{
+            ScheduleInfo scheduleInfo=scheduleInfoService.selectScheduleInfoById(infoId);
+            ScheduleLog log=scheduleLogService.getScheduleLogById(scheduleInfo.getLogId());
+            log.setIfUse(1);
+            scheduleLogService.updateScheduleLog(log);
+            List<ScheduleInfo> sis = scheduleInfoService.selectScheduleInfoNotInfoId(scheduleInfo.getLogId());
+            for (ScheduleInfo info : sis) {
                 info.setIfLeave(0);
                 info.setLogId("");
                 info.setLeaveType("");
