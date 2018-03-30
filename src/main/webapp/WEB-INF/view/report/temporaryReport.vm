@@ -109,15 +109,21 @@ function queryBtn(){
             };
             //指定图表的配置项和数据
             var option = {
+                tooltip : {
+                    trigger: 'axis',
+                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
                 xAxis: {
                     data: labels,
                 },
-                yAxis: {
-                },
+                yAxis: {},
                 series: [{
                     type: 'bar',
                     data: jy,
-                    itemStyle: ItemStyle
+                    itemStyle: ItemStyle,
+                    name: '结余'
                 }],
                 grid: {
                     left: 30
@@ -125,45 +131,7 @@ function queryBtn(){
             };
             // 使用刚指定的配置项和数据显示图表。
             myChart.setOption(option);
-            // itemColor = '#ff6600'
-            // var canvas = document.getElementById("temporaryReport");
-            // var ctx = canvas.getContext("2d");
-            // ctx.clearRect(0,0,1600,400);
-            // var myChart1 = new Chart(ctx, {
-            //     type: 'bar',
-            //     data: {
-            //         labels : labels,
-            //         datasets : [
-            //             {
-            //                 backgroundColor : itemColor,//,"#70BF41",
-            //                 data : jy
-            //             }
-            //         ],
-            //     },
-            //     options: {
-            //         responsive: false,
-            //         legend: {
-            //             display: false,
-            //         },
-            //         scales: {
-            //             xAxes: [{
-            //                 gridLines: {
-            //                     display: true,
-            //                 },
-            //                 type: "category",
-            //                 categoryPercentage: 0.6,
-            //                 barPercentage: 1.00,
-            //             }],
-            //             yAxes: [{
-            //                 ticks: {
-            //                     autoSkip: false,
-            //                     beginAtZero: true,
-            //                     fixedStepSize: 10
-            //                 },
-            //             }],
-            //         }
-            //     }
-            // });
+            
             $('.mask').hide();
         }
     });
