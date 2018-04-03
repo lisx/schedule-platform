@@ -860,6 +860,7 @@
         console.log(stationArea);
         if(stationArea==''){
             Alert("fail", "需选择站区");
+            $('.mask').hide();
             return;
         }
         //Alert('success', "数据加载中请稍候")

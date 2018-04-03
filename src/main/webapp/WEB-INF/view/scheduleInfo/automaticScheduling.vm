@@ -412,6 +412,7 @@
             dataType: "json",
             error: function (e) {
                 Alert('fail', "网络错误");
+                $('.mask').hide();
             },
             success: function (result) {
                 if (result.error) {
