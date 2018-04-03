@@ -370,7 +370,9 @@ public class UserController extends BaseController {
             a.add(u.getHomeAddress());
             a.add(u.getCertNo());
             a.add(u.getCertLevel());
-
+            a.add(u.getXfzNo());
+            a.add(u.getZwyNo());
+            a.add(u.getZwyLevel());
             a.add(u.getGender());
             a.add(u.getPhoneNumber());
             a.add(u.getBirthday());
