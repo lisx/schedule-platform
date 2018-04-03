@@ -315,6 +315,7 @@
             dataType: "json",
             error: function () {
                 Alert('fail', "网络错误");
+                $('.mask').hide();
             },
             success: function (result) {
                 $(".colorPanel").hide();

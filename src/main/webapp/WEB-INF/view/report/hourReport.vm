@@ -57,6 +57,7 @@
             dataType: "json",
             error: function (xmlHttpReq, status) {
                 Alert("fail", "网络错误");
+                $('.mask').hide();
             },
             success: function (data) {
                 var target = $(".scheduleForm");
