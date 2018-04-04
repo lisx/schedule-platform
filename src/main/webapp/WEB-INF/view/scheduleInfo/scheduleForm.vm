@@ -530,6 +530,10 @@
                             <option>休息</option>
                         </select>
                     </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">

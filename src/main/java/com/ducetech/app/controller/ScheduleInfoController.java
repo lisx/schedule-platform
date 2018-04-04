@@ -125,7 +125,7 @@ public class ScheduleInfoController extends BaseController {
     }
 
     /**
-     * 新增排班
+     * 新增排班按钮
      * @param model
      * @param request
      * @return
@@ -140,6 +140,11 @@ public class ScheduleInfoController extends BaseController {
         return "/scheduleInfo/automaticScheduling";
     }
 
+    /**
+     * 站区中>站点按钮
+     * @param groupId
+     * @return
+     */
     @RequestMapping(value = "/loadGroup", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -577,7 +582,7 @@ public class ScheduleInfoController extends BaseController {
 
     /**
      * 换班
-     *
+     * 班次变更
      * @param request
      * @return
      */
@@ -907,8 +912,8 @@ public class ScheduleInfoController extends BaseController {
     private ScheduleInfoTemplateService templateService;
 
     /**
-     * 生成模版
-     * @param zwyId
+     * 建立模版
+     * @param zwyId 班制
      * @param stationId
      * @param request
      * @return
