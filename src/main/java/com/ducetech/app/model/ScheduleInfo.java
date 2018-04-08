@@ -29,6 +29,8 @@ public class ScheduleInfo extends BaseModel implements Serializable {
     private String postName;
     //当班总时间
     private Integer totalAt;
+    //离职
+    private String userLeave;
     //排班人员
     private String userId;
     //排班人名

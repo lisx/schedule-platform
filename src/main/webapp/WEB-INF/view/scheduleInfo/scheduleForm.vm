@@ -1021,26 +1021,24 @@
                     var startDay = new Date($('#startAt').val());
                     var year = startDay.getFullYear();
                     var month = startDay.getMonth()+1;
+                    var day = startDay.getDate();
                     var dayCount = countDays(year,month);
-                    for(var i=1;i<=Length;i++){
-                        var day = 0;
-                        if(i<=dayCount){
-                            day = i;
-                        }else{
-                            day = i - dayCount;
+                    for(var i=0;i<Length;i++){
+                        var newDay = i+day;
+                        if(newDay>dayCount){
+                            newDay -= dayCount;
                             month++;
                         }
-                        day = (i<=dayCount ? i : i-dayCount);
-                        str1 += '<td>'+ month +'.'+ day +'</td>';
-                        var date = new Date(year+'-'+month+'-'+i);
-                        str2 += '<td>'+ getWeekDay(date) +'</td>';
+                        str1 += '<th>'+ month +'.'+ newDay +'</th>';
+                        var date = new Date(year+'-'+month+'-'+newDay);
+                        str2 += '<th>'+ getWeekDay(date) +'</th>';
                         if (date < today) {
                             rightMenu.push('');
                             arr.push('');
 
                         } else {
                             rightMenu.push('rightMenu');
-                            arr.push(date)
+                            arr.push(date);
                         }
                     }
                 }else{
@@ -1048,15 +1046,15 @@
                     var month = dataObj.val().substring(5);
                     var Length = countDays(year,month);
                     for(var i=1;i<=Length;i++){
-                        str1 += '<td>'+ month +'.'+ i +'</td>';
+                        str1 += '<th>'+ month +'.'+ i +'</th>';
                         var date = new Date(year+'-'+month+'-'+i);
-                        str2 += '<td>'+ getWeekDay(date) +'</td>';
+                        str2 += '<th>'+ getWeekDay(date) +'</th>';
                         if (date < today) {
                             rightMenu.push('');
                             arr.push('');
                         } else {
                             rightMenu.push('rightMenu');
-                            console.log(222)
+                            arr.push(date);
                         }
                     }
                 }
