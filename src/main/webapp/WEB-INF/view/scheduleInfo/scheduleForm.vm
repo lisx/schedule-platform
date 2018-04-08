@@ -983,13 +983,12 @@
         //初始化排班表
         var station=$("#stationQuery").val();
         var postName=$("#postName").val();
-        console.log(station);
         if(station==''){
             Alert("fail", "需选择站点");
+            $('.mask').hide();
             return;
         }
         var stationArea=$("#stationAreaQuery").val();
-        console.log(stationArea);
         if(stationArea==''){
             Alert("fail", "需选择站区");
             $('.mask').hide();
@@ -1011,42 +1010,99 @@
                 var arr = [];
                 var d = new Date();
                 var today = new Date(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate());
-                for (var i = 0; i < data.length; i++) {
-                    var thead = '';
-                    //遍历排班表标题栏
-                    thead = '<tr><th rowspan="2">姓名</th><th rowspan="2">岗位</th>';
-                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
-                        var date = new Date(data[i].scheduleInfoList[j].scheduleDate);
-                        var day = (date.getMonth() + 1) + '.' + date.getDate();
-                        thead += '<th>' + day + '</th>';
-                        var dataDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                //add by chenyun 2018-04-08
+                var dataObj = $('.active #dateSelec').length == 1 ? $('.active #dateSelec') : $('.active #monthDate');
+                var Length = 0;
+                var str1 = '';
+                var str2 = '';
+                if(dataObj.is($('#dateSelec'))){
+                    Length = $('#dateSelec').val() == '一周' ? 7 : 14;
+                    var startDay = new Date($('#startAt').val());
+                    var year = startDay.getFullYear();
+                    var month = startDay.getMonth()+1;
+                    var dayCount = countDays(year,month);
+                    console.log(dayCount)
+                    for(var i=1;i<=Length;i++){
+                        var day = 0;
+                        if(i<=dayCount){
+                            day = i;
+                        }else{
+                            day = i - dayCount;
+                            month++;
+                        }
+                        day = (i<=dayCount ? i : i-dayCount);
+                        str1 += '<td>'+ month +'.'+ day +'</td>';
+                        var date = new Date(year+'-'+month+'-'+i);
+                        str2 += '<td>'+ getWeekDay(date) +'</td>';
                         if (date < today) {
                             rightMenu.push('');
                             arr.push('');
 
                         } else {
                             rightMenu.push('rightMenu');
-                            arr.push(dataDate)
+                            arr.push(date)
                         }
                     }
-                    thead += '<th colspan=11>总计:' + data[i].scheduleInfoList.length + '天</th></tr>';
-                    thead += '<tr>';
-                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
-                        thead += '<th>' + data[i].scheduleInfoList[j].scheduleWeek + '</th>';
+                }else{
+                    var year = dataObj.val().substring(0,4)
+                    var month = dataObj.val().substring(5);
+                    var Length = countDays(year,month);
+                    for(var i=1;i<=Length;i++){
+                        str1 += '<td>'+ month +'.'+ i +'</td>';
+                        var date = new Date(year+'-'+month+'-'+i);
+                        str2 += '<td>'+ getWeekDay(date) +'</td>';
+                        if (date < today) {
+                            rightMenu.push('');
+                            arr.push('');
+
+                        } else {
+                            rightMenu.push('rightMenu');
+                            arr.push(date)
+                        }
                     }
-                    thead += '<th>计划工时</th><th>实际工时</th><th>结余</th>';
-                    thead += '</tr>';
-                    target.find("thead").html(thead);
-                    break;
                 }
+                //end
+                //for (var i = 0; i < data.length; i++) {
+                var thead = '';
+                //遍历排班表标题栏
+                thead = '<tr><th rowspan="2">姓名</th><th rowspan="2">岗位</th>';
+                // for (var j = 0; j < Length; j++) {
+                //     var date = new Date(data[i].scheduleInfoList[j].scheduleDate);
+                //     var day = (date.getMonth() + 1) + '.' + date.getDate();
+                //     thead += '<th>' + day + '</th>';
+                //     var dataDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                //     if (date < today) {
+                //         rightMenu.push('');
+                //         arr.push('');
+
+                //     } else {
+                //         rightMenu.push('rightMenu');
+                //         arr.push(dataDate)
+                //     }
+                // }
+                thead += str1;
+                thead += '<th colspan=11>总计:' + Length + '天</th></tr>';
+                thead += '<tr>';
+                // for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
+                //     thead += '<th>' + data[i].scheduleInfoList[j].scheduleWeek + '</th>';
+                // }
+                thead += str2;
+                thead += '<th>计划工时</th><th>实际工时</th><th>结余</th>';
+                thead += '</tr>';
+                target.find("thead").html(thead);
+                    //break;
+                //}
                 //遍历排班表数据
                 var tbody = '';
                 for (var i = 0; i < data.length; i++) {
                     tbody += '<tr><td class="userName" tdType="' + data[i].userId + '">' + data[i].userName + '</td>';
                     tbody += '<td>' + data[i].postName + '</td>';
                     var jhgs = 0;
-                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
-                        var color = "";
+                    for (var j = 0; j < Length; j++) {
+                        if(!data[i].scheduleInfoList[j]){
+                            tbody += '<td>--</td>';
+                        }else{
+                            var color = "";
                         var clz="";
                         var ifLeave = data[i].scheduleInfoList[j].ifLeave;
 
@@ -1077,6 +1133,8 @@
                                 + '" colorCode="#'+data[i].scheduleInfoList[j].shiftColor+'" data-scheduleInfoId="' + data[i].scheduleInfoList[j].scheduleInfoId + '" data-userId="'
                                 + data[i].userId + '" data-totalAt="' + data[i].scheduleInfoList[j].totalAt + '" data-shiftId='+data[i].scheduleInfoList[j].shiftId+' data-stationArea="'
                                 + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
+                        }
+                        
                     }
 
                     var balance = ''; 
@@ -1105,6 +1163,25 @@
         });
     }
 
+    //计算某个月有多少天
+    function countDays(year,month){
+        year = parseInt(year);
+        month = parseInt(month);
+        var Length = 0;
+        if(month == 2){
+            Length = year%4==0 ? 29 : 28;
+        }else if(month == 4 || month == 6 || month == 9 || month == 11){
+            Length = 30;
+        }else{
+            Length = 31;
+        }
+        return Length;
+    }
+    //获取当前开始日期是周几
+    function getWeekDay(date){
+        var arr = ['日','一','二','三','四','五','六'];
+        return '星期' + arr[date.getDay()];
+    }
     var colorType=['colorStyle','colorCode'];
     var currentColor=0;
     $(document).on("click","#btnToggle",function(){
