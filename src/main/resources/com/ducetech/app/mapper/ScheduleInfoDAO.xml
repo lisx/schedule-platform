@@ -30,6 +30,7 @@
         <result column="serial_number" property="serialNumber"/>
         <result column="shift_code" property="shiftCode"/>
         <result column="shift_color" property="shiftColor"/>
+        <result column="user_leave" property="userLeave"/>
 	</resultMap>
 
     <select id="deleteExistInfo"  >
