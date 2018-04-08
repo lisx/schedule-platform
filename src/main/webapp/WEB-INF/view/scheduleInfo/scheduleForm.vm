@@ -1002,6 +1002,7 @@
             dataType: "json",
             error: function (xmlHttpReq, status) {
                 Alert("fail", "网络错误");
+                $('.mask').hide();
             },
             success: function (data) {
                 var target = $(".scheduleForm");
@@ -1021,7 +1022,6 @@
                     var year = startDay.getFullYear();
                     var month = startDay.getMonth()+1;
                     var dayCount = countDays(year,month);
-                    console.log(dayCount)
                     for(var i=1;i<=Length;i++){
                         var day = 0;
                         if(i<=dayCount){
@@ -1054,13 +1054,13 @@
                         if (date < today) {
                             rightMenu.push('');
                             arr.push('');
-
                         } else {
                             rightMenu.push('rightMenu');
-                            arr.push(date)
+                            console.log(222)
                         }
                     }
                 }
+                console.log('rightMenu:'+rightMenu)
                 //end
                 //for (var i = 0; i < data.length; i++) {
                 var thead = '';

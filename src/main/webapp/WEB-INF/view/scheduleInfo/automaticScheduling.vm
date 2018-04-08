@@ -72,6 +72,7 @@
     });
 
     $(document).on("click", "#btnSave", function () {
+        $('.mask').show();
         var milasUrl={};//新建对象，用来存储所有数据
         var subMilasUrlArr={};//存储每一行数据
         var tableData={};
@@ -87,7 +88,6 @@
         {
             milasUrl[key]=subMilasUrlArr[key];//将每一行存入对象
         }
-        console.log(JSON.stringify(milasUrl))
         var empty = $("td[tdType=-1]:empty");
 //        if (empty.length > 0) {
 //            Alert('fail', "还有岗位未排班");
@@ -109,9 +109,11 @@
             dataType: "json",
             error: function (e) {
                 Alert('fail', "网络错误");
+                //$('.mask').hide();
             },
             success: function (result) {
                 Alert(result, "保存成功");
+                //$('.mask').hide();
             }
         });
     });
