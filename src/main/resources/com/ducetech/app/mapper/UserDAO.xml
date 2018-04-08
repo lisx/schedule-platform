@@ -180,6 +180,13 @@
 	<select id="selectUserCountByStation" resultType="Integer">
 		select count(1) from user where station=#{station}
 	</select>
+    <!-- 离职  -->
+    <select id="getLeaveUser" resultMap="userMap" parameterType="com.ducetech.app.model.User">
+        select * from user where user_id not in(
+            select user_id from schedule_info where station = #{station} and station_area=#{stationArea} GROUP BY user_id
+        )
+                                 and user_job = #{userJob}
+    </select>
 
 	<select id="getPrepareUser" resultMap="userMap" parameterType="com.ducetech.app.model.User">
 		select * from user where station = #{station} and station_area = #{stationArea} and user_job = #{userJob}

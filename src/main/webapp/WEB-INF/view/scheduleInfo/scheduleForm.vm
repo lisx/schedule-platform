@@ -216,6 +216,7 @@
     <a href="#minersAbsence" data-toggle="modal" data-target="#minersAbsence">旷工缺勤</a>
     <a href="#overtimeWork" data-toggle="modal" data-target="#overtimeWork">补班加班</a>
     <a href="#replaceShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#replaceShift">替班</a>
+    <a href="#leaveShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#leaveShift">离职</a>
     <a class="cancelHandle" href="javascript:;">撤销</a>
 </div>
 <!--  人员信息 -->
@@ -302,6 +303,66 @@
     </div>
 </div>
 
+<!-- 离职 -->
+<div class="modal" id="leaveShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">离职</h4>
+            </div>
+            <div class="modal-body">
+                <input id="minDate" type="hidden">
+                <form class="form-container" id="leaveShiftForm">
+                    <div class="form_line">
+                        <label>站区</label>
+                        <select name="stationArea" id="leStationAreaQuery">
+                            <option value="">请选择</option>
+                            #foreach($group in $!groups)
+                                <option value="$!group.groupCode">$!group.groupName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>站点</label>
+                        <select name="station" id="leStationQuery">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>岗位</label>
+                        <select name="postName" id="lePostName">
+                            <option value="站务员">站务员</option>
+                            <option value="替班员">替班员</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <input name="userId" type="hidden">
+                        <input name="scheduleInfoId" type="hidden">
+                        <input name="logId" id="logId" type="hidden">
+                        <input name="stationArea" id="leStationArea" type="hidden">
+                        <input name="station" id="leStation"  type="hidden">
+                        <input name="groupName" id="leGroupName"  type="hidden">
+                        <input name="logType" type="hidden" value="离职">
+                        <label>上岗人员</label>
+                        <select name="detailType" id="leplaceUserSelect">
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="leaveShift()">离职</a>
+                <a class="btn btn-red" href="javascript:;" onclick="editReplaceShiftDel()">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $("#rsStationAreaQuery").change(function () {
         var _oneId = this.value;
@@ -351,8 +412,75 @@
         rsStationQuery.val(rsStation);
         rsStationQuery.change();
     }
+    //初始化离职人员和站区站点
+    function initLeaveShift() {
+        var leStationArea = $('#leStationArea').val();
+        var leStation = $('#leStation').val();
+        var leGroupName = $('leGroupName').val();
 
+        var leStationAreaQuery = $("#leStationAreaQuery");
+        leStationAreaQuery.val(leStationArea);
+        leStationAreaQuery.change();
+        var leStationQuery = $("#leStationQuery");
+        leStationQuery.val(leStation);
+        leStationQuery.change();
+    }
 
+    $("#leStationAreaQuery").change(function () {
+        var _oneId = this.value;
+        var two_obj = $('#leStationQuery');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    $("#leStationQuery").change(function () {
+        var _oneId = this.value;
+        var _station = $("#leStationAreaQuery").val();
+        var two_obj = $('#leplaceUserSelect');
+        var _postName = $('#lePostName').val();
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/getLeaveUser', {stationArea: _station,station: _oneId,postName:_postName}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + '<option value="' + data[i].userId + '">工号:'+ data[i].userCode + " 姓名:" + data[i].userName +'</option>';
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    //离职
+    function leaveShift(){
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/editLeaveShiftForm?" + $("#leaveShiftForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#leaveShift").modal('hide');
+                queryBtn();
+            }
+        });
+    }
 
     //换班
     function editReplaceShift() {
@@ -613,11 +741,11 @@
     </div>
 </div>
 <script>
-    function minersAbsenceForm() {
+    function mineleAbsenceForm() {
         jQuery.ajax({
             async: false,
             type: "post",
-            url: "$path/minersAbsenceForm?" + $("#minersAbsenceForm").serialize(),
+            url: "$path/mineleAbsenceForm?" + $("#minersAbsenceForm").serialize(),
             data: null,
             dataType: "json",
             error: function () {

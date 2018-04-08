@@ -342,4 +342,9 @@ public class UserServiceImpl implements UserService {
     public List<User> getPrepareUser(User user) {
         return userDAO.getPrepareUser(user);
     }
+
+    @Override
+    public List<User> getLeaveUser(User user) {
+        return userDAO.getLeaveUser(user);
+    }
 }

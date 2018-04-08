@@ -158,6 +158,15 @@
         WHERE schedule_info_id=#{scheduleInfoId}
     </update>
 
+    <update id="leaveUser">
+        UPDATE schedule_info
+        <set>
+            user_id=#{userId},
+            user_code=#{userCode},
+            user_name=#{userName}
+        </set>
+        WHERE user_id=#{oldUser} and schedule_info_id>=#{scheduleInfoId}
+    </update>
 
     <delete id="deleteAreaScheduleInfo">
         DELETE FROM schedule_info WHERE schedule_date BETWEEN #{startAt} AND #{endAt}

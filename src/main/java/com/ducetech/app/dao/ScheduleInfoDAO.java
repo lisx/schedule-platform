@@ -37,4 +37,6 @@ public interface ScheduleInfoDAO {
     void insertBatch(@Param("batch")List<ScheduleInfo> batch);
 
 	void changeUser(ScheduleInfo info);
+
+    Integer leaveUser(@Param("scheduleInfoId") String scheduleInfoId,@Param("userName") String userName,@Param("userCode") String userCode,@Param("userId") String userId,@Param("oldUser") String oldUser);
 }

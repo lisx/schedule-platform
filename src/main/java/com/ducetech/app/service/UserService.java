@@ -158,4 +158,5 @@ public interface UserService {
 	 * @return
 	 */
 	List<User> getPrepareUser(User user);
+    List<User> getLeaveUser(User user);
 }

@@ -211,6 +211,11 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
     }
 
     @Override
+    public Integer leaveUser(String scheduleInfoId, String userName, String userCode, String userId, String oldUser) {
+        return scheduleDAO.leaveUser(scheduleInfoId,userName,userCode,userId,oldUser);
+    }
+
+    @Override
     public List<WorkflowContent> getWorkflowContentByCode(String shiftId,String text) {
         List<Workflow> workflows = workflowDAO.selectWorkflowsByShiftId(shiftId);
         for (Workflow w :

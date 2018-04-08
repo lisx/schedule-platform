@@ -493,6 +493,20 @@ public class UserController extends BaseController {
         return userList;
     }
 
+    /**
+     * 根据站区和站点获取上岗人员
+     */
+    @RequestMapping(value = "/getLeaveUser", method = RequestMethod.GET)
+    @ResponseBody
+    public List<User> getLeaveUser(User user,String postName) {
+        PostSetting ps=postSettingService.selectPostSettingByPostName(postName);
+        //获取备班人员
+        List<User> userList = new ArrayList<User>();
+        user.setUserJob(ps.getPostCode());
+        userList.addAll(userService.getLeaveUser(user));
+        return userList;
+    }
+
     public static void main(String [] z){
         List<String> homework=new ArrayList<>(500);
         for(int i=0;i<150;i++){
