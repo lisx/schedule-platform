@@ -264,25 +264,15 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
         User user=userService.getUserByUserId(log.getDetailType());
+        scheduleInfoService.setUserLeave(log.getUserId(),"0");
         scheduleInfoService.leaveUser(log.getScheduleInfoId(),user.getUserName(),user.getUserCode(),user.getUserId(),log.getUserId());
+        scheduleInfoService.setUserLeave(user.getUserId(),"1");
         log.setUserName(user.getUserName());
         log.setLogType(log.getUserName()+log.getLogType()+user.getUserName());
         scheduleLogService.insertScheduleLog(log);
-        //使用默认时区和语言环境获得一个日历。
-        Calendar    rightNow    =    Calendar.getInstance();
-        /*用Calendar的get(int field)方法返回给定日历字段的值。
-        HOUR 用于 12 小时制时钟 (0 - 11)，HOUR_OF_DAY 用于 24 小时制时钟。*/
-        Integer year = rightNow.get(Calendar.YEAR);
-        Integer month = rightNow.get(Calendar.MONTH)+1; //第一个月从0开始，所以得到月份＋1
-        Integer day = rightNow.get(rightNow.DAY_OF_MONTH);
 
-//        String startAt = log.getStartAt();
-//        String endAt = log.getEndAt();
-//        if(!StringUtils.isBlank(startAt)||!StringUtils.isBlank(endAt)) {
-//            int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
-//            log.setTimeAt(-gh);
-//        }
-//        scheduleLogService.updateScheduleLog(log);
+
+
         return OperationResult.buildSuccessResult("离职编辑成功", "success");
     }
 

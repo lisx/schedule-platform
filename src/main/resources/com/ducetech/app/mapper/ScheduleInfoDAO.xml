@@ -158,12 +158,21 @@
         WHERE schedule_info_id=#{scheduleInfoId}
     </update>
 
+    <update id="setUserLeave">
+        UPDATE schedule_info
+        <set>
+            user_leave=#{userLeave}
+        </set>
+        WHERE user_id=#{userId}
+    </update>
+
     <update id="leaveUser">
         UPDATE schedule_info
         <set>
             user_id=#{userId},
             user_code=#{userCode},
-            user_name=#{userName}
+            user_name=#{userName},
+            user_leave=1
         </set>
         WHERE user_id=#{oldUser} and schedule_info_id>=#{scheduleInfoId}
     </update>

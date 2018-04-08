@@ -216,6 +216,11 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
     }
 
     @Override
+    public Integer setUserLeave(String userId, String userLeave) {
+        return scheduleDAO.setUserLeave(userId,userLeave);
+    }
+
+    @Override
     public List<WorkflowContent> getWorkflowContentByCode(String shiftId,String text) {
         List<Workflow> workflows = workflowDAO.selectWorkflowsByShiftId(shiftId);
         for (Workflow w :

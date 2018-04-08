@@ -44,6 +44,7 @@ public interface ScheduleInfoService {
     void changeScheduleInfo(String id1, String id2, User loginUser);
 
     Integer leaveUser(String scheduleInfoId,String userName,String userCode,String userId,String oldUser);
+    Integer setUserLeave(String userId,String userLeave);
 
     List<WorkflowContent> getWorkflowContentByCode(String shiftId,String text);
 }
