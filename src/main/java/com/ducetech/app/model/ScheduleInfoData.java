@@ -34,5 +34,6 @@ public class ScheduleInfoData{
     public int leave;
 
     public String shiftId;
+    public String userLeave;
 }
 

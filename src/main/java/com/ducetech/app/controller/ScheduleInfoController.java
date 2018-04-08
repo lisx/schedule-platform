@@ -681,6 +681,7 @@ public class ScheduleInfoController extends BaseController {
             sd.station = list.get(0).getStation();
             sd.groupName = list.get(0).getGroupName();
             sd.scheduleInfoList = list;
+            sd.userLeave=list.get(0).getUserLeave();
         } else {
             sd.postName = "";
         }

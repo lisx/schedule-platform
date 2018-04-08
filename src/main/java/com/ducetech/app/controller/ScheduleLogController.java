@@ -267,6 +267,22 @@ public class ScheduleLogController extends BaseController {
         scheduleInfoService.setUserLeave(log.getUserId(),"0");
         scheduleInfoService.leaveUser(log.getScheduleInfoId(),user.getUserName(),user.getUserCode(),user.getUserId(),log.getUserId());
         scheduleInfoService.setUserLeave(user.getUserId(),"1");
+        ScheduleInfo temp=scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
+        int num=Integer.parseInt(temp.getCreatedAt().substring(6));
+        for(int i=0;i<num;i++) {
+            ScheduleInfo info = new ScheduleInfo();
+            info.setUserId(user.getUserId());
+            info.setUserCode(user.getUserCode());
+            info.setUserName(user.getUserName());
+            info.setShiftName("休");
+            info.setScheduleDay(temp.getScheduleDay().substring(0,6)+ String.format("%02d", i+1));
+            try {
+                scheduleInfoService.insertSchedule(info);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         log.setUserName(user.getUserName());
         log.setLogType(log.getUserName()+log.getLogType()+user.getUserName());
         scheduleLogService.insertScheduleLog(log);
