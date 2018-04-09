@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -257,7 +258,7 @@ public class ScheduleLogController extends BaseController {
      */
     @RequestMapping(value = "/editLeaveShiftForm", method = RequestMethod.POST)
     @ResponseBody
-    public OperationResult editLeaveShiftForm(ScheduleLog log, HttpServletRequest request) {
+    public OperationResult editLeaveShiftForm(ScheduleLog log, HttpServletRequest request) throws ParseException {
         User userInfo = getLoginUser(request);
         log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
         log.setCreatorId(userInfo.getUserId());
@@ -269,13 +270,19 @@ public class ScheduleLogController extends BaseController {
         scheduleInfoService.setUserLeave(user.getUserId(),"1");
         ScheduleInfo temp=scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         int num=Integer.parseInt(temp.getCreatedAt().substring(6));
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(int i=0;i<num;i++) {
             ScheduleInfo info = new ScheduleInfo();
             info.setUserId(user.getUserId());
             info.setUserCode(user.getUserCode());
             info.setUserName(user.getUserName());
             info.setShiftName("休");
+            info.setGroupName(user.getStation());
+            info.setStation(temp.getStation());
+            info.setStationArea(temp.getStationArea());
             info.setScheduleDay(temp.getScheduleDay().substring(0,6)+ String.format("%02d", i+1));
+            info.setPostName("站务员");
+            info.setScheduleDate(df.parse(info.getScheduleDay()+" 00:00:00"));
             try {
                 scheduleInfoService.insertSchedule(info);
             } catch (ParseException e) {
