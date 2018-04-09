@@ -1058,7 +1058,6 @@
                         }
                     }
                 }
-                console.log('rightMenu:'+rightMenu)
                 //end
                 //for (var i = 0; i < data.length; i++) {
                 var thead = '';
@@ -1097,42 +1096,53 @@
                     tbody += '<td>' + data[i].postName + '</td>';
                     var jhgs = 0;
                     for (var j = 0; j < Length; j++) {
-                        if(!data[i].scheduleInfoList[j]){
-                            tbody += '<td>--</td>';
-                        }else{
+                        var len = data[i].scheduleInfoList.length;
+                        if(len<Length){
+                            if(data[i].userLeave == '0'){
+                                for(var m=0;m<Length-len;m++){
+                                    data[i].scheduleInfoList.push('');
+                                }
+                            }else if(data[i].userLeave == '1'){
+                               for(var m=0;m<Length-len;m++){
+                                    data[i].scheduleInfoList.unshift('');
+                                } 
+                            }
+                        }
+                        if(data[i].scheduleInfoList[j]!==''){
                             var color = "";
-                        var clz="";
-                        var ifLeave = data[i].scheduleInfoList[j].ifLeave;
+                            var clz="";
+                            var ifLeave = data[i].scheduleInfoList[j].ifLeave;
 
-                        if(ifLeave == 1){
-                            clz = 'yellow color';
-                            color = '#fffc00';
-                        } else if (ifLeave == 2) {
-                            clz = 'pink color';
-                            color = '#ff9191';
-                        } else if (ifLeave == 3) {
-                            clz = 'blue color';
-                            color = '#3A6BCE';
-                        } else if (ifLeave == 4) {
-                            clz = 'deepRed color';
-                            color = '#b10000';
-                        } else if (ifLeave == 5) {
-                            clz = 'green color';
-                            color = '#00d537';
-                        } else if (ifLeave == 6) {
-                            clz = 'deepGreen color';
-                            color = '#008121';
-                        } else {
-                            clz = '';
-                            color = '';
+                            if(ifLeave == 1){
+                                clz = 'yellow color';
+                                color = '#fffc00';
+                            } else if (ifLeave == 2) {
+                                clz = 'pink color';
+                                color = '#ff9191';
+                            } else if (ifLeave == 3) {
+                                clz = 'blue color';
+                                color = '#3A6BCE';
+                            } else if (ifLeave == 4) {
+                                clz = 'deepRed color';
+                                color = '#b10000';
+                            } else if (ifLeave == 5) {
+                                clz = 'green color';
+                                color = '#00d537';
+                            } else if (ifLeave == 6) {
+                                clz = 'deepGreen color';
+                                color = '#008121';
+                            } else {
+                                clz = '';
+                                color = '';
+                            }
+                            tbody += '<td style="position: relative" tdType=shift serialNumber="' + data[i].scheduleInfoList[j].serialNumber + '" shiftName="' + data[i].scheduleInfoList[j].shiftName
+                                    + '" colorStyle="'+color+'" class="' + rightMenu[j] +" "+clz+ '" data-logId="' + data[i].scheduleInfoList[j].logId
+                                    + '" colorCode="#'+data[i].scheduleInfoList[j].shiftColor+'" data-scheduleInfoId="' + data[i].scheduleInfoList[j].scheduleInfoId + '" data-userId="'
+                                    + data[i].userId + '" data-totalAt="' + data[i].scheduleInfoList[j].totalAt + '" data-shiftId='+data[i].scheduleInfoList[j].shiftId+' data-stationArea="'
+                                    + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
+                        }else{
+                            tbody += '<td>--</td>';
                         }
-                        tbody += '<td style="position: relative" tdType=shift serialNumber="' + data[i].scheduleInfoList[j].serialNumber + '" shiftName="' + data[i].scheduleInfoList[j].shiftName
-                                + '" colorStyle="'+color+'" class="' + rightMenu[j] +" "+clz+ '" data-logId="' + data[i].scheduleInfoList[j].logId
-                                + '" colorCode="#'+data[i].scheduleInfoList[j].shiftColor+'" data-scheduleInfoId="' + data[i].scheduleInfoList[j].scheduleInfoId + '" data-userId="'
-                                + data[i].userId + '" data-totalAt="' + data[i].scheduleInfoList[j].totalAt + '" data-shiftId='+data[i].scheduleInfoList[j].shiftId+' data-stationArea="'
-                                + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
-                        }
-                        
                     }
 
                     var balance = ''; 
