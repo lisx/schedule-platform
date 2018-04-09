@@ -1063,56 +1063,36 @@
                 var thead = '';
                 //遍历排班表标题栏
                 thead = '<tr><th rowspan="2">姓名</th><th rowspan="2">岗位</th>';
-                // for (var j = 0; j < Length; j++) {
-                //     var date = new Date(data[i].scheduleInfoList[j].scheduleDate);
-                //     var day = (date.getMonth() + 1) + '.' + date.getDate();
-                //     thead += '<th>' + day + '</th>';
-                //     var dataDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-                //     if (date < today) {
-                //         rightMenu.push('');
-                //         arr.push('');
-
-                //     } else {
-                //         rightMenu.push('rightMenu');
-                //         arr.push(dataDate)
-                //     }
-                // }
                 thead += str1;
                 thead += '<th colspan=11>总计:' + Length + '天</th></tr>';
                 thead += '<tr>';
-                // for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
-                //     thead += '<th>' + data[i].scheduleInfoList[j].scheduleWeek + '</th>';
-                // }
                 thead += str2;
                 thead += '<th>计划工时</th><th>实际工时</th><th>结余</th>';
                 thead += '</tr>';
                 target.find("thead").html(thead);
-                    //break;
-                //}
                 //遍历排班表数据
                 var tbody = '';
                 for (var i = 0; i < data.length; i++) {
                     tbody += '<tr><td class="userName" tdType="' + data[i].userId + '">' + data[i].userName + '</td>';
                     tbody += '<td>' + data[i].postName + '</td>';
                     var jhgs = 0;
-                    for (var j = 0; j < Length; j++) {
-                        var len = data[i].scheduleInfoList.length;
-                        if(len<Length){
-                            if(data[i].userLeave == '0'){
-                                for(var m=0;m<Length-len;m++){
-                                    data[i].scheduleInfoList.push('');
-                                }
-                            }else if(data[i].userLeave == '1'){
-                               for(var m=0;m<Length-len;m++){
-                                    data[i].scheduleInfoList.unshift('');
-                                } 
+                    var len = data[i].scheduleInfoList.length;
+                    if(len<Length){
+                        if(data[i].userLeave == '0'){
+                            for(var m=0;m<Length-len;m++){
+                                data[i].scheduleInfoList.push('');
                             }
+                        }else if(data[i].userLeave == '1'){
+                           for(var m=0;m<Length-len;m++){
+                                data[i].scheduleInfoList.unshift('');
+                            } 
                         }
-                        if(data[i].scheduleInfoList[j]!==''){
+                    }
+                    for (var j = 0; j < Length; j++) {
+                        if(data[i].scheduleInfoList[j]!=='' && data[i].scheduleInfoList[j]){
                             var color = "";
                             var clz="";
                             var ifLeave = data[i].scheduleInfoList[j].ifLeave;
-
                             if(ifLeave == 1){
                                 clz = 'yellow color';
                                 color = '#fffc00';
