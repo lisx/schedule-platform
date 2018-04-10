@@ -329,12 +329,13 @@
                             <option value="">请选择</option>
                         </select>
                     </div>
-                    <div class="form_line">
+                    <div class="form_line hidden">
                         <label>岗位</label>
-                        <select name="postName" id="lePostName">
+                        <input type="hidden" id="lePostName" value="站务员">
+                        <!-- <select name="postName" id="lePostName">
                             <option value="站务员">站务员</option>
                             <option value="替班员">替班员</option>
-                        </select>
+                        </select> -->
                     </div>
                     <div class="form_line">
                         <input name="userId" type="hidden">
@@ -444,13 +445,31 @@
     });
 
     $("#leStationQuery").change(function () {
+        var startAt = '';
+        var endAt = '';
+        if($('#tab1').hasClass('active')){
+            startAt = $('#startAt').val();
+            endAt = $('#endAt').val();
+        }else{
+            var date = $('#monthDate').val();
+            var year = date.substring(0,4);
+            var month = date.substring(5);
+            var days = countDays(year,month);
+            startAt = year+'-'+month+'-1';
+            endAt = year+'-'+month+'-'+days;
+        }
+
+        console.log(startAt);
+        console.log(endAt);
+
+
         var _oneId = this.value;
         var _station = $("#leStationAreaQuery").val();
         var two_obj = $('#leplaceUserSelect');
         var _postName = $('#lePostName').val();
         var _html = "<option value=''>请选择</option>";
         $.ajaxSettings.async = false;
-        $.getJSON('$path/getLeaveUser', {stationArea: _station,station: _oneId,postName:_postName}, function (data) {
+        $.getJSON('$path/getLeaveUser', {stationArea: _station,station: _oneId,postName:_postName,startAt: startAt,endAt: endAt}, function (data) {
             if (data) {
                 for (var i = 0; i < data.length; i++) {
                     var obj = data[i];
@@ -1058,8 +1077,6 @@
                         }
                     }
                 }
-                //end
-                //for (var i = 0; i < data.length; i++) {
                 var thead = '';
                 //遍历排班表标题栏
                 thead = '<tr><th rowspan="2">姓名</th><th rowspan="2">岗位</th>';
