@@ -50,6 +50,9 @@
             width: 120px;
             height: 40px;
         }
+        .scheduleForm{
+            table-layout: fixed;
+        }
     </style>
 </head>
 <div class="mask"><img src="$path/static/img/loading.gif"></div>
@@ -656,7 +659,7 @@
         <div class="tab-content">
             <div class="tab-pane in active" id="tab1">
                 <div class="schedule">
-                    <table class="scheduleForm">
+                    <table class="scheduleForm" >
                         <thead>
                         <tr id="theHead0"></tr>
                         </thead>

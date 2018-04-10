@@ -390,8 +390,8 @@
     });
 
     function showColorPanel(event) {
-
-        $(".colorPanel").css("left", (event.pageX-100)+"px");
+        var left = event.pageX<100 ? event.pageX : event.pageX-100;
+        $(".colorPanel").css("left", left+"px");
         $(".colorPanel").css("top", event.pageY+20);
         $("#contentInput").text("");
         $(".colorPanel").show();
