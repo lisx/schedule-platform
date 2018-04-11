@@ -168,7 +168,8 @@
 <script>
 
     $(document).on("click", "[tdValue]", function (event) {
-        $(".operateUnit").hide();
+        var L = $(".td-active").length;
+
         if ($(this).hasClass("td-active")) {
             $(this).removeClass("td-active");
             if ($(this).attr("colspan")>0&&!$(this).attr("contentId")) {
@@ -182,9 +183,14 @@
                 }
             }
         } else {
+            if(L>1){
+                Alert('fail','只能选择两个时间节点！');
+                return;
+            }
             $(this).addClass("td-active");
             showColorPanel(event);
-            if ($(".td-active").length == 2) {
+            if (L == 1) {
+                $(".operateUnit").hide();
                 $("#addFlow").show();
             }
             if ($(this).attr("contentId")) {
