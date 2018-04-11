@@ -344,7 +344,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getLeaveUser(User user) {
-        return userDAO.getLeaveUser(user);
+    public List<User> getLeaveUser(String station,String userJob,String startAt,String endAt) {
+        return userDAO.getLeaveUser(station,userJob,startAt,endAt);
     }
 }

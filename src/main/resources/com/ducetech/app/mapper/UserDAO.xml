@@ -183,9 +183,9 @@
     <!-- 离职  -->
     <select id="getLeaveUser" resultMap="userMap" parameterType="com.ducetech.app.model.User">
         select * from user where user_id not in(
-            select user_id from schedule_info where station = #{station} and station_area=#{stationArea} GROUP BY user_id
+            select user_id from schedule_info where station = #{station} and schedule_date BETWEEN #{startAt} AND #{endAt} GROUP BY user_id
         )
-                                 and user_job = #{userJob}
+        and user_job = #{userJob}
     </select>
 
 	<select id="getPrepareUser" resultMap="userMap" parameterType="com.ducetech.app.model.User">

@@ -498,12 +498,12 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/getLeaveUser", method = RequestMethod.GET)
     @ResponseBody
-    public List<User> getLeaveUser(User user,String postName) {
+    @Transactional
+    public List<User> getLeaveUser(String station,String postName,String startAt,String endAt) {
         PostSetting ps=postSettingService.selectPostSettingByPostName(postName);
         //获取备班人员
         List<User> userList = new ArrayList<User>();
-        user.setUserJob(ps.getPostCode());
-        userList.addAll(userService.getLeaveUser(user));
+        userList.addAll(userService.getLeaveUser(station,ps.getPostCode(),startAt,endAt));
         return userList;
     }
 

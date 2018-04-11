@@ -158,5 +158,5 @@ public interface UserService {
 	 * @return
 	 */
 	List<User> getPrepareUser(User user);
-    List<User> getLeaveUser(User user);
+    List<User> getLeaveUser(String station,String userJob,String startAt,String endAt);
 }

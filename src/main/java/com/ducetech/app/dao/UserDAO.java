@@ -80,5 +80,5 @@ public interface UserDAO {
 	 * @return
 	 */
 	List<User> getPrepareUser(User user);
-    List<User> getLeaveUser(User user);
+    List<User> getLeaveUser(@Param("station") String station,@Param("userJob")String userJob,@Param("startAt")String startAt,@Param("endAt")String endAt);
 }
