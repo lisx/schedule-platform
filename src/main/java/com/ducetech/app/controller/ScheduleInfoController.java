@@ -13,6 +13,7 @@ import com.ducetech.framework.util.DateUtil;
 import com.ducetech.framework.util.PictureUtil;
 import com.ducetech.framework.util.PoiUtil;
 import com.ducetech.framework.web.view.OperationResult;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -942,11 +943,19 @@ public class ScheduleInfoController extends BaseController {
             List<ScheduleInfoTemplate> data = ScheduleCalculator.calculate(shiftList, model);
 
             User loginUser = getLoginUser(request);
-            int i=0;
-            for (ScheduleInfoTemplate t:data) {
-                i++;
-                List<String> list=workFlowMap.get(t.getShiftId());
-                t.setSerialNumber(list.get(i%list.size()));
+            Map<String,Integer> codeNumber=new HashedMap();
+            for (int i=0;i<data.size();i++) {
+                String shiftId=data.get(i).getShiftId();
+                if(!workFlowMap.containsKey(shiftId)){
+                    continue;
+                }
+                if (!codeNumber.containsKey(shiftId)) {
+                    codeNumber.put(shiftId,0);
+                }
+                int number=codeNumber.get(shiftId);
+                String code=workFlowMap.get(shiftId).get(number%workFlowMap.get(shiftId).size());
+                data.get(i).setSerialNumber(code);
+                codeNumber.put(shiftId,number + 1);
             }
             int weeks = templateService.insertScheduleInfoTemplateList(model.getModelId(), data, loginUser);
 

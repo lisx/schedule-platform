@@ -383,7 +383,7 @@
                 for (var i = 0; i < data.length; i++) {
                     var template = data[i];
                     var tdId = "row" + template.weekNumber + "col" + template.weekDay;
-                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "' >" + template.serialNumber + "</div>";
+                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " templateId='"+template.id+"' shiftId='" + template.shiftId + "' >" + template.serialNumber + "</div>";
                     $("#" + tdId).html(html);
                     $("#" + tdId).css("background-color", "#" + template.shiftColor);
                 }
@@ -448,7 +448,7 @@
                 for (var i = 0; i < data.length; i++) {
                     var template = data[i];
                     var tdId = "row" + template.weekNumber + "col" + template.weekDay;
-                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "' >" + template.serialNumber + "</div>";
+                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " templateId='"+template.id+"' shiftId='" + template.shiftId + "' >" + template.serialNumber + "</div>";
                     $("#" + tdId).html(html);
                     $("#" + tdId).css("background-color", "#" + template.shiftColor);
                 }
