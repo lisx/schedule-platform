@@ -942,17 +942,20 @@ public class ScheduleInfoController extends BaseController {
             List<ScheduleInfoTemplate> data = ScheduleCalculator.calculate(shiftList, model);
 
             User loginUser = getLoginUser(request);
+            int i=0;
+            for (ScheduleInfoTemplate t:data) {
+                i++;
+                List<String> list=workFlowMap.get(t.getShiftId());
+                t.setSerialNumber(list.get(i%list.size()));
+            }
             int weeks = templateService.insertScheduleInfoTemplateList(model.getModelId(), data, loginUser);
 
             Map<String,ShiftSetting> shiftMap=new HashMap<>();
 
-            for (ShiftSetting s :
-                    shiftList) {
+            for (ShiftSetting s : shiftList) {
                 shiftMap.put(s.getShiftId(),s);
             }
-
-            for (ScheduleInfoTemplate t:data
-                    ) {
+            for (ScheduleInfoTemplate t:data) {
                 weeks=Math.max(weeks,t.getWeekNumber());
             }
 
@@ -970,6 +973,12 @@ public class ScheduleInfoController extends BaseController {
         return result;
     }
 
+    /**
+     * 加载模版
+     * @param modelId
+     * @param stationId
+     * @return
+     */
     @RequestMapping(value = "/loadTemplate", method = RequestMethod.GET)
     public
     @ResponseBody

@@ -27,6 +27,8 @@ public class ScheduleInfoTemplate extends BaseModel implements Serializable {
     private int weekDay;
 
     private int orderIndex;
+    //流程编号
+    private String serialNumber;
     //修改人
     private String updatorId;
 

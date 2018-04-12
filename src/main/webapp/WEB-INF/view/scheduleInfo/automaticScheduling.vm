@@ -383,7 +383,7 @@
                 for (var i = 0; i < data.length; i++) {
                     var template = data[i];
                     var tdId = "row" + template.weekNumber + "col" + template.weekDay;
-                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "' >" + template.shiftName + "</div>";
+                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "' >" + template.serialNumber + "</div>";
                     $("#" + tdId).html(html);
                     $("#" + tdId).css("background-color", "#" + template.shiftColor);
                 }
@@ -393,8 +393,8 @@
                     calcWeeklyTime(n);
                 });
                 $("#btnLoad").hide();
-                codes = result.codes;
-                setCodes();
+                //codes = result.codes;
+                //setCodes();
                 calcAverage();
                 initUserTable(result.users);
                 $("th[thead]").each(function(n) {
@@ -428,6 +428,7 @@
                 $("#timepick").show();
                 $("#btnSave").show();
                 var data = result.data;
+                console.log(data)
                 $("#theHead0").empty();
                 $("#theHead0").append("<th>站务员</th>");
                 for (var i = 0; i < 7; i++) {
@@ -447,7 +448,7 @@
                 for (var i = 0; i < data.length; i++) {
                     var template = data[i];
                     var tdId = "row" + template.weekNumber + "col" + template.weekDay;
-                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "' >" + template.shiftName + "</div>";
+                    var html = "<div style='width:100%;height:100%;' duration=" + template.shiftMinutes + " shiftId='" + template.shiftId + "' >" + template.serialNumber + "</div>";
                     $("#" + tdId).html(html);
                     $("#" + tdId).css("background-color", "#" + template.shiftColor);
                 }
@@ -457,8 +458,8 @@
                 globalShiftCounts=result.shifts;
                 globalShiftIds=result.shiftIds;
                 $("#btnLoad").hide();
-                codes = result.codes;
-                setCodes();
+                //codes = result.codes;
+                //setCodes();
                 calcAverage();
                 initUserTable(result.users);
                 drawOwners(result.owners);
@@ -594,26 +595,28 @@
         $(".noPlan").show();
     }
 
-    function setCodes() {
-        if (codes == null || codes == undefined || codes === "") {
-            return;
-        }
-        var shifts = $("div[shiftId]");
-        var codeNumber = {};
-        for (var i = 0; i < shifts.length; i++) {
-            var shiftId = $(shifts[i]).attr("shiftId");
-            if (!codes.hasOwnProperty(shiftId)) {
-                return;
-            }
-            if (!codeNumber.hasOwnProperty(shiftId)) {
-                codeNumber[shiftId] = 0;
-            }
-            var number = codeNumber[shiftId];
-            var code = codes[shiftId][number % codes[shiftId].length];
-            $(shifts[i]).text(code);
-            codeNumber[shiftId] = number + 1;
-        }
-    }
+//    function setCodes() {
+//        if (codes == null || codes == undefined || codes === "") {
+//            return;
+//        }
+//        var shifts = $("div[shiftId]");
+//        var codeNumber = {};
+//        for (var i = 0; i < shifts.length; i++) {
+//            var shiftId = $(shifts[i]).attr("shiftId");
+//            if (!codes.hasOwnProperty(shiftId)) {
+//                return;
+//            }
+//            if (!codeNumber.hasOwnProperty(shiftId)) {
+//                codeNumber[shiftId] = 0;
+//            }
+//            console.log("codeNumber"+JSON.stringify(codeNumber));
+//            var number = codeNumber[shiftId];
+//            console.log("number"+number)
+//            var code = codes[shiftId][number % codes[shiftId].length];
+//            $(shifts[i]).text(code);
+//            codeNumber[shiftId] = number + 1;
+//        }
+//    }
 
 </script>
 <div class="menu">

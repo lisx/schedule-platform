@@ -12,6 +12,7 @@
         <result column="shift_minutes" property="shiftMinutes"/>
         <result column="week_number" property="weekNumber"/>
         <result column="week_day" property="weekDay"/>
+        <result column="serial_number" property="serialNumber"/>
         <result column="order_index" property="orderIndex"/>
         <result column="updator_id" property="updatorId"></result>
     </resultMap>
@@ -26,7 +27,7 @@
 	</select>
 
     <insert id="insertScheduleInfoTemplate" parameterType="com.ducetech.app.model.ScheduleInfoTemplate">
-		insert into schedule_info_template (model_id,shift_id,shift_name,shift_color,shift_minutes,week_number,week_day,order_index,updator_id) values (#{modelId},#{shiftId},#{shiftName},#{shiftColor},#{shiftMinutes},#{weekNumber},#{weekDay},#{orderIndex},#{updatorId})
+		insert into schedule_info_template (model_id,shift_id,shift_name,shift_color,shift_minutes,week_number,week_day,order_index,updator_id,serial_number) values (#{modelId},#{shiftId},#{shiftName},#{shiftColor},#{shiftMinutes},#{weekNumber},#{weekDay},#{orderIndex},#{updatorId},#{serialNumber})
 	</insert>
 
     <update id="updateScheduleInfoTemplate" parameterType="com.ducetech.app.model.ScheduleInfoTemplate">
@@ -36,6 +37,7 @@
             week_day = #{weekDay},
             order_index = #{orderIndex},
             updator_id = #{updatorId},
+            serial_number = #{serialNumber},
         </set>
         where id = #{id}
     </update>
