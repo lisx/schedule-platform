@@ -231,6 +231,14 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorId(userInfo.getUserId());
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
+        String startAt = log.getStartAt();
+        String endAt = log.getEndAt();
+        if(!StringUtils.isBlank(startAt)&&!StringUtils.isBlank(endAt)) {
+            int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
+            log.setTimeAt(-gh);
+        }else{
+            return OperationResult.buildSuccessResult("替班编辑失败,请选择时间.", "error");
+        }
         ScheduleInfo scheduleInfo = scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         ScheduleInfo replace=scheduleInfoService.selectInfoReplace(log.getDetailType(),scheduleInfo.getScheduleDay());
         User user=userService.getUserByUserId(log.getDetailType());
@@ -262,12 +270,7 @@ public class ScheduleLogController extends BaseController {
         scheduleInfo.setScheduleDesc(log.getRemark());
         scheduleInfo.setLogId(log.getScheduleLogId());
         scheduleInfoService.updateScheduleInfo(scheduleInfo);
-        String startAt = log.getStartAt();
-        String endAt = log.getEndAt();
-        if(!StringUtils.isBlank(startAt)||!StringUtils.isBlank(endAt)) {
-            int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
-            log.setTimeAt(-gh);
-        }
+
         scheduleLogService.updateScheduleLog(log);
         ScheduleLog rlog=new ScheduleLog();
         try {
