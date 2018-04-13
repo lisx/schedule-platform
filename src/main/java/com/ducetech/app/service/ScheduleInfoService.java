@@ -47,4 +47,5 @@ public interface ScheduleInfoService {
     Integer setUserLeave(String userId,String userLeave);
 
     List<WorkflowContent> getWorkflowContentByCode(String shiftId,String text);
+    ScheduleInfo selectInfoReplace(String userId,String scheduleDay);
 }

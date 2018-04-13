@@ -40,4 +40,5 @@ public interface ScheduleInfoDAO {
 
     Integer leaveUser(@Param("scheduleInfoId") String scheduleInfoId,@Param("userName") String userName,@Param("userCode") String userCode,@Param("userId") String userId,@Param("oldUser") String oldUser);
     Integer setUserLeave(@Param("userId")String userId,@Param("userLeave")String userLeave);
+    ScheduleInfo selectInfoReplace(@Param("userId")String userId,@Param("scheduleDay")String scheduleDay);
 }

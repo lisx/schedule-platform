@@ -621,7 +621,7 @@ public class ScheduleInfoController extends BaseController {
         QueryDate queryDate = new QueryDate(startAt, endAt, monthDate).invoke();
         startAt = queryDate.getStartAt();
         endAt = queryDate.getEndAt();
-        List<ScheduleInfo> sis = scheduleInfoService.selectScheduleInfo(startAt, endAt, postName, queryData, postName, station, stationArea);
+        List<ScheduleInfo> sis = scheduleInfoService.selectScheduleInfo(startAt, endAt, queryData, queryData, postName, station, stationArea);
         List<ScheduleInfoData> dataList = new ArrayList<>();
         Map<String, List<ScheduleInfo>> map = groupByProperty(sis, "userId", String.class);
         groupData(startAt, endAt, scheduleType, dataList, map);

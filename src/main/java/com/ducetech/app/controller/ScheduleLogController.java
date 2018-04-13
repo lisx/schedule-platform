@@ -6,6 +6,7 @@ import com.ducetech.framework.controller.BaseController;
 import com.ducetech.framework.schedule.service.SystemSechduleService;
 import com.ducetech.framework.util.DateUtil;
 import com.ducetech.framework.web.view.OperationResult;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -230,10 +232,24 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
         ScheduleInfo scheduleInfo = scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
-        log.setScheduleInfoId(scheduleInfo.getScheduleInfoId());
-        log.setUserName(scheduleInfo.getUserName());
+        ScheduleInfo replace=scheduleInfoService.selectInfoReplace(log.getDetailType(),scheduleInfo.getScheduleDay());
         User user=userService.getUserByUserId(log.getDetailType());
-        log.setLogType(log.getUserName()+log.getLogType()+user.getUserName());
+        if(null!=replace){
+            replace.setShiftName(scheduleInfo.getShiftName());
+            //replace.setSerialNumber(scheduleInfo.getSerialNumber());
+            replace.setShiftCode(scheduleInfo.getShiftCode());
+            replace.setShiftColor(scheduleInfo.getShiftColor());
+            replace.setTotalAt(scheduleInfo.getTotalAt());
+        }else{
+            replace=scheduleInfo;
+            replace.setScheduleInfoId("");
+            replace.setUserName(user.getUserName());
+            replace.setUserId(user.getUserId());
+            replace.setUserCode(user.getUserCode());
+        }
+        scheduleInfoService.updateScheduleInfo(replace);
+        log.setUserName(scheduleInfo.getUserName());
+        log.setLogType(user.getUserName()+log.getLogType()+log.getUserName());
         scheduleLogService.insertScheduleLog(log);
         scheduleInfo.setIfLeave(6);
         scheduleInfo.setLeaveType(log.getLogType());
@@ -247,6 +263,20 @@ public class ScheduleLogController extends BaseController {
             log.setTimeAt(-gh);
         }
         scheduleLogService.updateScheduleLog(log);
+        ScheduleLog rlog=new ScheduleLog();
+        try {
+            BeanUtils.copyProperties(rlog,log);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        rlog.setScheduleLogId("");
+        rlog.setUserId(user.getUserId());
+        rlog.setUserName(user.getUserName());
+        rlog.setScheduleInfoId(replace.getScheduleInfoId());
+        rlog.setTimeAt(-rlog.getTimeAt());
+        scheduleLogService.updateScheduleLog(rlog);
         return OperationResult.buildSuccessResult("替班编辑成功", "success");
     }
 

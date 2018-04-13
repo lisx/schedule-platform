@@ -232,6 +232,11 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
         return null;
     }
 
+    @Override
+    public ScheduleInfo selectInfoReplace(String userId, String scheduleDay) {
+        return scheduleDAO.selectInfoReplace(userId,scheduleDay);
+    }
+
     private void setNewUser(List<ScheduleInfo> infoList,User user){
         for (ScheduleInfo info :
                 infoList) {

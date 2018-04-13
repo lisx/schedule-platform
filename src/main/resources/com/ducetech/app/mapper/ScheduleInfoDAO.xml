@@ -60,8 +60,11 @@
     <select id="selectScheduleInfo" parameterType="String" resultMap="scheduleInfoMap">
         select * from schedule_info
         where if_use=0
-        <if test="userCode!=null and userCode!='' and userCode!='{}'||userName!=null and userName!='' and userName!='{}'|| postName!=null and postName!='' and postName!='{}'">
-            AND (user_code=#{userCode} or user_name like '%' #{userName} '%' or post_Name=#{postName})
+        <if test="userCode!=null and userCode!='' and userCode!='{}'||userName!=null and userName!='' and userName!='{}'">
+            AND (user_code=#{userCode} or user_name = #{userName} )
+        </if>
+        <if test=" postName!=null and postName!='' and postName!='{}'">
+            and post_Name=#{postName}
         </if>
         <if test="stationArea!=null and stationArea!='' and stationArea!='undefined'">
             and station_area like CONCAT(#{stationArea},'%')
@@ -113,6 +116,11 @@
         where if_use=0 and schedule_info_id=#{scheduleInfoId}
     </select>
 
+    <select id="selectInfoReplace" parameterType="String" resultMap="scheduleInfoMap">
+        select * from schedule_info
+        where if_use=0 and user_id=#{userId} and schedule_day=#{scheduleDay}
+    </select>
+
     <insert id="insertScheduleInfo" parameterType="com.ducetech.app.model.ScheduleInfo">
 		insert into schedule_info (log_id,model_id, shift_id,shift_name, user_id,user_name,total_at,schedule_date,schedule_day,schedule_week, schedule_desc, station,station_area,if_leave,post_name,if_use,creator_id,created_at,user_code,group_name,serial_number,shift_code,shift_color)
 		values(#{logId},#{modelId},#{shiftId},#{shiftName},#{userId},#{userName},#{totalAt},#{scheduleDate},#{scheduleDay},#{scheduleWeek},#{scheduleDesc},#{station},#{stationArea},#{ifLeave},#{postName},#{ifUse},#{creatorId},#{createdAt},#{userCode},#{groupName},#{serialNumber},#{shiftCode},#{shiftColor})
@@ -143,6 +151,30 @@
             </if>
             <if test="scheduleDesc != null ">
                 schedule_desc=#{scheduleDesc},
+            </if>
+            <if test="shiftName != null ">
+                shift_name=#{shiftName},
+            </if>
+            <if test="shiftCode != null ">
+                shift_code=#{shiftCode},
+            </if>
+            <if test="serialNumber != null ">
+                serial_number=#{serialNumber},
+            </if>
+            <if test="shiftColor != null ">
+                shift_color=#{shiftColor},
+            </if>
+            <if test="totalAt != null ">
+                total_at=#{totalAt},
+            </if>
+            <if test="userId != null ">
+                user_id=#{userId},
+            </if>
+            <if test="userName != null ">
+                user_name=#{userName},
+            </if>
+            <if test="userCode != null ">
+                user_code=#{userCode},
             </if>
         </set>
         WHERE schedule_info_id=#{scheduleInfoId}
