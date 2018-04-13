@@ -365,11 +365,12 @@
                 $("#btnSave").show();
                 var data = result.data;
                 $("#theHead0").empty();
-                $("#theHead0").append("<th>站务员</th>");
+                var w = parseInt($('.scheduleForm').width()/9)-4;
+                $("#theHead0").append("<th width='"+w+"'>站务员</th>");
                 for (var i = 0; i < 7; i++) {
-                    $("#theHead0").append("<th thead=" + i + ">" + i + "</th>");
+                    $("#theHead0").append("<th width='"+w+"' thead=" + i + ">" + i + "</th>");
                 }
-                $("#theHead0").append("<th>周工时</th>");
+                $("#theHead0").append("<th width='"+w+"'>周工时</th>");
                 $("#theBody").empty();
                 for (var i = 0; i <= result.weeks; i++) {
                     var node = "<tr  ><td class='userName' tdType='-1' userId='' weekNumber='" + i + "'></td>";
@@ -430,11 +431,12 @@
                 var data = result.data;
                 console.log(data)
                 $("#theHead0").empty();
-                $("#theHead0").append("<th>站务员</th>");
+                var w = parseInt($('.scheduleForm').width()/9)-4;
+                $("#theHead0").append("<th width='"+ w +"'>站务员</th>");
                 for (var i = 0; i < 7; i++) {
-                    $("#theHead0").append("<th thead=" + i + ">" + i + "</th>");
+                    $("#theHead0").append("<th width='"+ w +"' thead=" + i + ">" + i + "</th>");
                 }
-                $("#theHead0").append("<th>周工时</th>");
+                $("#theHead0").append("<th width='"+ w +"'>周工时</th>");
                 $("#theBody").empty();
                 for (var i = 0; i <= result.weeks; i++) {
                     var node = "<tr  ><td class='userName' tdType='-1' userId='' weekNumber='" + i + "'></td>";
