@@ -240,14 +240,20 @@ public class ScheduleLogController extends BaseController {
             replace.setShiftCode(scheduleInfo.getShiftCode());
             replace.setShiftColor(scheduleInfo.getShiftColor());
             replace.setTotalAt(scheduleInfo.getTotalAt());
+            scheduleInfoService.updateScheduleInfo(replace);
         }else{
             replace=scheduleInfo;
             replace.setScheduleInfoId("");
             replace.setUserName(user.getUserName());
             replace.setUserId(user.getUserId());
             replace.setUserCode(user.getUserCode());
+            try {
+                scheduleInfoService.insertSchedule(replace);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-        scheduleInfoService.updateScheduleInfo(replace);
+
         log.setUserName(scheduleInfo.getUserName());
         log.setLogType(user.getUserName()+log.getLogType()+log.getUserName());
         scheduleLogService.insertScheduleLog(log);
@@ -276,7 +282,12 @@ public class ScheduleLogController extends BaseController {
         rlog.setUserName(user.getUserName());
         rlog.setScheduleInfoId(replace.getScheduleInfoId());
         rlog.setTimeAt(-rlog.getTimeAt());
-        scheduleLogService.updateScheduleLog(rlog);
+        scheduleLogService.insertScheduleLog(rlog);
+        replace.setIfLeave(6);
+        replace.setLeaveType(rlog.getLogType());
+        replace.setScheduleDesc(rlog.getRemark());
+        replace.setLogId(rlog.getScheduleLogId());
+        scheduleInfoService.updateScheduleInfo(replace);
         return OperationResult.buildSuccessResult("替班编辑成功", "success");
     }
 
