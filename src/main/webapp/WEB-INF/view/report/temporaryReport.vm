@@ -47,7 +47,7 @@ $(function(){
         });
     }).change();
     function myPrint(){
-        location.href = "$path/printSchedule?startAt="+$("#startAt").val()+"&endAt="+$("#endAt").val()+"&monthDate="+$("#monthDate").val()+"&queryData="+$("#queryData").val()+"&scheduleType=0"+"&station="+$("#station").val()+"&stationArea="+$("#stationArea").val();
+        location.href = "$path/printSchedule?startAt="+$("#startAt").val()+"&endAt="+$("#endAt").val()+"&monthDate="+$("#monthDate").val()+"&queryData="+$("#queryData").val()+"&scheduleType=0"+"&station="+$("#stationQuery").val()+"&stationArea="+$("#stationAreaQuery").val();
     }
 })
 

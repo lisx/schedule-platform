@@ -24,7 +24,7 @@
             date:endAt,
             useCurrent:true
         });
-        queryBtn();
+        //queryBtn();
         $("#stationAreaQuery").change(function() {
             var _oneId = this.value;
             var two_obj = $('#stationQuery');
