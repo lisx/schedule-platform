@@ -250,11 +250,16 @@ public class ScheduleLogController extends BaseController {
             replace.setTotalAt(scheduleInfo.getTotalAt());
             scheduleInfoService.updateScheduleInfo(replace);
         }else{
-            replace=scheduleInfo;
+            replace=new ScheduleInfo();
             replace.setScheduleInfoId("");
             replace.setUserName(user.getUserName());
             replace.setUserId(user.getUserId());
             replace.setUserCode(user.getUserCode());
+            replace.setShiftName(scheduleInfo.getShiftName());
+            //replace.setSerialNumber(scheduleInfo.getSerialNumber());
+            replace.setShiftCode(scheduleInfo.getShiftCode());
+            replace.setShiftColor(scheduleInfo.getShiftColor());
+            replace.setTotalAt(scheduleInfo.getTotalAt());
             try {
                 scheduleInfoService.insertSchedule(replace);
             } catch (ParseException e) {
