@@ -528,20 +528,19 @@ public class ScheduleInfoController extends BaseController {
 
         Map<String, List<ScheduleInfo>> map = new HashMap<>();
 
-        for (ScheduleInfo info :
-                sis) {
+        for (ScheduleInfo info :sis) {
             String key=info.getUserId()+"-"+info.getUserName();
             if (!map.containsKey(key)){
+                if(key.equals("1305-李璇"))
                 map.put(key,new ArrayList<ScheduleInfo>());
             }
+            if(key.equals("1305-李璇"))
             map.get(key).add(info);
         }
-
         Map<String,ShiftSetting> shiftMap = new HashMap<>();
 
-        List<ShiftSetting> shiftList = shiftService.selectShiftSettingByStation(station);
-        for (ShiftSetting shift :
-                shiftList) {
+        List<ShiftSetting> shiftList = shiftService.selectShiftSettingByModelId(modelId);
+        for (ShiftSetting shift : shiftList) {
             shiftMap.put(shift.getShiftId(),shift);
         }
 
