@@ -58,8 +58,7 @@ public class PictureUtil {
         }
         //上下留边，姓名，间距，标题，每日数据
         int height = MARGIN * 2 + SPACE_SIZE_BASE + SPACE_SIZE_BASE + SPACE_SIZE_BASE + SPACE_SIZE_BASE * 2 * scheduleInfos.size();
-        BufferedImage image = new BufferedImage(width, height,
-                BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
         Graphics graphics = image.getGraphics();
 
         graphics.setColor(Color.WHITE);
@@ -239,7 +238,12 @@ public class PictureUtil {
     }
 
     private static Color getColor(String shiftColor) {
-        Integer c = Integer.parseInt(shiftColor, 16);
+        Integer c = 16777215;
+        try{
+            c=Integer.parseInt(shiftColor, 16);
+        }catch (Exception e){
+            System.out.print("没有颜色默认白");
+        }
         return new Color(c >>> 16, c >>> 8 & 0xff, c & 0xff);
     }
 
