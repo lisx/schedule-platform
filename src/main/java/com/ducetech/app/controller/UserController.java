@@ -149,11 +149,11 @@ public class UserController extends BaseController {
                                     user.setEduBackGround(edu);
                                     user.setIsPartyMember(political);
                                     user.setJoinDate(joinDate);
-                                    user.setCertLevel(certLevel);
-                                    user.setCertNo(certNo);
-                                    user.setXfzNo(xfzNo);
                                     user.setZwyNo(zwyNo);
                                     user.setZwyLevel(zwyLevel);
+                                    user.setXfzNo(xfzNo);
+                                    user.setCertLevel(certLevel);
+                                    user.setCertNo(certNo);
                                     user.setCreatorId(u.getUserId());
                                     user.setIsAdmin("0");
                                     user.setIsDeleted(0);
