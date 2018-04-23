@@ -65,6 +65,9 @@
         <if test="timeAt != null and timeAt !=''">
             time_at=#{timeAt},
         </if>
+        <if test="timeAt == 999">
+            time_at=0,
+        </if>
         <if test="ifUse != null and ifUse !=''">
             if_use=#{ifUse},
         </if>

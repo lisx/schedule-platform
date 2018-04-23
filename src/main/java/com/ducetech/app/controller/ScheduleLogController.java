@@ -240,6 +240,13 @@ public class ScheduleLogController extends BaseController {
             return OperationResult.buildSuccessResult("替班编辑失败,请选择时间.", "error");
         }
         ScheduleInfo scheduleInfo = scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
+        List<ScheduleLog> logs=scheduleLogService.getScheduleLogByInfo(scheduleInfo.getScheduleInfoId());
+        if(logs!=null){
+            for(ScheduleLog obj:logs){
+                obj.setTimeAt(999);
+                scheduleLogService.updateScheduleLog(obj);
+            }
+        }
         ScheduleInfo replace=scheduleInfoService.selectInfoReplace(log.getDetailType(),scheduleInfo.getScheduleDay());
         User user=userService.getUserByUserId(log.getDetailType());
         if(null!=replace){
