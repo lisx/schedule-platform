@@ -531,10 +531,8 @@ public class ScheduleInfoController extends BaseController {
         for (ScheduleInfo info :sis) {
             String key=info.getUserId()+"-"+info.getUserName();
             if (!map.containsKey(key)){
-                if(key.equals("1305-李璇"))
                 map.put(key,new ArrayList<ScheduleInfo>());
             }
-            if(key.equals("1305-李璇"))
             map.get(key).add(info);
         }
         Map<String,ShiftSetting> shiftMap = new HashMap<>();
