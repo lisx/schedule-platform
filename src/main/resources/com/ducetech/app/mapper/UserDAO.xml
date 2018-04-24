@@ -16,6 +16,8 @@
     	<result column="creator_id" property="creatorId"/>
     	<result column="created_at" property="createdAt"/>
     	<result column="is_deleted" property="isDeleted"/>
+        <result column="is_leave" property="isLeave"/>
+        <result column="staff_code" property="staffCode"/>
         <result column="is_admin" property="isAdmin"/>
         <result column="birth_day" property="birthday"/>
         <result column="id_code" property="idCode"/>
@@ -40,7 +42,7 @@
         select * from user where user_code=#{userCode}
     </select>
     <select id="selectUserByStation" resultMap="userMap">
-        select * from user where station=#{station}
+        select * from user where station=#{station} and is_deleted=0
     </select>
 	<!-- 获取某用户的全部菜单权限 -->
 	<select id="selectPermissionByUserId" resultType="String">

@@ -72,5 +72,9 @@ public class User extends BaseModel implements Serializable {
 
 	private int isDeleted;		//删除标记	0启用	1停用	默认0启用
 
+    private int isLeave;
+
+    private String staffCode;
+
     private String isAdmin;            //是否是管理员 1是管理员 0是普通 默认0
 }
