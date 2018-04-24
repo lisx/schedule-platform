@@ -88,23 +88,24 @@ public class UserController extends BaseController {
                                 if(!StringUtils.isBlank(userCode)||userCode.length()!=8){
                                     sb.append("第"+(i+2)+"行员工卡号错误;");
                                 }
-                                String userName = ExtStringUtil.trim(row.get(1));
-                                String gender = ExtStringUtil.trim(row.get(2));
+                                String staffCode = ExtStringUtil.trim(row.get(1));
+                                String userName = ExtStringUtil.trim(row.get(2));
+                                String gender = ExtStringUtil.trim(row.get(3));
                                 String stationArea = u.getStationArea();
-                                String station = ExtStringUtil.trim(row.get(3));
+                                String station = ExtStringUtil.trim(row.get(4));
                                 if (StringUtils.isNotBlank(station)){
                                     station = checkStationArea(station);
                                 }
-                                String phone = ExtStringUtil.trim(row.get(5));
+                                String phone = ExtStringUtil.trim(row.get(6));
 //                                if(isEmptyUser(userCode,userName,gender,station,phone)){
 //                                    continue;
 //                                }
 //                                if(station!=null&&!station.startsWith(stationArea)){
 //                                    continue;
 //                                }
-                                String userJob = ExtStringUtil.trim(row.get(4));
-                                String addr = ExtStringUtil.trim(row.get(6));
-                                String idCode = ExtStringUtil.trim(row.get(7));
+                                String userJob = ExtStringUtil.trim(row.get(5));
+                                String addr = ExtStringUtil.trim(row.get(7));
+                                String idCode = ExtStringUtil.trim(row.get(8));
                                 if(idCode.length()!=18){
                                     int index=sb.toString().lastIndexOf("第");
                                     int rowIndex=sb.toString().lastIndexOf("行");
@@ -116,17 +117,17 @@ public class UserController extends BaseController {
                                         sb.append("第" + (i + 2) + "行身份证号码错误;");
                                     }
                                 }
-                                String married = ExtStringUtil.trim(row.get(8));
-                                String child = ExtStringUtil.trim(row.get(9));
-                                String edu = ExtStringUtil.trim(row.get(10));
-                                String xfzNo = ExtStringUtil.trim(row.get(11));
-                                String certNo = ExtStringUtil.trim(row.get(12));
-                                String certLevel = ExtStringUtil.trim(row.get(13));
-                                String zwyNo = ExtStringUtil.trim(row.get(14));
-                                String zwyLevel = ExtStringUtil.trim(row.get(15));
-                                String recruitDate = ExtStringUtil.trim(row.get(16));
-                                String political = ExtStringUtil.trim(row.get(17));
-                                String joinDate = ExtStringUtil.trim(row.get(18));
+                                String married = ExtStringUtil.trim(row.get(9));
+                                String child = ExtStringUtil.trim(row.get(10));
+                                String edu = ExtStringUtil.trim(row.get(11));
+                                String xfzNo = ExtStringUtil.trim(row.get(12));
+                                String certNo = ExtStringUtil.trim(row.get(13));
+                                String certLevel = ExtStringUtil.trim(row.get(14));
+                                String zwyNo = ExtStringUtil.trim(row.get(15));
+                                String zwyLevel = ExtStringUtil.trim(row.get(16));
+                                String recruitDate = ExtStringUtil.trim(row.get(17));
+                                String political = ExtStringUtil.trim(row.get(18));
+                                String joinDate = ExtStringUtil.trim(row.get(19));
                                 if (!ExtStringUtil.isBlank(userJob)) {
                                     PostSetting postSetting = postSettingService.selectPostSettingByPostName(userJob);
                                     if (null != postSetting) {
@@ -157,6 +158,7 @@ public class UserController extends BaseController {
                                     user.setCreatorId(u.getUserId());
                                     user.setIsAdmin("0");
                                     user.setIsDeleted(0);
+                                    user.setStaffCode(staffCode);
                                     user.setPassword("123456");
                                     user.setUserPass("123456");
                                     user.setStation(station);
@@ -370,6 +372,7 @@ public class UserController extends BaseController {
             a.add(u.getHomeAddress());
             a.add(u.getCertNo());
             a.add(u.getCertLevel());
+            a.add(u.getStaffCode());
             a.add(u.getXfzNo());
             a.add(u.getZwyNo());
             a.add(u.getZwyLevel());
@@ -501,7 +504,7 @@ public class UserController extends BaseController {
     @Transactional
     public List<User> getLeaveUser(String station,String postName,String startAt,String endAt) {
         PostSetting ps=postSettingService.selectPostSettingByPostName(postName);
-        //获取备班人员
+        //获取替班人员
         List<User> userList = new ArrayList<User>();
         userList.addAll(userService.getLeaveUser(station,ps.getPostCode(),startAt,endAt));
         return userList;

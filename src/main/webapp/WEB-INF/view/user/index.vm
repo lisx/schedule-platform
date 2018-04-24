@@ -86,7 +86,7 @@
         <thead>
             <tr>
                 <th>操作</th>
-                <th>编号</th>
+                <th>员工卡号</th>
                 <th>姓名</th>
                 <th>身份证</th>
                 <th>入职时间</th>
@@ -98,6 +98,7 @@
                 <th>住址</th>
                 <th>站务员证书编号</th>
                 <th>站务员证书等级</th>
+                <th>人员编码</th>
                 <th>消防证书编号</th>
                 <th>综控员证书编号</th>
                 <th>综控员证书级别</th>
@@ -126,8 +127,12 @@
             <div class="modal-body">
                 <form id="userAddForm" class="form-container clear">
                     <div class="form_line">
-                        <label>编号</label>
+                        <label>员工卡号</label>
                         <input id="userCode" name="userCode" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label>人员编码</label>
+                        <input id="staffCode" name="staffCode" type="text">
                     </div>
                     <div class="form_line">
                         <label class="require">姓名</label>
@@ -271,8 +276,12 @@
                 <form class="form-container clear" id="userEditForm">
                     <div class="form_line">
                         <input id="editUserId" name="userId" type="hidden">
-                        <label>编号</label>
+                        <label>员工卡号</label>
                         <input id="editUserCode" name="userCode" type="text">
+                    </div>
+                    <div class="form_line">
+                        <label>人员编码</label>
+                        <input id="editStaffCode" name="staffCode" type="text">
                     </div>
                     <div class="form_line">
                         <label class="require">姓名</label>
@@ -498,6 +507,7 @@
                 $("#editIsAdmin").val(data.isAdmin);
                 $("#editUserName").val(data.userName);
                 $("#editUserCode").val(data.userCode);
+                $("#editStaffCode").val(data.staffCode);
                 $("#editUserJob").val(data.userJob);
                 $("#editStation").val(data.station);
                 $("#editStationArea").val(data.stationArea);

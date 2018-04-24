@@ -216,7 +216,7 @@
     <a href="#minersAbsence" data-toggle="modal" data-target="#minersAbsence">旷工缺勤</a>
     <a href="#overtimeWork" data-toggle="modal" data-target="#overtimeWork">补班加班</a>
     <a href="#replaceShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#replaceShift">替班</a>
-    <a href="#leaveShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#leaveShift">离职</a>
+    <a href="#leaveShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#leaveShift">调离</a>
     <a class="cancelHandle" href="javascript:;">撤销</a>
 </div>
 <!--  人员信息 -->
@@ -303,13 +303,13 @@
     </div>
 </div>
 
-<!-- 离职 -->
+<!-- 调离 -->
 <div class="modal" id="leaveShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog " role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
-                <h4 class="modal-title">离职</h4>
+                <h4 class="modal-title">调离</h4>
             </div>
             <div class="modal-body">
                 <input id="minDate" type="hidden">
@@ -344,7 +344,7 @@
                         <input name="stationArea" id="leStationArea" type="hidden">
                         <input name="station" id="leStation"  type="hidden">
                         <input name="groupName" id="leGroupName"  type="hidden">
-                        <input name="logType" type="hidden" value="离职">
+                        <input name="logType" type="hidden" value="调离">
                         <label>上岗人员</label>
                         <select name="detailType" id="leplaceUserSelect">
                         </select>
@@ -357,7 +357,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <a class="btn btn-confirm" href="javascript:;" onclick="leaveShift()">离职</a>
+                <a class="btn btn-confirm" href="javascript:;" onclick="leaveShift()">调离</a>
                 <a class="btn btn-red" href="javascript:;" onclick="editReplaceShiftDel()">取消</a>
             </div>
         </div>
@@ -413,7 +413,7 @@
         rsStationQuery.val(rsStation);
         rsStationQuery.change();
     }
-    //初始化离职人员和站区站点
+    //初始化调离人员和站区站点
     function initLeaveShift() {
         var leStationArea = $('#leStationArea').val();
         var leStation = $('#leStation').val();
@@ -481,7 +481,7 @@
         $.ajaxSettings.async = true;
     });
 
-    //离职
+    //调离
     function leaveShift(){
         jQuery.ajax({
             async: false,

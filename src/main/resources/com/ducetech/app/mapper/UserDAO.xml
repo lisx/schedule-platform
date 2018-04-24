@@ -83,8 +83,8 @@
 	
 	<!-- 插入新用户 -->
 	<insert id="insertUser" useGeneratedKeys="true" keyProperty="userId">
-		insert into user (password,user_pass,user_code,user_name,station_area,station,creator_id,created_at,is_admin,secret_key,user_job,gender,phone_number,birth_day,id_code,on_board_date,is_married,has_child,edu_back_ground,is_party_member,join_date,home_address,cert_no,cert_level)
-		values(#{password},#{userPass},#{userCode},#{userName},#{stationArea},#{station},#{creatorId},#{createdAt},#{isAdmin},#{secretKey}, #{userJob},#{gender},#{phoneNumber},#{birthday},#{idCode},#{onBoardDate},#{isMarried},#{hasChild},#{eduBackGround},#{isPartyMember},#{joinDate},#{homeAddress},#{certNo},#{certLevel})
+		insert into user (password,user_pass,user_code,user_name,station_area,station,creator_id,created_at,is_admin,secret_key,user_job,gender,phone_number,birth_day,id_code,on_board_date,is_married,has_child,edu_back_ground,is_party_member,join_date,home_address,cert_no,cert_level,staff_code)
+		values(#{password},#{userPass},#{userCode},#{userName},#{stationArea},#{station},#{creatorId},#{createdAt},#{isAdmin},#{secretKey}, #{userJob},#{gender},#{phoneNumber},#{birthday},#{idCode},#{onBoardDate},#{isMarried},#{hasChild},#{eduBackGround},#{isPartyMember},#{joinDate},#{homeAddress},#{certNo},#{certLevel},#{staffCode})
 	</insert>
     <update id="deleteUserById" parameterType="com.ducetech.app.model.User">
         update user
