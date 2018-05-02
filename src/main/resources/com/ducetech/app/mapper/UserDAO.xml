@@ -187,10 +187,10 @@
         select * from user where user_id not in(
             select user_id from schedule_info where station = #{station} and schedule_date BETWEEN #{startAt} AND #{endAt} GROUP BY user_id
         )
-        and user_job = #{userJob}
+        and user_job = #{userJob} and is_deleted=0
     </select>
 
 	<select id="getPrepareUser" resultMap="userMap" parameterType="com.ducetech.app.model.User">
-		select * from user where station = #{station} and station_area = #{stationArea} and user_job = #{userJob}
+		select * from user where station = #{station} and station_area = #{stationArea} and user_job = #{userJob} and is_deleted=0
 	</select>
 </mapper>

@@ -358,7 +358,7 @@
             </div>
             <div class="modal-footer">
                 <a class="btn btn-confirm" href="javascript:;" onclick="leaveShift()">调离</a>
-                <a class="btn btn-red" href="javascript:;" onclick="editReplaceShiftDel()">取消</a>
+                <a class="btn btn-red" href="javascript:;" onclick="editLeaveShiftDel()">取消</a>
             </div>
         </div>
     </div>
@@ -525,6 +525,11 @@
     function editReplaceShiftDel() {
         $("#rightMenu").addClass("hidden");
         $("#replaceShift").modal('hide');
+    }
+    //调离取消
+    function editLeaveShiftDel() {
+        $("#rightMenu").addClass("hidden");
+        $("#leaveShift").modal('hide');
     }
 </script>
 
@@ -1030,86 +1035,65 @@
                 var arr = [];
                 var d = new Date();
                 var today = new Date(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate());
-                //add by chenyun 2018-04-08
-                var dataObj = $('.active #dateSelec').length == 1 ? $('.active #dateSelec') : $('.active #monthDate');
-                var Length = 0;
-                var str1 = '';
-                var str2 = '';
-                if(dataObj.is($('#dateSelec'))){
-                    Length = $('#dateSelec').val() == '一周' ? 7 : 14;
-                    var startDay = new Date($('#startAt').val());
-                    var year = startDay.getFullYear();
-                    var month = startDay.getMonth()+1;
-                    var day = startDay.getDate();
-                    var dayCount = countDays(year,month);
-                    for(var i=0;i<Length;i++){
-                        var newDay = i+day;
-                        if(newDay>dayCount){
-                            newDay -= dayCount;
-                            month++;
-                        }
-                        str1 += '<th>'+ month +'.'+ newDay +'</th>';
-                        var date = new Date(year+'-'+month+'-'+newDay);
-                        str2 += '<th>'+ getWeekDay(date) +'</th>';
+
+                for (var i = 0; i < data.length; i++) {
+                    var thead = '';
+                    //遍历排班表标题栏
+                    thead = '<tr><th rowspan="2">姓名</th><th rowspan="2">岗位</th>';
+                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
+                        var date = new Date(data[i].scheduleInfoList[j].scheduleDate);
+                        var day = (date.getMonth() + 1) + '.' + date.getDate();
+                        thead += '<th>' + day + '</th>';
+                        var dataDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
                         if (date < today) {
                             rightMenu.push('');
                             arr.push('');
 
                         } else {
                             rightMenu.push('rightMenu');
-                            arr.push(date);
+                            arr.push(dataDate)
                         }
                     }
-                }else{
-                    var year = dataObj.val().substring(0,4)
-                    var month = dataObj.val().substring(5);
-                    var Length = countDays(year,month);
-                    for(var i=1;i<=Length;i++){
-                        str1 += '<th>'+ month +'.'+ i +'</th>';
-                        var date = new Date(year+'-'+month+'-'+i);
-                        str2 += '<th>'+ getWeekDay(date) +'</th>';
-                        if (date < today) {
-                            rightMenu.push('');
-                            arr.push('');
-                        } else {
-                            rightMenu.push('rightMenu');
-                            arr.push(date);
+                    thead += '<th colspan=11>总计:' + data[i].scheduleInfoList.length + '天</th></tr>';
+                    thead += '<tr>';
+                    for (var j = 0; j < data[i].scheduleInfoList.length; j++) {
+                        thead += '<th>' + data[i].scheduleInfoList[j].scheduleWeek + '</th>';
+                    }
+                    thead += '<th>计划工时</th><th>实际工时</th><th>结余</th>';
+                    thead += '</tr>';
+                    target.find("thead").html(thead);
+                    break;
+                }
+                //遍历排班表数据
+                var tbody = '';
+                var Length=0;
+                var cha=0;
+                for (var i = 0; i < data.length; i++){
+                    if(Length<data[i].scheduleInfoList.length){
+                        Length=data[i].scheduleInfoList.length;
+                    }else{
+                        if (data[i].scheduleInfoList[0].userLeave==1){
+                            cha=Length-data[i].scheduleInfoList.length;
                         }
                     }
                 }
-                var thead = '';
-                //遍历排班表标题栏
-                thead = '<tr><th rowspan="2">姓名</th><th rowspan="2">岗位</th>';
-                thead += str1;
-                thead += '<th colspan=11>总计:' + Length + '天</th></tr>';
-                thead += '<tr>';
-                thead += str2;
-                thead += '<th>计划工时</th><th>实际工时</th><th>结余</th>';
-                thead += '</tr>';
-                target.find("thead").html(thead);
-                //遍历排班表数据
-                var tbody = '';
+
                 for (var i = 0; i < data.length; i++) {
                     tbody += '<tr><td class="userName" tdType="' + data[i].userId + '">' + data[i].userName + '</td>';
                     tbody += '<td>' + data[i].postName + '</td>';
                     var jhgs = 0;
-                    var len = data[i].scheduleInfoList.length;
-                    if(len<Length){
-                        if(data[i].userLeave == '0'){
-                            for(var m=0;m<Length-len;m++){
-                                data[i].scheduleInfoList.push('');
-                            }
-                        }else if(data[i].userLeave == '1'){
-                           for(var m=0;m<Length-len;m++){
-                                data[i].scheduleInfoList.unshift('');
-                            } 
-                        }
-                    }
                     for (var j = 0; j < Length; j++) {
+                        var bool=true;
+                        if(data[i].scheduleInfoList[0].userLeave==1){
+                            for(var k=0;k<Length-data[i].scheduleInfoList.length&&j==0;k++){
+                                tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="' + rightMenu[j] +" "+clz+ '" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
+                            }
+                            bool=false;
+                        }
                         if(data[i].scheduleInfoList[j]!=='' && data[i].scheduleInfoList[j]){
                             var color = "";
                             var clz="";
-                            var ifLeave = data[i].scheduleInfoList[j].ifLeave;
+                            var ifLeave = 0;
                             if(ifLeave == 1){
                                 clz = 'yellow color';
                                 color = '#fffc00';
@@ -1138,8 +1122,10 @@
                                     + data[i].userId + '" data-totalAt="' + data[i].scheduleInfoList[j].totalAt + '" data-shiftId='+data[i].scheduleInfoList[j].shiftId+' data-stationArea="'
                                     + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
                         }else{
-                            tbody += '<td>--</td>';
+                            if(bool)
+                            tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="' + rightMenu[j] +" "+clz+ '" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
                         }
+
                     }
 
                     var balance = ''; 
