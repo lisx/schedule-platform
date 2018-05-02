@@ -272,7 +272,7 @@
                         <select name="detailType" id="replaceUserSelect">
                         </select>
                     </div>
-                    <div class="form_line">
+                    <!-- <div class="form_line">
                         <label>替班时间</label>
                         <div class='input-group datetimepicker'>
                             <input type='text' class="form-control" name="startAt"/>
@@ -287,7 +287,7 @@
                                 <i class="glyphicon glyphicon-calendar"></i>
                             </em>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form_line">
                         <label>备注</label>
                         <textarea name="remark"></textarea>

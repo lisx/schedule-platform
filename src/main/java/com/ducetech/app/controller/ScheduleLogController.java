@@ -231,14 +231,15 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorId(userInfo.getUserId());
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
-        String startAt = log.getStartAt();
-        String endAt = log.getEndAt();
-        if(!StringUtils.isBlank(startAt)&&!StringUtils.isBlank(endAt)) {
-            int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
-            log.setTimeAt(-gh);
-        }else{
-            return OperationResult.buildSuccessResult("替班编辑失败,请选择时间.", "error");
-        }
+//        String startAt = log.getStartAt();
+//        String endAt = log.getEndAt();
+//        if(!StringUtils.isBlank(startAt)&&!StringUtils.isBlank(endAt)) {
+//            int gh = Math.abs(DateUtil.timeToMinu(startAt) - DateUtil.timeToMinu(endAt));
+//            log.setTimeAt(-gh);
+//        }else{
+//            return OperationResult.buildSuccessResult("替班编辑失败,请选择时间.", "error");
+//        }
+        //查询之前的编辑记录清0
         ScheduleInfo scheduleInfo = scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
         List<ScheduleLog> logs=scheduleLogService.getScheduleLogByInfo(scheduleInfo.getScheduleInfoId());
         if(logs!=null){
@@ -273,7 +274,7 @@ public class ScheduleLogController extends BaseController {
                 e.printStackTrace();
             }
         }
-
+        log.setTimeAt(-scheduleInfo.getTotalAt());
         log.setUserName(scheduleInfo.getUserName());
         log.setLogType(user.getUserName()+log.getLogType()+log.getUserName());
         scheduleLogService.insertScheduleLog(log);
@@ -296,7 +297,8 @@ public class ScheduleLogController extends BaseController {
         rlog.setUserId(user.getUserId());
         rlog.setUserName(user.getUserName());
         rlog.setScheduleInfoId(replace.getScheduleInfoId());
-        rlog.setTimeAt(-rlog.getTimeAt());
+        System.out.print("|||"+replace.getTotalAt()+"|||"+rlog.getTimeAt());
+        rlog.setTimeAt(replace.getTotalAt()+rlog.getTimeAt());
         scheduleLogService.insertScheduleLog(rlog);
         replace.setIfLeave(6);
         replace.setLeaveType(rlog.getLogType());
