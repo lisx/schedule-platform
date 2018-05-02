@@ -346,6 +346,7 @@
         var stationId = $(".menu .active a").attr("data-groupId");
         var zwyId = $("select").val();
         var startAt = $("#startAt").val();
+        week=null;
         console.log("autoBtn");
         jQuery.ajax({
             type: "get",
@@ -563,7 +564,7 @@
             $(".user-table td[userId='" + userId + "']").css("color", "orange");
         }
     }
-
+    var week=null;
     function calcWeeklyTime(n) {
         if (n != null && n != undefined) {
             var timeTd = $("td[tLength]:eq(" + n + ")");
@@ -572,13 +573,31 @@
             for (var i = 0; i < works.length; i++) {
                 time += parseInt($(works[i]).attr("duration"));
             }
-            $(timeTd).text(time / 60);
+            if (week == null){
+                week = returnWeek();
+                console.log(week)
+            }
+            var time=time / 60
+            if(time>(week+week*0.1)||time<(week-week*0.1)){
+                $(timeTd).css({'background-color':'red'});
+            }
+            $(timeTd).text(time);
+
             if (time == 0) {
                 $(timeTd).html("<button class='btnDefault bgOrange autoBtn' name='btnRemoveLine' weekNumber=" + n + ">删除本行</button>")
             }
         }
     }
-
+    function returnWeek(){
+        var times = 0;
+        var length = $("[tdType=-1]").length;
+        $("div[duration]").each(function (n) {
+            times += parseInt($(this).attr("duration"));
+        });
+        var daily = times / length / 60 / 7;
+        var weekly = daily * 7;
+        return Math.round(weekly * 1000) / 1000;
+    }
     function calcAverage() {
         var times = 0;
         var length = $("[tdType=-1]").length;
