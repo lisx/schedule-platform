@@ -1086,7 +1086,7 @@
                         var bool=true;
                         if(data[i].scheduleInfoList[0].userLeave==1){
                             for(var k=0;k<Length-data[i].scheduleInfoList.length&&j==0;k++){
-                                tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="' + rightMenu[j] +" "+clz+ '" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
+                                tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
                             }
                             bool=false;
                         }
@@ -1123,7 +1123,7 @@
                                     + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
                         }else{
                             if(bool)
-                            tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="' + rightMenu[j] +" "+clz+ '" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
+                            tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
                         }
 
                     }
