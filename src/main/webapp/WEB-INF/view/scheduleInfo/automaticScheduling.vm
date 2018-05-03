@@ -579,7 +579,7 @@
             }
             var time=time / 60
             if(time>(week+week*0.1)||time<(week-week*0.1)){
-                $(timeTd).css({'background-color':'red'});
+                $(timeTd).css({'color':'red'});
             }
             $(timeTd).text(time);
 
