@@ -1093,7 +1093,7 @@
                         if(data[i].scheduleInfoList[j]!=='' && data[i].scheduleInfoList[j]){
                             var color = "";
                             var clz="";
-                            var ifLeave = 0;
+                            var ifLeave = data[i].scheduleInfoList[j].ifLeave;
                             if(ifLeave == 1){
                                 clz = 'yellow color';
                                 color = '#fffc00';

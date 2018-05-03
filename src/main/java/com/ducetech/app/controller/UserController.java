@@ -361,7 +361,7 @@ public class UserController extends BaseController {
             a.add(action);
             a.add(u.getUserCode());
             a.add(u.getUserName());
-
+            
             a.add(u.getIdCode());
             a.add(u.getOnBoardDate());
             a.add(u.getIsMarried());
