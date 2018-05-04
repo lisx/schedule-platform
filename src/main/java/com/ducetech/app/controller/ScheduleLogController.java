@@ -7,7 +7,6 @@ import com.ducetech.framework.schedule.service.SystemSechduleService;
 import com.ducetech.framework.util.DateUtil;
 import com.ducetech.framework.web.view.OperationResult;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -73,6 +71,7 @@ public class ScheduleLogController extends BaseController {
         }
         scheduleLogService.insertScheduleLog(log);
         int gh=0;
+        int nj=0;
         for(ScheduleInfo s:sis){
             s.setIfLeave(1);
             s.setLeaveType(log.getLogType());
@@ -80,6 +79,11 @@ public class ScheduleLogController extends BaseController {
             s.setLogId(log.getScheduleLogId());
             if(null!=s.getTotalAt()) {
                 gh += s.getTotalAt();
+                if(s.getTotalAt()>8*60){
+                    nj+=s.getTotalAt()-480;
+                }else{
+                    nj+=480-s.getTotalAt();
+                }
             }
             List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
             for(ScheduleLog slog:list){
@@ -88,8 +92,11 @@ public class ScheduleLogController extends BaseController {
             }
             scheduleInfoService.updateScheduleInfo(s);
         }
-        log.setTimeAt(-gh);
-
+        if(log.getDetailType().equals("年假/年")||log.getDetailType().equals("其他假/其")){
+            log.setTimeAt(nj);
+        }else {
+            log.setTimeAt(-gh);
+        }
         scheduleLogService.updateScheduleLog(log);
         return OperationResult.buildSuccessResult("假期编辑成功", "success");
     }
