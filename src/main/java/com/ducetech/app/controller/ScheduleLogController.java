@@ -71,19 +71,15 @@ public class ScheduleLogController extends BaseController {
         }
         scheduleLogService.insertScheduleLog(log);
         int gh=0;
-        int nj=0;
+        int i=0;
         for(ScheduleInfo s:sis){
+            ++i;
             s.setIfLeave(1);
             s.setLeaveType(log.getLogType());
             s.setScheduleDesc(log.getRemark());
             s.setLogId(log.getScheduleLogId());
-            if(null!=s.getTotalAt()) {
+            if (null != s.getTotalAt()) {
                 gh += s.getTotalAt();
-                if(s.getTotalAt()>8*60){
-                    nj+=s.getTotalAt()-480;
-                }else{
-                    nj+=480-s.getTotalAt();
-                }
             }
             List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
             for(ScheduleLog slog:list){
@@ -93,7 +89,7 @@ public class ScheduleLogController extends BaseController {
             scheduleInfoService.updateScheduleInfo(s);
         }
         if(log.getDetailType().equals("年假/年")||log.getDetailType().equals("其他假/其")){
-            log.setTimeAt(nj);
+            log.setTimeAt(i*480-gh);
         }else {
             log.setTimeAt(-gh);
         }
