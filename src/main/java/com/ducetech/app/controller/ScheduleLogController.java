@@ -71,6 +71,49 @@ public class ScheduleLogController extends BaseController {
         }
         scheduleLogService.insertScheduleLog(log);
         int gh=0;
+        for(ScheduleInfo s:sis){
+            s.setIfLeave(1);
+            s.setLeaveType(log.getLogType());
+            s.setScheduleDesc(log.getRemark());
+            s.setLogId(log.getScheduleLogId());
+            if (null != s.getTotalAt()) {
+                gh += s.getTotalAt();
+            }
+            List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(s.getScheduleInfoId(),log.getScheduleLogId());
+            for(ScheduleLog slog:list){
+                slog.setIfUse(1);
+                scheduleLogService.updateScheduleLog(slog);
+            }
+            scheduleInfoService.updateScheduleInfo(s);
+        }
+
+        log.setTimeAt(-gh);
+        scheduleLogService.updateScheduleLog(log);
+        return OperationResult.buildSuccessResult("假期编辑成功", "success");
+    }
+
+    /**
+     * 有薪假期编辑
+     * @param log
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/yeditHolidayForm", method = RequestMethod.POST)
+    @ResponseBody
+    public OperationResult yeditHolidayForm(ScheduleLog log, HttpServletRequest request) {
+        User userInfo = getLoginUser(request);
+        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+        log.setCreatorId(userInfo.getUserId());
+        log.setCreatorName(userInfo.getUserName());
+        log.setIfUse(0);
+        log.setLogType("有薪假期-"+log.getLogType());
+        List<ScheduleInfo> sis=scheduleInfoService.selectScheduleInfoByUser(log.getStartAt(),log.getEndAt(),log.getUserId());
+        if(null!=sis&&sis.size()>0) {
+            log.setScheduleInfoId(sis.get(0).getScheduleInfoId());
+            log.setUserName(sis.get(0).getUserName());
+        }
+        scheduleLogService.insertScheduleLog(log);
+        int gh=0;
         int i=0;
         for(ScheduleInfo s:sis){
             ++i;
@@ -88,13 +131,50 @@ public class ScheduleLogController extends BaseController {
             }
             scheduleInfoService.updateScheduleInfo(s);
         }
-        if(log.getDetailType().equals("年假/年")||log.getDetailType().equals("其他假/其")){
-            log.setTimeAt(i*480-gh);
-        }else {
-            log.setTimeAt(-gh);
-        }
+        log.setTimeAt(i*480-gh);
         scheduleLogService.updateScheduleLog(log);
-        return OperationResult.buildSuccessResult("假期编辑成功", "success");
+        List<ScheduleInfo> replaces=scheduleInfoService.selectScheduleInfoByUser(log.getStartAt(),log.getEndAt(),log.getDetailType());
+        int rgh=0;
+        ScheduleInfo replace=null;
+        for(ScheduleInfo r:replaces){
+            if(rgh==0){
+                replace=r;
+            }
+            r.setIfLeave(6);
+            r.setLeaveType(log.getLogType());
+            r.setScheduleDesc(log.getRemark());
+            r.setLogId(log.getScheduleLogId());
+            if (null != r.getTotalAt()) {
+                rgh += r.getTotalAt();
+            }
+            List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(r.getScheduleInfoId(),log.getScheduleLogId());
+            for(ScheduleLog slog:list){
+                slog.setIfUse(1);
+                scheduleLogService.updateScheduleLog(slog);
+            }
+            scheduleInfoService.updateScheduleInfo(r);
+        }
+        ScheduleLog rlog=new ScheduleLog();
+        try {
+            BeanUtils.copyProperties(rlog,log);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        User user=userService.getUserByUserId(log.getDetailType());
+        rlog.setScheduleLogId("");
+        rlog.setUserId(user.getUserId());
+        rlog.setUserName(user.getUserName());
+        rlog.setScheduleInfoId(replace.getScheduleInfoId());
+        rlog.setTimeAt(gh-rgh);
+        scheduleLogService.insertScheduleLog(rlog);
+        replace.setIfLeave(6);
+        replace.setLeaveType(rlog.getLogType());
+        replace.setScheduleDesc(rlog.getRemark());
+        replace.setLogId(rlog.getScheduleLogId());
+        scheduleInfoService.updateScheduleInfo(replace);
+        return OperationResult.buildSuccessResult("有薪假期编辑成功", "success");
     }
 
     /**

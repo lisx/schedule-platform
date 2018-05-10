@@ -6,6 +6,7 @@
     #parse('common/path-css.vm')
     #parse('common/path-js.vm')
     <script src="$path/static/js/scheduleForm.js" type="text/javascript"></script>
+
     <style>
         .status{
             left:0;
@@ -87,42 +88,7 @@
         <a class="btnDefault bgBlue queryBtn" onclick="queryBtn()" href="javascript:;">查询</a>
         <a class="btnDefault" href="javascript:;" onclick="myPrint()">导出</a>
         <a class="btnDefault" href="javascript:;" onclick="mySinglePrint()">导出个人</a>
-        <script>
-            $("#stationAreaQuery").change(function () {
-                var _oneId = this.value;
-                var two_obj = $('#stationQuery');
-                var _html = "<option value=''>请选择</option>";
-                $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
-                    if (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var obj = data[i];
-                            _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
-                        }
-                    }
-                    two_obj.html(_html);
-                });
-            }).change();
 
-
-
-            function myPrint() {
-                Alert('success', "数据导出中请稍候")
-                console.log("打印方法开始:");
-                location.href = "$path/printXiZhiMenSchedule?startAt=" + $("#startAt").val()
-                        + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val()
-                        + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" 
-                        + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
-                console.log("打印方法结束:");
-            }
-            function mySinglePrint() {
-                Alert('success', "数据导出中请稍候")
-                if(!$("#stationQuery").val()){
-                    Alert("导出失败","未选择站点");
-                    return ;
-                }
-                location.href = "$path/printSingleXiZhiMenSchedule?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
-            }
-        </script>
     </div>
     <div class="clear"></div>
 </div>
@@ -193,24 +159,11 @@
         </div>
     </div>
 </div>
-<!-- 表格 end -->
-<div class="mask"><img src="$path/static/img/loading.gif"></div>
-<!-- 备注信息 -->
-<div id="remarks" class="hidden">
-    <p class="head">旷工</p>
-    <p class="con">2017年4月11日</p>
-    <p class="con">备注：因个人原因请假一天</p>
-    <ul class="editRecord">
-        <li>
-            <em></em>
-            <p>2017-4-11 14：23：32</p>
-            <p>曹骏一对此条状态进行了创建</p>
-        </li>
-    </ul>
-</div>
+
 <!-- 右键菜单 -->
 <div id="rightMenu" class="hidden">
     <a href="#editHoliday" data-toggle="modal" data-target="#editHoliday">假期编辑</a>
+    <a href="#yeditHoliday" onclick="yinitReplaceShift()" data-toggle="modal" data-target="#yeditHoliday">有薪假期编辑</a>
     <a href="#shiftChange" data-toggle="modal" data-target="#shiftChange">班次变更</a>
     <a href="#provisionalDisposition" data-toggle="modal" data-target="#provisionalDisposition">临时安排</a>
     <a href="#minersAbsence" data-toggle="modal" data-target="#minersAbsence">旷工缺勤</a>
@@ -219,320 +172,6 @@
     <a href="#leaveShift" onclick="initReplaceShift()" data-toggle="modal" data-target="#leaveShift">调离</a>
     <a class="cancelHandle" href="javascript:;">撤销</a>
 </div>
-<!--  人员信息 -->
-<div class="userInfo">
-    <table>
-        <tr>
-            <th>电话</th>
-            <th>地址</th>
-        </tr>
-        <tr class="userInfoTarget">
-            <td>--</td>
-            <td>--</td>
-        </tr>
-    </table>
-</div>
-
-
-<!-- 替班 -->
-<div class="modal" id="replaceShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog " role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
-                <h4 class="modal-title">替班</h4>
-            </div>
-            <div class="modal-body">
-                <input id="minDate" type="hidden">
-                <form class="form-container" id="replaceShiftForm">
-                    <div class="form_line">
-                        <label>站区</label>
-                        <select name="stationArea" id="rsStationAreaQuery">
-                            <option value="">请选择</option>
-                            #foreach($group in $!groups)
-                                <option value="$!group.groupCode">$!group.groupName</option>
-                            #end
-                        </select>
-                    </div>
-                    <div class="form_line">
-                        <label>站点</label>
-                        <select name="station" id="rsStationQuery">
-                            <option value="">请选择</option>
-                        </select>
-                    </div>
-                    <div class="form_line">
-                        <input name="userId" type="hidden">
-                        <input name="scheduleInfoId" type="hidden">
-                        <input name="logId" id="logId" type="hidden">
-                        <input name="stationArea" id="rsStationArea" type="hidden">
-                        <input name="station" id="rsStation"  type="hidden">
-                        <input name="groupName" id="rsGroupName"  type="hidden">
-                        <input name="logType" type="hidden" value="替班">
-                        <label>替班人员</label>
-                        <select name="detailType" id="replaceUserSelect">
-                        </select>
-                    </div>
-                    <!-- <div class="form_line">
-                        <label>替班时间</label>
-                        <div class='input-group datetimepicker'>
-                            <input type='text' class="form-control" name="startAt"/>
-                            <em class="input-group-addon">
-                                <i class="glyphicon glyphicon-calendar"></i>
-                            </em>
-                        </div>
-                        <span>至</span>
-                        <div class='input-group datetimepicker'>
-                            <input type='text' name="endAt" class="form-control"/>
-                            <em class="input-group-addon">
-                                <i class="glyphicon glyphicon-calendar"></i>
-                            </em>
-                        </div>
-                    </div> -->
-                    <div class="form_line">
-                        <label>备注</label>
-                        <textarea name="remark"></textarea>
-                    </div>
-                    <div class="clear"></div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-confirm" href="javascript:;" onclick="editReplaceShift()">替班</a>
-                <a class="btn btn-red" href="javascript:;" onclick="editReplaceShiftDel()">取消</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 调离 -->
-<div class="modal" id="leaveShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog " role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
-                <h4 class="modal-title">调离</h4>
-            </div>
-            <div class="modal-body">
-                <input id="minDate" type="hidden">
-                <form class="form-container" id="leaveShiftForm">
-                    <div class="form_line">
-                        <label>站区</label>
-                        <select name="stationArea" id="leStationAreaQuery">
-                            <option value="">请选择</option>
-                            #foreach($group in $!groups)
-                                <option value="$!group.groupCode">$!group.groupName</option>
-                            #end
-                        </select>
-                    </div>
-                    <div class="form_line">
-                        <label>站点</label>
-                        <select name="station" id="leStationQuery">
-                            <option value="">请选择</option>
-                        </select>
-                    </div>
-                    <div class="form_line hidden">
-                        <label>岗位</label>
-                        <input type="hidden" id="lePostName" value="站务员">
-                        <!-- <select name="postName" id="lePostName">
-                            <option value="站务员">站务员</option>
-                            <option value="替班员">替班员</option>
-                        </select> -->
-                    </div>
-                    <div class="form_line">
-                        <input name="userId" type="hidden">
-                        <input name="scheduleInfoId" type="hidden">
-                        <input name="logId" id="logId" type="hidden">
-                        <input name="stationArea" id="leStationArea" type="hidden">
-                        <input name="station" id="leStation"  type="hidden">
-                        <input name="groupName" id="leGroupName"  type="hidden">
-                        <input name="logType" type="hidden" value="调离">
-                        <label>上岗人员</label>
-                        <select name="detailType" id="leplaceUserSelect">
-                        </select>
-                    </div>
-                    <div class="form_line">
-                        <label>备注</label>
-                        <textarea name="remark"></textarea>
-                    </div>
-                    <div class="clear"></div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-confirm" href="javascript:;" onclick="leaveShift()">调离</a>
-                <a class="btn btn-red" href="javascript:;" onclick="editLeaveShiftDel()">取消</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    $("#rsStationAreaQuery").change(function () {
-        var _oneId = this.value;
-        var two_obj = $('#rsStationQuery');
-        var _html = "<option value=''>请选择</option>";
-        $.ajaxSettings.async = false;
-        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
-            if (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var obj = data[i];
-                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
-                }
-            }
-            two_obj.html(_html);
-        });
-        $.ajaxSettings.async = true;
-    });
-
-    $("#rsStationQuery").change(function () {
-        var _oneId = this.value;
-        var _station = $("#rsStationAreaQuery").val();
-        var two_obj = $('#replaceUserSelect');
-        var _html = "<option value=''>请选择</option>";
-        $.ajaxSettings.async = false;
-        $.getJSON('$path/getPrepareUser', {stationArea: _station,station: _oneId}, function (data) {
-            if (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var obj = data[i];
-                    _html = _html + '<option value="' + data[i].userId + '">工号:'+ data[i].userCode + " 姓名:" + data[i].userName +'</option>';
-                }
-            }
-            two_obj.html(_html);
-        });
-        $.ajaxSettings.async = true;
-    });
-
-    //初始化替班人员和站区站点
-    function initReplaceShift() {
-        var rsStationArea = $('#rsStationArea').val();
-        var rsStation = $('#rsStation').val();
-        var rsGroupName = $('rsGroupName').val();
-
-        var rsStationAreaQuery = $("#rsStationAreaQuery");
-        rsStationAreaQuery.val(rsStationArea);
-        rsStationAreaQuery.change();
-        var rsStationQuery = $("#rsStationQuery");
-        rsStationQuery.val(rsStation);
-        rsStationQuery.change();
-    }
-    //初始化调离人员和站区站点
-    function initLeaveShift() {
-        var leStationArea = $('#leStationArea').val();
-        var leStation = $('#leStation').val();
-        var leGroupName = $('leGroupName').val();
-
-        var leStationAreaQuery = $("#leStationAreaQuery");
-        leStationAreaQuery.val(leStationArea);
-        leStationAreaQuery.change();
-        var leStationQuery = $("#leStationQuery");
-        leStationQuery.val(leStation);
-        leStationQuery.change();
-    }
-
-    $("#leStationAreaQuery").change(function () {
-        var _oneId = this.value;
-        var two_obj = $('#leStationQuery');
-        var _html = "<option value=''>请选择</option>";
-        $.ajaxSettings.async = false;
-        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
-            if (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var obj = data[i];
-                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
-                }
-            }
-            two_obj.html(_html);
-        });
-        $.ajaxSettings.async = true;
-    });
-
-    $("#leStationQuery").change(function () {
-        var startAt = '';
-        var endAt = '';
-        if($('#tab1').hasClass('active')){
-            startAt = $('#startAt').val();
-            endAt = $('#endAt').val();
-        }else{
-            var date = $('#monthDate').val();
-            var year = date.substring(0,4);
-            var month = date.substring(5);
-            var days = countDays(year,month);
-            startAt = year+'-'+month+'-1';
-            endAt = year+'-'+month+'-'+days;
-        }
-
-        console.log(startAt);
-        console.log(endAt);
-
-
-        var _oneId = this.value;
-        var _station = $("#leStationAreaQuery").val();
-        var two_obj = $('#leplaceUserSelect');
-        var _postName = $('#lePostName').val();
-        var _html = "<option value=''>请选择</option>";
-        $.ajaxSettings.async = false;
-        $.getJSON('$path/getLeaveUser', {stationArea: _station,station: _oneId,postName:_postName,startAt: startAt,endAt: endAt}, function (data) {
-            if (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var obj = data[i];
-                    _html = _html + '<option value="' + data[i].userId + '">工号:'+ data[i].userCode + " 姓名:" + data[i].userName +'</option>';
-                }
-            }
-            two_obj.html(_html);
-        });
-        $.ajaxSettings.async = true;
-    });
-
-    //调离
-    function leaveShift(){
-        jQuery.ajax({
-            async: false,
-            type: "post",
-            url: "$path/editLeaveShiftForm?" + $("#leaveShiftForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#leaveShift").modal('hide');
-                queryBtn();
-            }
-        });
-    }
-
-    //换班
-    function editReplaceShift() {
-        jQuery.ajax({
-            async: false,
-            type: "post",
-            url: "$path/editReplaceShiftForm?" + $("#replaceShiftForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#replaceShift").modal('hide');
-                queryBtn();
-            }
-        });
-    }
-
-    //取消
-    function editReplaceShiftDel() {
-        $("#rightMenu").addClass("hidden");
-        $("#replaceShift").modal('hide');
-    }
-    //调离取消
-    function editLeaveShiftDel() {
-        $("#rightMenu").addClass("hidden");
-        $("#leaveShift").modal('hide');
-    }
-</script>
-
 
 <!-- 假期编辑 -->
 <div class="modal" id="editHoliday" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
@@ -567,8 +206,6 @@
                             <option>出差假/差</option>
                             <option>迟到/迟</option>
                             <option>早退/早退</option>
-                            <option>年假/年</option>
-                            <option>其他假/其</option>
                             <option>调休/调</option>
                         </select>
                     </div>
@@ -598,68 +235,84 @@
             <div class="modal-footer">
                 <a class="btn btn-confirm" href="javascript:;" onclick="editHoliday()">假期上报</a>
                 <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
-                <!-- <a class="btn btn-red" href="javascript:;" onclick="editHolidayDel()">撤销假期</a> -->
             </div>
         </div>
     </div>
 </div>
-<script>
-    function editHoliday() {
-        jQuery.ajax({
-            async: false,
-            type: "post",
-            url: "$path/editHolidayForm?" + $("#editHolidayForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#editHoliday").modal('hide');
-                queryBtn();
-            }
-        });
-    }
-    function editHolidayDel() {
-        jQuery.ajax({
-            async: false,
-            type: "delete",
-            url: "$path/editHolidayFormRevoke?" + $("#editHolidayForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#editHoliday").modal('hide');
-                queryBtn();
-            }
-        });
-    }
-    //班次变更
-    function shiftChange() {
-        jQuery.ajax({
-            async: false,
-            type: "post",
-            url: "$path/shiftChangeForm?" + $("#shiftChangeForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#shiftChange").modal('hide');
-                queryBtn();
-            }
-        });
-    }
-</script>
+<!-- 有薪假期编辑 -->
+<div class="modal" id="yeditHoliday" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">有薪假期编辑</h4>
+            </div>
+            <div class="modal-body">
+                <input id="minDate" type="hidden">
+                <form class="form-container" id="yeditHolidayForm">
+                    <div class="form_line">
+                        <input name="userId" type="hidden">
+                        <input name="scheduleInfoId" type="hidden">
+                        <input name="logId" id="logId" type="hidden">
+                        <label>假期类型</label>
+                        <select name="logType">
+                            <option>年假/年</option>
+                            <option>其他假/其</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>假期时间</label>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' class="form-control" name="startAt"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                        <span>至</span>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' name="endAt" class="form-control"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                    </div>
+                    <div class="form_line">
+                        <label>站区</label>
+                        <select name="stationArea" id="yrsStationAreaQuery">
+                            <option value="">请选择</option>
+                            #foreach($group in $!groups)
+                                <option value="$!group.groupCode">$!group.groupName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>站点</label>
+                        <select name="station" id="yrsStationQuery">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <input name="stationArea" id="yrsStationArea" type="hidden">
+                        <input name="station" id="yrsStation"  type="hidden">
+                        <input name="groupName" id="yrsGroupName"  type="hidden">
+                        <label>替班人员</label>
+                        <select name="detailType" id="yreplaceUserSelect">
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="yeditHoliday()">假期上报</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- 班次变更 -->
 <div class="modal" id="shiftChange" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog " role="document">
@@ -696,26 +349,6 @@
     </div>
 </div>
 <!-- 临时安排 -->
-<script>
-    function provisionalDisposition() {
-        jQuery.ajax({
-            async: false,
-            type: "post",
-            url: "$path/provisionalDispositionForm?" + $("#provisionalDispositionForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#provisionalDisposition").modal('hide');
-                queryBtn();
-            }
-        });
-    }
-</script>
 <div class="modal" id="provisionalDisposition" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog " role="document">
         <div class="modal-content">
@@ -764,44 +397,7 @@
         </div>
     </div>
 </div>
-<script>
-    function mineleAbsenceForm() {
-        jQuery.ajax({
-            async: false,
-            type: "post",
-            url: "$path/mineleAbsenceForm?" + $("#minersAbsenceForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#minersAbsence").modal("hide");
-                queryBtn();
-            }
-        });
-    }
-    function minersAbsenceFormRevoke() {
-        jQuery.ajax({
-            async: false,
-            type: "delete",
-            url: "$path/minersAbsenceForm?" + $("#minersAbsenceForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#minersAbsence").modal("hidden");
-                queryBtn();
-            }
-        });
-    }
-</script>
+
 <!-- 旷工缺勤 -->
 <div class="modal" id="minersAbsence" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog " role="document">
@@ -838,49 +434,11 @@
             <div class="modal-footer">
                 <a class="btn btn-confirm" href="javascript:;" onclick="minersAbsenceForm()">确定</a>
                 <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
-                <!-- <a class="btn btn-red" href="javascript:;" onclick="minersAbsenceFormRevoke()">撤销缺勤</a> -->
             </div>
         </div>
     </div>
 </div>
-<script>
-    function overtimeWork() {
-        jQuery.ajax({
-            async: false,
-            type: "post",
-            url: "$path/overtimeWorkForm?" + $("#overtimeWorkForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#overtimeWork").modal("hide");
-                queryBtn();
-            }
-        });
-    }
-    function overtimeWorkRevoke() {
-        jQuery.ajax({
-            async: false,
-            type: "delete",
-            url: "$path/overtimeWorkForm?" + $("#overtimeWorkForm").serialize(),
-            data: null,
-            dataType: "json",
-            error: function () {
-                Alert('fail', "网络错误");
-            },
-            success: function (result) {
-                Alert(result.data, result.message);
-                $("#rightMenu").addClass("hidden");
-                $("#overtimeWork").modal("hidden");
-                queryBtn();
-            }
-        });
-    }
-</script>
+
 <!-- 补班加班 -->
 <div class="modal" id="overtimeWork" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog " role="document">
@@ -921,11 +479,156 @@
         </div>
     </div>
 </div>
+<!-- 替班 -->
+<div class="modal" id="replaceShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">替班</h4>
+            </div>
+            <div class="modal-body">
+                <input id="minDate" type="hidden">
+                <form class="form-container" id="replaceShiftForm">
+                    <div class="form_line">
+                        <label>站区</label>
+                        <select name="stationArea" id="rsStationAreaQuery">
+                            <option value="">请选择</option>
+                            #foreach($group in $!groups)
+                                <option value="$!group.groupCode">$!group.groupName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>站点</label>
+                        <select name="station" id="rsStationQuery">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <input name="userId" type="hidden">
+                        <input name="scheduleInfoId" type="hidden">
+                        <input name="logId" id="logId" type="hidden">
+                        <input name="stationArea" id="rsStationArea" type="hidden">
+                        <input name="station" id="rsStation"  type="hidden">
+                        <input name="groupName" id="rsGroupName"  type="hidden">
+                        <input name="logType" type="hidden" value="替班">
+                        <label>替班人员</label>
+                        <select name="detailType" id="replaceUserSelect">
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="editReplaceShift()">替班</a>
+                <a class="btn btn-red" href="javascript:;" onclick="editReplaceShiftDel()">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- 调离 -->
+<div class="modal" id="leaveShift" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">调离</h4>
+            </div>
+            <div class="modal-body">
+                <input id="minDate" type="hidden">
+                <form class="form-container" id="leaveShiftForm">
+                    <div class="form_line">
+                        <label>站区</label>
+                        <select name="stationArea" id="leStationAreaQuery">
+                            <option value="">请选择</option>
+                            #foreach($group in $!groups)
+                                <option value="$!group.groupCode">$!group.groupName</option>
+                            #end
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>站点</label>
+                        <select name="station" id="leStationQuery">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form_line hidden">
+                        <label>岗位</label>
+                        <input type="hidden" id="lePostName" value="站务员">
+                    </div>
+                    <div class="form_line">
+                        <input name="userId" type="hidden">
+                        <input name="scheduleInfoId" type="hidden">
+                        <input name="logId" id="logId" type="hidden">
+                        <input name="stationArea" id="leStationArea" type="hidden">
+                        <input name="station" id="leStation"  type="hidden">
+                        <input name="groupName" id="leGroupName"  type="hidden">
+                        <input name="logType" type="hidden" value="调离">
+                        <label>上岗人员</label>
+                        <select name="detailType" id="leplaceUserSelect">
+                        </select>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="leaveShift()">调离</a>
+                <a class="btn btn-red" href="javascript:;" onclick="editLeaveShiftDel()">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    /*站区站点关联查询*/
+    $("#stationAreaQuery").change(function () {
+        var _oneId = this.value;
+        var two_obj = $('#stationQuery');
+        var _html = "<option value=''>请选择</option>";
+        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                }
+            }
+            two_obj.html(_html);
+        });
+    }).change();
+    //        打印
+    function myPrint() {
+        Alert('success', "数据导出中请稍候")
+        console.log("打印方法开始:");
+        location.href = "$path/printXiZhiMenSchedule?startAt=" + $("#startAt").val()
+                + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val()
+                + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station="
+                + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
+        console.log("打印方法结束:");
+    }
+    //        打印个人
+    function mySinglePrint() {
+        Alert('success', "数据导出中请稍候")
+        if(!$("#stationQuery").val()){
+            Alert("导出失败","未选择站点");
+            return ;
+        }
+        location.href = "$path/printSingleXiZhiMenSchedule?startAt=" + $("#startAt").val() + "&endAt=" + $("#endAt").val() + "&monthDate=" + $("#monthDate").val() + "&queryData=" + $("#queryData").val() + "&scheduleType=0" + "&station=" + $("#stationQuery").val() + "&stationArea=" + $("#stationAreaQuery").val();
+    }
+</script>
+#*初始化日期*#
 <script>
     $(function () {
         zbftn();
-        //初始化日期控件
+        //假期初始化日期控件
         $("#editHoliday .datetimepicker").datetimepicker({
             format: "YYYY-M-D",
             date: new Date(),
@@ -934,7 +637,15 @@
         $("#editHoliday .datetimepicker").eq(0).find("input").blur(function () {
             $("#editHoliday .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
         })
-
+        //有薪假期初始化日期控件
+        $("#yeditHoliday .datetimepicker").datetimepicker({
+            format: "YYYY-M-D",
+            date: new Date(),
+            useCurrent: true
+        });
+        $("#yeditHoliday .datetimepicker").eq(0).find("input").blur(function () {
+            $("#yeditHoliday .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
+        })
         //初始化日期控件
         $("#replaceShift .datetimepicker").datetimepicker({
             format: "HH:mm",
@@ -969,6 +680,7 @@
         $("#endAt").val(endAt);
     }
 </script>
+#*查询及撤销*#
 <script>
     zbftn();
     function zbftn() {
@@ -1123,12 +835,12 @@
                                     + data[i].stationArea + '" data-station="' + data[i].station + '" data-date="' + arr[j] + '" > ' + data[i].scheduleInfoList[j].shiftName + '</td>';
                         }else{
                             if(bool)
-                            tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
+                                tbody += '<td style="position: relative" tdType=shift serialNumber=" " shiftName="" colorStyle="" class="" data-logId="" colorCode="" data-scheduleInfoId="" data-userId="" data-totalAt="' + 0+ '" data-shiftId=data-stationArea="" data-station="" data-date=""</td>';
                         }
 
                     }
 
-                    var balance = ''; 
+                    var balance = '';
                     if(data[i].actualHours > 0){
                         balance = 'green';
                     } else if (data[i].actualHours < 0) {
@@ -1212,10 +924,349 @@
     }).on('mouseout', '.scheduleForm tbody tr .userName',function(){
         $('.userInfo').hide();
     })
-    //撤销操作
+
+</script>
+#*假期编辑*#
+<script>
+    function editHoliday() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/editHolidayForm?" + $("#editHolidayForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#editHoliday").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+</script>
+#*有薪假期编辑*#
+<script>
+    function yeditHoliday() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/yeditHolidayForm?" + $("#yeditHolidayForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#yeditHoliday").modal('hide');
+                queryBtn();
+            }
+        });
+    };
+    $("#yrsStationAreaQuery").change(function () {
+        var _oneId = this.value;
+        var two_obj = $('#yrsStationQuery');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    $("#yrsStationQuery").change(function () {
+        var _oneId = this.value;
+        var _station = $("#yrsStationAreaQuery").val();
+        var two_obj = $('#yreplaceUserSelect');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/getPrepareUser', {stationArea: _station,station: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + '<option value="' + data[i].userId + '">工号:'+ data[i].userCode + " 姓名:" + data[i].userName +'</option>';
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    //初始化有薪假替班人员和站区站点
+    function yinitReplaceShift() {
+        var rsStationArea = $('#yrsStationArea').val();
+        var rsStation = $('#yrsStation').val();
+        var rsGroupName = $('yrsGroupName').val();
+
+        var rsStationAreaQuery = $("#yrsStationAreaQuery");
+        rsStationAreaQuery.val(rsStationArea);
+        rsStationAreaQuery.change();
+        var rsStationQuery = $("#yrsStationQuery");
+        rsStationQuery.val(rsStation);
+        rsStationQuery.change();
+    }
+</script>
+#*班次变更*#
+<script>
+    function shiftChange() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/shiftChangeForm?" + $("#shiftChangeForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#shiftChange").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+</script>
+#*临时安排*#
+<script>
+    function provisionalDisposition() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/provisionalDispositionForm?" + $("#provisionalDispositionForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#provisionalDisposition").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+</script>
+#*旷工缺勤*#
+<script>
+    function minersAbsenceForm() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/minersAbsenceForm?" + $("#minersAbsenceForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#minersAbsence").modal("hide");
+                queryBtn();
+            }
+        });
+    }
+</script>
+#*补班加班*#
+<script>
+    function overtimeWork() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/overtimeWorkForm?" + $("#overtimeWorkForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#overtimeWork").modal("hide");
+                queryBtn();
+            }
+        });
+    }
+</script>
+#*替班*#
+<script>
+    function editReplaceShift() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/editReplaceShiftForm?" + $("#replaceShiftForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#replaceShift").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+    //取消
+    function editReplaceShiftDel() {
+        $("#rightMenu").addClass("hidden");
+        $("#replaceShift").modal('hide');
+    }
+    $("#rsStationAreaQuery").change(function () {
+        var _oneId = this.value;
+        var two_obj = $('#rsStationQuery');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    $("#rsStationQuery").change(function () {
+        var _oneId = this.value;
+        var _station = $("#rsStationAreaQuery").val();
+        var two_obj = $('#replaceUserSelect');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/getPrepareUser', {stationArea: _station,station: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + '<option value="' + data[i].userId + '">工号:'+ data[i].userCode + " 姓名:" + data[i].userName +'</option>';
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    //初始化替班人员和站区站点
+    function initReplaceShift() {
+        var rsStationArea = $('#rsStationArea').val();
+        var rsStation = $('#rsStation').val();
+        var rsGroupName = $('rsGroupName').val();
+
+        var rsStationAreaQuery = $("#rsStationAreaQuery");
+        rsStationAreaQuery.val(rsStationArea);
+        rsStationAreaQuery.change();
+        var rsStationQuery = $("#rsStationQuery");
+        rsStationQuery.val(rsStation);
+        rsStationQuery.change();
+    }
+</script>
+#*调离*#
+<script>
+    //调离
+    function leaveShift(){
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/editLeaveShiftForm?" + $("#leaveShiftForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#leaveShift").modal('hide');
+                queryBtn();
+            }
+        });
+    }
+    //调离取消
+    function editLeaveShiftDel() {
+        $("#rightMenu").addClass("hidden");
+        $("#leaveShift").modal('hide');
+    }
+    //初始化调离人员和站区站点
+    function initLeaveShift() {
+        var leStationArea = $('#leStationArea').val();
+        var leStation = $('#leStation').val();
+        var leGroupName = $('leGroupName').val();
+
+        var leStationAreaQuery = $("#leStationAreaQuery");
+        leStationAreaQuery.val(leStationArea);
+        leStationAreaQuery.change();
+        var leStationQuery = $("#leStationQuery");
+        leStationQuery.val(leStation);
+        leStationQuery.change();
+    }
+
+    $("#leStationAreaQuery").change(function () {
+        var _oneId = this.value;
+        var two_obj = $('#leStationQuery');
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/group/querySubNodes', {oneCode: _oneId}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + "<option value='" + obj.groupCode + "'>" + obj.groupName + "</option>";
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+
+    $("#leStationQuery").change(function () {
+        var startAt = '';
+        var endAt = '';
+        if($('#tab1').hasClass('active')){
+            startAt = $('#startAt').val();
+            endAt = $('#endAt').val();
+        }else{
+            var date = $('#monthDate').val();
+            var year = date.substring(0,4);
+            var month = date.substring(5);
+            var days = countDays(year,month);
+            startAt = year+'-'+month+'-1';
+            endAt = year+'-'+month+'-'+days;
+        }
+        var _oneId = this.value;
+        var _station = $("#leStationAreaQuery").val();
+        var two_obj = $('#leplaceUserSelect');
+        var _postName = $('#lePostName').val();
+        var _html = "<option value=''>请选择</option>";
+        $.ajaxSettings.async = false;
+        $.getJSON('$path/getLeaveUser', {stationArea: _station,station: _oneId,postName:_postName,startAt: startAt,endAt: endAt}, function (data) {
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    _html = _html + '<option value="' + data[i].userId + '">工号:'+ data[i].userCode + " 姓名:" + data[i].userName +'</option>';
+                }
+            }
+            two_obj.html(_html);
+        });
+        $.ajaxSettings.async = true;
+    });
+</script>
+#*撤销操作*#
+<script>
     $('.cancelHandle').click(function(){
         var infoId = window.localStorage.getItem('infoId');
-        console.log("|||||"+infoId);
         $.ajax({
             type: 'delete',
             url: '$path/formRevoke?infoId='+infoId,

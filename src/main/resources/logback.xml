@@ -10,10 +10,10 @@
 	</appender>
 
 
-	<logger name="druid.sql" level="DEBUG" additivity="false">
+	<logger name="druid.sql" level="INFO" additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
-	<logger name="com.ducetech" level="DEBUG" additivity="false">
+	<logger name="com.ducetech" level="INFO" additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
 
