@@ -106,7 +106,9 @@ public class ScheduleLogController extends BaseController {
         log.setCreatorId(userInfo.getUserId());
         log.setCreatorName(userInfo.getUserName());
         log.setIfUse(0);
-        log.setLogType("有薪假期-"+log.getLogType());
+        User user=userService.getUserByUserId(log.getDetailType());
+        User you=userService.getUserByUserId(log.getUserId());
+        log.setLogType(you.getUserName()+"有薪假期-"+log.getLogType()+"|"+user.getUserName()+"替班");
         List<ScheduleInfo> sis=scheduleInfoService.selectScheduleInfoByUser(log.getStartAt(),log.getEndAt(),log.getUserId());
         if(null!=sis&&sis.size()>0) {
             log.setScheduleInfoId(sis.get(0).getScheduleInfoId());
@@ -162,7 +164,7 @@ public class ScheduleLogController extends BaseController {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        User user=userService.getUserByUserId(log.getDetailType());
+
         rlog.setScheduleLogId("");
         rlog.setUserId(user.getUserId());
         rlog.setUserName(user.getUserName());

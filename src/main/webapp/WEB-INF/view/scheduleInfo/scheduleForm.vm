@@ -159,7 +159,21 @@
         </div>
     </div>
 </div>
-
+<!-- 表格 end -->
+<div class="mask"><img src="$path/static/img/loading.gif"></div>
+<!-- 备注信息 -->
+<div id="remarks" class="hidden">
+    <p class="head">旷工</p>
+    <p class="con">2017年4月11日</p>
+    <p class="con">备注：因个人原因请假一天</p>
+    <ul class="editRecord">
+        <li>
+            <em></em>
+            <p>2017-4-11 14：23：32</p>
+            <p>曹骏一对此条状态进行了创建</p>
+        </li>
+    </ul>
+</div>
 <!-- 右键菜单 -->
 <div id="rightMenu" class="hidden">
     <a href="#editHoliday" data-toggle="modal" data-target="#editHoliday">假期编辑</a>
