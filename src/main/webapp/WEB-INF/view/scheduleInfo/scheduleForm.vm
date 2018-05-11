@@ -177,6 +177,7 @@
 <!-- 右键菜单 -->
 <div id="rightMenu" class="hidden">
     <a href="#editHoliday" data-toggle="modal" data-target="#editHoliday">假期编辑</a>
+    <a href="#lingXing" data-toggle="modal" data-target="#lingXing">零星假编辑</a>
     <a href="#yeditHoliday" onclick="yinitReplaceShift()" data-toggle="modal" data-target="#yeditHoliday">有薪假期编辑</a>
     <a href="#shiftChange" data-toggle="modal" data-target="#shiftChange">班次变更</a>
     <a href="#provisionalDisposition" data-toggle="modal" data-target="#provisionalDisposition">临时安排</a>
@@ -248,6 +249,53 @@
             </div>
             <div class="modal-footer">
                 <a class="btn btn-confirm" href="javascript:;" onclick="editHoliday()">假期上报</a>
+                <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 零星假期 -->
+<div class="modal" id="lingXing" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" class="close icon-1" data-dismiss="modal" aria-label="Close"></a>
+                <h4 class="modal-title">零星假期编辑</h4>
+            </div>
+            <div class="modal-body">
+                <input id="minDate" type="hidden">
+                <form class="form-container" id="lingXingForm">
+                    <div class="form_line">
+                        <input name="userId" type="hidden">
+                        <input name="scheduleInfoId" type="hidden">
+                        <input name="logId" id="logId" type="hidden">
+                        <input name="logType" value="零星假" type="hidden">
+                    </div>
+                    <div class="form_line">
+                        <label>假期时间</label>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' class="form-control" name="startAt"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                        <span>至</span>
+                        <div class='input-group datetimepicker'>
+                            <input type='text' name="endAt" class="form-control"/>
+                            <em class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </em>
+                        </div>
+                    </div>
+                    <div class="form_line">
+                        <label>备注</label>
+                        <textarea name="remark"></textarea>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-confirm" href="javascript:;" onclick="lingXing()">假期上报</a>
                 <button class="btn btn-cancel" href="javascript:;" data-dismiss="modal" aria-label="Close">取消</button>
             </div>
         </div>
@@ -651,6 +699,15 @@
         $("#editHoliday .datetimepicker").eq(0).find("input").blur(function () {
             $("#editHoliday .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
         })
+        //零星假期初始化日期控件
+        $("#lingXing .datetimepicker").datetimepicker({
+            format: "HH",
+            date: new Date(),
+            useCurrent: true
+        });
+        $("#lingXing .datetimepicker").eq(0).find("input").blur(function () {
+            $("#lingXing .datetimepicker").eq(1).data("DateTimePicker").minDate($(this).val());
+        })
         //有薪假期初始化日期控件
         $("#yeditHoliday .datetimepicker").datetimepicker({
             format: "YYYY-M-D",
@@ -1028,6 +1085,27 @@
         var rsStationQuery = $("#yrsStationQuery");
         rsStationQuery.val(rsStation);
         rsStationQuery.change();
+    }
+</script>
+#*零星假*#
+<script>
+    function lingXing() {
+        jQuery.ajax({
+            async: false,
+            type: "post",
+            url: "$path/lingXingForm?" + $("#lingXingForm").serialize(),
+            data: null,
+            dataType: "json",
+            error: function () {
+                Alert('fail', "网络错误");
+            },
+            success: function (result) {
+                Alert(result.data, result.message);
+                $("#rightMenu").addClass("hidden");
+                $("#lingXing").modal('hide');
+                queryBtn();
+            }
+        });
     }
 </script>
 #*班次变更*#

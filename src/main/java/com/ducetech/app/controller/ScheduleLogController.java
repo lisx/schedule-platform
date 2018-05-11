@@ -7,6 +7,7 @@ import com.ducetech.framework.schedule.service.SystemSechduleService;
 import com.ducetech.framework.util.DateUtil;
 import com.ducetech.framework.web.view.OperationResult;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,44 @@ public class ScheduleLogController extends BaseController {
         log.setTimeAt(-gh);
         scheduleLogService.updateScheduleLog(log);
         return OperationResult.buildSuccessResult("假期编辑成功", "success");
+    }
+
+    /**
+     * 零星假期编辑
+     * @param log
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/lingXingForm", method = RequestMethod.POST)
+    @ResponseBody
+    public OperationResult lingXingForm(ScheduleLog log, HttpServletRequest request) {
+        User userInfo = getLoginUser(request);
+        log.setCreatedAt(DateUtil.formatDate(new Date(), DateUtil.DEFAULT_TIME_FORMAT));
+        log.setCreatorId(userInfo.getUserId());
+        log.setCreatorName(userInfo.getUserName());
+        log.setIfUse(0);
+        log.setLogType("假期编辑-"+log.getLogType());
+        ScheduleInfo info=scheduleInfoService.selectScheduleInfoById(log.getScheduleInfoId());
+        int startAt = Integer.parseInt(log.getStartAt());
+        int endAt = Integer.parseInt(log.getEndAt());
+        if(startAt!=0&&endAt>startAt) {
+            int gh = Math.abs( endAt-startAt);
+            log.setTimeAt(-gh*60);
+        }else{
+            return OperationResult.buildSuccessResult("零星假编辑失败,请选择时间.", "error");
+        }
+        scheduleLogService.insertScheduleLog(log);
+        info.setIfLeave(1);
+        info.setLeaveType(log.getLogType());
+        info.setScheduleDesc(log.getRemark());
+        info.setLogId(log.getScheduleLogId());
+        List<ScheduleLog> list=scheduleLogService.getScheduleLogByInfoAndLogId(info.getScheduleInfoId(),log.getScheduleLogId());
+        for(ScheduleLog slog:list){
+            slog.setIfUse(1);
+            scheduleLogService.updateScheduleLog(slog);
+        }
+        scheduleInfoService.updateScheduleInfo(info);
+        return OperationResult.buildSuccessResult("零星假期编辑成功", "success");
     }
 
     /**
